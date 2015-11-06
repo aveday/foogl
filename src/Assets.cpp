@@ -31,28 +31,30 @@ int Assets::Triangles()
 
 
 
-void split(int s, float **grid)
+void split(int s, float **g)
 {
+
     if(s == 2)
         return;
 
-    float rmin = -0.4f, rmax = 0.4f;
-    // calculate lines midpoints
-    grid[1*s/4][s/4] = (grid[0  ][0  ] + grid[s/2][s/2]) / 2 + random_f(rmin, rmax);
-    grid[2*s/4][s/4] = (grid[s/2][0  ] + grid[s/2][s/2]) / 2 + random_f(rmin, rmax);
-    grid[3*s/4][s/2] = (grid[s  ][s/2] + grid[s/2][s/2]) / 2 + random_f(rmin, rmax);
+    int q = s/4;
+    float rmin = -0.05 * s, rmax = 0.05f * s;
+    
+    // mids
+    g[1*q][1*q] = (g[0  ][0  ] + g[s/2][s/2]) / 2 + random_f(rmin, rmax);
+    g[2*q][1*q] = (g[s/2][0  ] + g[s/2][s/2]) / 2 + random_f(rmin, rmax);
+    g[3*q][2*q] = (g[s  ][s/2] + g[s/2][s/2]) / 2 + random_f(rmin, rmax);
+    g[1*q][2*q] = (g[0  ][s/2] + g[s/2][s/2]) / 2 + random_f(rmin, rmax);
+    g[2*q][3*q] = (g[s/2][s  ] + g[s/2][s/2]) / 2 + random_f(rmin, rmax);
+    g[3*q][3*q] = (g[s  ][s  ] + g[s/2][s/2]) / 2 + random_f(rmin, rmax);
 
-    grid[1*s/4][2*s/4] = (grid[0  ][s/2] + grid[s/2][s/2]) / 2 + random_f(rmin, rmax);
-    grid[2*s/4][3*s/4] = (grid[s/2][s  ] + grid[s/2][s/2]) / 2 + random_f(rmin, rmax);
-    grid[3*s/4][3*s/4] = (grid[s  ][s  ] + grid[s/2][s/2]) / 2 + random_f(rmin, rmax);
-
-    grid[1*s/4][0*s/4] = (grid[0  ][0  ] + grid[s/2][0  ]) / 2 + random_f(rmin, rmax);
-    grid[3*s/4][1*s/4] = (grid[s/2][0  ] + grid[s  ][s/2]) / 2 + random_f(rmin, rmax);
-    grid[4*s/4][3*s/4] = (grid[s  ][s/2] + grid[s  ][s  ]) / 2 + random_f(rmin, rmax);
-
-    grid[3*s/4][4*s/4] = (grid[s  ][s  ] + grid[s/2][s  ]) / 2 + random_f(rmin, rmax);
-    grid[1*s/4][3*s/4] = (grid[s/2][s  ] + grid[0  ][s/2]) / 2 + random_f(rmin, rmax);
-    grid[0*s/4][1*s/4] = (grid[0  ][0  ] + grid[0  ][s/2]) / 2 + random_f(rmin, rmax);
+    // edges
+    g[1*q][0*q] = (g[0  ][0  ] + g[s/2][0  ]) / 2 + random_f(rmin, rmax);
+    g[3*q][1*q] = (g[s/2][0  ] + g[s  ][s/2]) / 2 + random_f(rmin, rmax);
+    g[4*q][3*q] = (g[s  ][s/2] + g[s  ][s  ]) / 2 + random_f(rmin, rmax);
+    g[3*q][4*q] = (g[s  ][s  ] + g[s/2][s  ]) / 2 + random_f(rmin, rmax);
+    g[1*q][3*q] = (g[s/2][s  ] + g[0  ][s/2]) / 2 + random_f(rmin, rmax);
+    g[0*q][1*q] = (g[0  ][0  ] + g[0  ][s/2]) / 2 + random_f(rmin, rmax);
 
     // construct sub hexes
     float *sw[s/2+1], *se[s/2+1],
@@ -61,12 +63,12 @@ void split(int s, float **grid)
 
     for(int i = 0; i < s/2+1; i++)
     {
-        sw[i] = &grid[i][0];
-        se[i] = &grid[i][s/4];
-        w[i]  = &grid[i+s/4][0];
-        e[i]  = &grid[i+s/4][s/2];
-        nw[i] = &grid[i+s/2][s/4];
-        ne[i] = &grid[i+s/2][s/2];
+        sw[i] = &g[i][0];
+        se[i] = &g[i][q];
+        w[i]  = &g[i+q][0];
+        e[i]  = &g[i+q][s/2];
+        nw[i] = &g[i+s/2][q];
+        ne[i] = &g[i+s/2][s/2];
     }
 
     split(s/2, sw);
