@@ -113,9 +113,11 @@ int main() {
     
     // create entity
     
-    entities.push_front( Entity(shaderProgram, glm::vec3(0, -5, -20.0f), Assets::Terrain));
+    entities.push_front( Entity(shaderProgram, glm::vec3(0, 0, -50.0f), Assets::Terrain));
 
     float time = glfwGetTime();
+
+    entities.begin()->rotate(0, M_PI/6, 0);
 
     /* MAIN EVENT LOOP*/
     while(!glfwWindowShouldClose(window))
@@ -126,7 +128,7 @@ int main() {
         time = newTime;
 
         // rotate
-        entities.begin()->rotate(dt, 0, 0);
+        entities.begin()->rotate(dt/2, 0, 0);
 
         // render scene
         render(window);

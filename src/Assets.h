@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "Mesh.h"
+#include "Util.h"
 
 //std::vector<Vertex>vloadModel(const std::string modelName);
 
