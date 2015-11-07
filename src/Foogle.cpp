@@ -117,6 +117,12 @@ int main() {
 
     float time = glfwGetTime();
 
+    int dtn = 10, dti = 0;
+    float dts[dtn];
+    float dt_sum = 0;
+    for(int i = 0; i < dtn; i++)
+        dts[i] = 0;
+
     entities.begin()->rotate(0, M_PI/6, 0);
 
     /* MAIN EVENT LOOP*/
@@ -124,8 +130,15 @@ int main() {
     {
         // manage time
         float newTime = glfwGetTime();
-        float dt = time - newTime;
+        float dt = newTime - time;
         time = newTime;
+
+        // calulate average FPS
+        dt_sum += dt - dts[dti];
+        dts[dti++] = dt;
+        dti %= dtn;
+        if(dti == 0)
+            printf("%5.0f\n", dtn / dt_sum);
 
         // rotate
         entities.begin()->rotate(dt/2, 0, 0);
