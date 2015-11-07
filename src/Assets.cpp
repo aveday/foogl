@@ -37,34 +37,25 @@ void split(int s, float **g, float diff)
     float rmax = 0.05f * s;
     float rmin = -rmax;
 
-    bool corners = false;
+    bool corners = true;
     bool mids = true;
     bool edges = true;
 
     if(corners)
     {
-        g[0][0] += diff/10; //= (diff + g[0*h][0*h]) / 2;
-        g[h][0] += diff/10; //= (diff + g[1*h][0*h]) / 2;
-        g[s][h] += diff/10; //= (diff + g[2*h][1*h]) / 2;
-        g[s][s] += diff/10; //= (diff + g[2*h][2*h]) / 2;
-        g[h][s] += diff/10; //= (diff + g[1*h][2*h]) / 2;
-        g[0][h] += diff/10; //= (diff + g[0*h][1*h]) / 2;
-        g[h][h] += diff/10; //= (diff + g[0*h][1*h]) / 2;
+        g[0][0] += diff/20; //= (diff + g[0*h][0*h]) / 2;
+        g[h][0] += diff/20; //= (diff + g[1*h][0*h]) / 2;
+        g[s][h] += diff/20; //= (diff + g[2*h][1*h]) / 2;
+        g[s][s] += diff/20; //= (diff + g[2*h][2*h]) / 2;
+        g[h][s] += diff/20; //= (diff + g[1*h][2*h]) / 2;
+        g[0][h] += diff/20; //= (diff + g[0*h][1*h]) / 2;
+        g[h][h] += diff/20; //= (diff + g[0*h][1*h]) / 2;
     }
 
     // cannot adjust mids or edges at n == 2
     if(s == 2)
         return;
 
-    if(mids)
-    {
-        g[1*q][1*q] = (g[0][0] + g[h][h]) / 2 + random_f(rmin, rmax);
-        g[2*q][1*q] = (g[h][0] + g[h][h]) / 2 + random_f(rmin, rmax);
-        g[3*q][2*q] = (g[s][h] + g[h][h]) / 2 + random_f(rmin, rmax);
-        g[1*q][2*q] = (g[0][h] + g[h][h]) / 2 + random_f(rmin, rmax);
-        g[2*q][3*q] = (g[h][s] + g[h][h]) / 2 + random_f(rmin, rmax);
-        g[3*q][3*q] = (g[s][s] + g[h][h]) / 2 + random_f(rmin, rmax);
-    }
     if(edges)
     {
         g[1*q][0*q] = (g[0][0] + g[h][0]) / 2 + random_f(rmin, rmax);
@@ -73,6 +64,15 @@ void split(int s, float **g, float diff)
         g[3*q][4*q] = (g[s][s] + g[h][s]) / 2 + random_f(rmin, rmax);
         g[1*q][3*q] = (g[h][s] + g[0][h]) / 2 + random_f(rmin, rmax);
         g[0*q][1*q] = (g[0][0] + g[0][h]) / 2 + random_f(rmin, rmax);
+    }
+    if(mids)
+    {
+        g[1*q][1*q] = (g[0][0] + g[h][h] + g[1*q][0*q] + g[0*q][1*q]) / 4;
+        g[2*q][1*q] = (g[h][0] + g[h][h] + g[1*q][0*q] + g[3*q][1*q]) / 4;
+        g[3*q][2*q] = (g[s][h] + g[h][h] + g[3*q][1*q] + g[4*q][3*q]) / 4;
+        g[1*q][2*q] = (g[0][h] + g[h][h] + g[4*q][3*q] + g[3*q][4*q]) / 4;
+        g[2*q][3*q] = (g[h][s] + g[h][h] + g[3*q][4*q] + g[1*q][3*q]) / 4;
+        g[3*q][3*q] = (g[s][s] + g[h][h] + g[1*q][3*q] + g[0*q][1*q]) / 4;
     }
 
     // construct sub hexes
@@ -109,7 +109,13 @@ int Assets::Terrain()
     float max_height =  4.0f;
 
     float height[size+1][size+1];
+
     float *grid[size+1];
+
+    glm::vec4 green = glm::vec4(0.0f, 0.4f, 0.0f, 1.0f);
+    glm::vec4 white = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+    glm::vec4 brown = glm::vec4(0.2f, 0.1f, 0.02f, 1);
+    glm::vec4 yellow= glm::vec4(0.4f, 0.3f, 0.1f, 1);
 
     for(int s = 0; s <= size; s++)
         grid[s] = height[s];
@@ -137,6 +143,7 @@ int Assets::Terrain()
         
     split(size, grid, 0);
 
+    /*
     // print grid
     for(int y = 0; y <= size; y++)
     {
@@ -150,10 +157,13 @@ int Assets::Terrain()
         }
         printf("\n\n");
     }
+    */
 
     int vs_max = size * size * 2 * 3;
     int vs = 0;
 
+    glm::vec3 normals[size+1][size+1];
+    glm::vec3 pos[size+1][size+1][2][3];
     Vertex Vertices[vs_max];
 
     int dx[][3] = {{0, 1, 1}, {0, 1, 0}};
@@ -171,42 +181,54 @@ int Assets::Terrain()
                 if(y < 1 - size/2 - t + x || y > size/2 - t + x)
                     continue;
 
-                bool water = true;
-                glm::vec3 pos[3];
                 for(int d = 0; d < 3; d++)
                 {
                     int X = x+dx[t][d];
                     int Y = y+dy[t][d];
 
-
-                    float h = height[X][Y];
-                    if(h > 0)
-                        water = false;
-                    else
-                        h = 0;
-
-                    pos[d] = glm::vec3(
+                    pos[x][y][t][d] = glm::vec3(
                             X-Y/2.0f - size/4,
-                            h,
+                            height[X][Y],
                             Y*root3/2.0f - size/2 * root3/2);
                 }
+                for(int d = 0; d < 3; d++)
+                {
+                    int X = x+dx[t][d];
+                    int Y = y+dy[t][d];
+                    // find the normal
+                    normals[X][Y] = getNormal(pos[x][y][t]);
+                }
 
-                // find the normal
-                glm::vec3 normal = getNormal(pos);
+            }
+        }
+    }
 
+    for(int y = 0; y < size; y++)
+    {
+        for(int x = 0; x < size; x++)
+        {
+            for(int t = 0; t < 2; t++)
+            {
                 // determine ground color
-                glm::vec4 green = glm::vec4(0.0f, 0.4f, 0.0f, 1.0f);
-                glm::vec4 brown = glm::vec4(0.3f, 0.2f, 0.05f, 1);
-                glm::vec4 blue = glm::vec4(0, 0, 1.0f, 1) * (1+height[x][y]/5);
 
-                float slope = normal.y * normal.y * normal.y;
-
-                glm::vec4 col = water ? blue :
-                    slope * green + (1 - slope) * brown;
 
                 // add the vertices
                 for(int d = 0; d < 3; d++)
-                    Vertices[vs++] = Vertex(pos[d], normal, col);
+                {
+                    int X = x+dx[t][d];
+                    int Y = y+dy[t][d];
+
+                    glm::vec4 water = glm::vec4(0, 0, 1.0f, 1) * (1+height[X][Y]/5);
+                    glm::vec4 &ground = height[X][Y] < 5 ? green : white;
+                    glm::vec3 n = normalize(normals[X][Y]);
+
+                    float slope = pow(n.y, 10);
+                    glm::vec4 col = 
+                        height[X][Y] < 0.2f ? yellow :
+                        slope * ground + (1 - slope) * brown;
+
+                    Vertices[vs++] = Vertex(pos[x][y][t][d], n, col);
+                }
 
             }
             // calculate the position of each vertex
