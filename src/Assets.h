@@ -2,7 +2,10 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <list>
 #include <math.h>
+
 
 #include "Mesh.h"
 #include "Util.h"
