@@ -34,10 +34,10 @@ void split(int s, float **g, float diff)
     int h = s/2;
     int q = s/4;
 
-    float rmax = 0.05f * s;
+    float rmax = 0.1f * s;
     float rmin = -rmax;
 
-    bool corners = true;
+    bool corners = false;
     bool mids = true;
     bool edges = true;
 
@@ -102,7 +102,7 @@ void split(int s, float **g, float diff)
 
 int Assets::Terrain()
 {
-    int iter = 6;
+    int iter = 7;
     int size = pow(2, iter);
 
     float min_height = -2.0f;
