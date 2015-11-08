@@ -113,7 +113,7 @@ int main() {
     
     // create entity
     
-    entities.push_front( Entity(shaderProgram, glm::vec3(0, 0, -50.0f), Assets::Terrain));
+    entities.push_front( Entity(shaderProgram, glm::vec3(0, 0, -100.0f), Assets::Terrain));
 
     float time = glfwGetTime();
 
