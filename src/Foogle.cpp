@@ -137,7 +137,7 @@ int main() {
         dt_sum += dt - dts[dti];
         dts[dti++] = dt;
         dti %= dtn;
-        if(dti == 0)
+        if(dti == -1)//XXX
             printf("%5.0f\n", dtn / dt_sum);
 
         // rotate

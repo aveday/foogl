@@ -6,6 +6,7 @@
 #include <list>
 #include <math.h>
 
+#include "Perlin.h"
 
 #include "Mesh.h"
 #include "Util.h"
