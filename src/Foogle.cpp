@@ -141,7 +141,7 @@ int main() {
             printf("%5.0f\n", dtn / dt_sum);
 
         // rotate
-        //entities.begin()->rotate(dt/2, 0, 0);
+        entities.begin()->rotate(dt/2, 0, 0);
 
         // render scene
         render(window);

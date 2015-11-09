@@ -14,7 +14,6 @@ struct Vertex {
         position(p), normal(n), color(c) {}
 };
 
-
 class Mesh {
     public:
         Mesh(GLuint program, int (*model)());
