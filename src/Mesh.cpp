@@ -1,6 +1,5 @@
 #include "Mesh.h"
 
-
 Mesh::Mesh(GLuint program, int (*model)()):
     shaderProgram(program)
 {

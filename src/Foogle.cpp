@@ -14,11 +14,11 @@
 #include <algorithm>
 
 // Project Headers
+#include "Terrain.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "Entity.h"
 #include "config.h"
-#include "Assets.h"
 
 std::list<Entity> entities;
 GLuint projectionMatrixPtr, lightPositionPtr, lightColorPtr;
@@ -112,11 +112,11 @@ int main() {
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
     
     // create entity
-    
-    entities.push_front( Entity(shaderProgram, glm::vec3(0, 0, -100.0f), Assets::Terrain));
+    entities.push_front( Terrain(shaderProgram, glm::vec3(0, 0, -100.0f)) );
 
+
+    // create timer and fps counter
     float time = glfwGetTime();
-
     int dtn = 10, dti = 0;
     float dts[dtn];
     float dt_sum = 0;
@@ -137,7 +137,7 @@ int main() {
         dt_sum += dt - dts[dti];
         dts[dti++] = dt;
         dti %= dtn;
-        if(dti == -1)//XXX
+        if(dti == 0)
             printf("%5.0f\n", dtn / dt_sum);
 
         // rotate

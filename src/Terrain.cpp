@@ -1,43 +1,66 @@
-#include "Assets.h"
+#include <math.h>
 
-int Assets::Terrain()
+#include "Terrain.h"
+#include "Perlin.h"
+#include "Util.h"
+
+float root3 = sqrt(3);
+
+static glm::vec4 green = glm::vec4(0.0f, 0.4f, 0.0f, 1.0f);
+static glm::vec4 white = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
+static glm::vec4 brown = glm::vec4(0.2f, 0.1f, 0.02f, 1);
+static glm::vec4 yellow= glm::vec4(0.4f, 0.3f, 0.1f, 1);
+
+glm::vec2 gridToWorld(int x, int y, int size)
+{
+    return glm::vec2(
+            x-y/2.0f - size/4,
+            y*root3/2.0f - size/2 * root3/2);
+}
+
+Terrain::Terrain(GLuint program, glm::vec3 pos):
+    Entity(program, pos, CreateModel)
 {
 
-    int iter = 7;
-    int size = pow(2, iter);
+}
+
+int Terrain::CreateModel()
+{
+    /*  create terrain heightmap  */
+
+    int size = 128;
     float height[size+1][size+1];
 
     // Perlin noise parameters
-    Perlin p(43);
+    Perlin p(103);
     int levels = 3;
     float xScale[] = {0.6f, 0.3f, 0.1f};
     float yScale[] = {0.4f, 0.03f, 0.02f};
     float elevation = 2.0f;
-    float root3 = sqrt(3);
 
     // generate heightmap from Perlin noise
     for(int x = 0; x <= size; x++)
         for(int y = 0; y <= size; y++)
         {
+            //  skip out-of-bounds polygons
             if(y < 1 - size/2 + x - 1|| y > size/2 + x)
                 continue;
-            float xf = x-y/2.0f - size/4;
-            float yf = y*root3/2.0f - size/2 * root3/2;
+            glm::vec2 world = gridToWorld(x, y, size);
             float noise = 0;
             for(int i = 0; i < levels; i++)
                 noise += p.noise(
-                        xf / size / xScale[i],
-                        yf / size / xScale[i],
+                        world.x / size / xScale[i],
+                        world.y / size / xScale[i],
                         i) * size * yScale[i];
 
             height[x][y] = noise + elevation;
         }
 
-    glm::vec3 normals[size+1][size+1];
-    glm::vec3 pos[size][size][2][3];
 
-    Vertex Vertices[size * size * 2 * 3];
-    int vs = 0;
+    /*  define vertex 3D positions and normalsi  */
+
+    glm::vec3 normals[size+1][size+1];
+    glm::vec3 position[size][size][2][3];
 
     int dx[][3] = {{0, 1, 1}, {0, 1, 0}};
     int dy[][3] = {{0, 0, 1}, {0, 1, 1}};
@@ -48,33 +71,40 @@ int Assets::Terrain()
         {
             for(int t = 0; t < 2; t++)
             {
-                //  crop out-of-bounds areas
+                //  skip out-of-bounds polygons
                 if(y < 1 - size/2 - t + x || y > size/2 - t + x)
                     continue;
 
-                // calculate vertex positions
                 for(int d = 0; d < 3; d++)
                 {
+                    // get vertex grid coordinates
                     int X = x+dx[t][d];
                     int Y = y+dy[t][d];
 
-                    float xf = X-Y/2.0f - size/4;
-                    float yf = Y*root3/2.0f - size/2 * root3/2;
-                    pos[x][y][t][d] = glm::vec3(
-                            xf,
+                    // calculate vertex height
+                    glm::vec2 pos2d = gridToWorld(X, Y, size);
+                    position[x][y][t][d] = glm::vec3(
+                            pos2d.x,
                             height[X][Y],
-                            yf);
+                            pos2d.y);
                 }
 
+                // add polygon normal to vertex normal sum
                 for(int d = 0; d < 3; d++)
                 {
                     int X = x+dx[t][d];
                     int Y = y+dy[t][d];
-                    normals[X][Y] += getNormal(pos[x][y][t]);
+                    normals[X][Y] += getNormal(position[x][y][t]);
                 }
             }
         }
     }
+
+
+    /*  construct vertex objects  */
+
+    Vertex Vertices[size * size * 2 * 3];
+    int vs = 0;
 
     for(int y = 0; y < size; y++)
     {
@@ -82,6 +112,10 @@ int Assets::Terrain()
         {
             for(int t = 0; t < 2; t++)
             {
+                //  skip out-of-bounds polygons
+                if(y < 1 - size/2 - t + x || y > size/2 - t + x)
+                    continue;
+
                 for(int d = 0; d < 3; d++, vs++)
                 {
                     // get vertex grid coordinates
@@ -89,7 +123,7 @@ int Assets::Terrain()
                     int Y = y+dy[t][d];
 
                     // set vertex position
-                    Vertices[vs].position = pos[x][y][t][d];
+                    Vertices[vs].position = position[x][y][t][d];
 
                     // set vertex normal
                     Vertices[vs].normal = normalize(normals[X][Y]);
