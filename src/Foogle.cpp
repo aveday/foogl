@@ -12,6 +12,9 @@
 #include <math.h>
 #include <list>
 #include <algorithm>
+#include <thread>
+#include <chrono>
+#include <unistd.h>
 
 // Project Headers
 #include "Terrain.h"
@@ -125,10 +128,16 @@ int main() {
 
     entities.begin()->rotate(0, M_PI/6, 0);
 
+    render(window);
     /* MAIN EVENT LOOP*/
     while(!glfwWindowShouldClose(window))
     {
         // manage time
+        if(glfwGetTime() - time < 1/60.0f)
+        {
+            int ms = 1000 * ( time + 1/60.0f - glfwGetTime() );
+            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+        }
         float newTime = glfwGetTime();
         float dt = newTime - time;
         time = newTime;

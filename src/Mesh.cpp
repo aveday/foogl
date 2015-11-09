@@ -13,7 +13,7 @@ Mesh::Mesh(GLuint program, int (*model)()):
 
     // build model
     vertices_n = (*model)();
-    
+
     // setup vertex buffers
     initVertexAttrib(shaderProgram, "Position", 3, 10, 0);
     initVertexAttrib(shaderProgram, "Normal", 3, 10, 3);
