@@ -1,7 +1,6 @@
 #include <math.h>
 
 #include "Terrain.h"
-#include "Perlin.h"
 #include "Util.h"
 
 float root3 = sqrt(3);
@@ -19,26 +18,17 @@ glm::vec2 gridToWorld(int x, int y, int size)
 }
 
 Terrain::Terrain(GLuint program, glm::vec3 pos):
-    Entity(program, pos, CreateModel)
+    Entity(program, pos)
 {
-
+    CreateModel();
 }
 
-int Terrain::CreateModel()
+void Terrain::CreateModel()
 {
+    mesh.begin();
     /*  create terrain heightmap  */
 
-    int size = 128;
     float height[size+1][size+1];
-
-    // Perlin noise parameters
-    Perlin p(103);
-    int levels = 3;
-    float xScale[] = {0.6f, 0.3f, 0.1f};
-    float yScale[] = {0.4f, 0.03f, 0.02f};
-    float elevation = 2.0f;
-
-    // generate heightmap from Perlin noise
     for(int x = 0; x <= size; x++)
         for(int y = 0; y <= size; y++)
         {
@@ -48,7 +38,7 @@ int Terrain::CreateModel()
             glm::vec2 world = gridToWorld(x, y, size);
             float noise = 0;
             for(int i = 0; i < levels; i++)
-                noise += p.noise(
+                noise += perlin.noise(
                         world.x / size / xScale[i],
                         world.y / size / xScale[i],
                         i) * size * yScale[i];
@@ -142,5 +132,6 @@ int Terrain::CreateModel()
     }
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-    return vs;
+    mesh.vertices_n = vs;
+    mesh.end();
 }

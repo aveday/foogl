@@ -16,12 +16,14 @@ struct Vertex {
 
 class Mesh {
     public:
-        Mesh(GLuint program, int (*model)());
+        Mesh(GLuint program);
         void draw(glm::mat4 &modelMatrix);
+        void begin();
+        void end();
+        int vertices_n;
 
     private:
         GLuint vao, vbo;
-        int vertices_n;
         GLuint shaderProgram;
 
         void initVertexAttrib(GLuint program, const GLchar* attribName,

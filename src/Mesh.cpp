@@ -1,7 +1,10 @@
 #include "Mesh.h"
 
-Mesh::Mesh(GLuint program, int (*model)()):
+Mesh::Mesh(GLuint program) :
     shaderProgram(program)
+{ }
+
+void Mesh::begin()
 {
     // create and bind the vertex buffer
     glGenBuffers(1, &vbo);
@@ -10,10 +13,10 @@ Mesh::Mesh(GLuint program, int (*model)()):
     // create and bind the vertex array
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
+}
 
-    // build model
-    vertices_n = (*model)();
-
+void Mesh::end()
+{
     // setup vertex buffers
     initVertexAttrib(shaderProgram, "Position", 3, 10, 0);
     initVertexAttrib(shaderProgram, "Normal", 3, 10, 3);
