@@ -147,21 +147,23 @@ int Assets::Terrain()
 
 
     // apply perlin noise
-    Perlin p;
-    float scale[] = {5, 25, 100};
+    Perlin p(0);
+    float xScale[] = {0.5f, 0.1f, 0.05};
+    float yScale[] = {3.3f, 0.2f, 0.1};
     float root3 = sqrt(3);
 
-    for(int x = 1; x < size; x++)
-        for(int y = 1; y < size; y++)
+    for(int x = 0; x <= size; x++)
+        for(int y = 0; y <= size; y++)
         {
+            if(y < 1 - size/2 + x - 1|| y > size/2 + x)
+                continue;
             float xf = x-y/2.0f - size/4;
             float yf = y*root3/2.0f - size/2 * root3/2;
-            float noise = p.noise( scale[0] * xf/ size, scale[0] * yf/ size, 0);
-            noise += 0.1f * p.noise( scale[1] * xf/ size, scale[1] * yf/ size, 1);
-            float hh = (max_height - min_height) / 2;
-            height[x][y] = hh * noise + (max_height - hh);
+            float noise = 0;
+            for(int i = 0; i < 3; i++)
+                noise += p.noise(xf / size / xScale[i], yf / size / xScale[i], i) * yScale[i];
 
-            printf("%d, %d - %.2f\n", x, y, height[x][y]);
+            height[x][y] = (noise-1) * (max_height - min_height) / 2 + max_height;
         }
 
     /*
@@ -262,6 +264,8 @@ int Assets::Terrain()
 
     glm::vec3 normals[size+1][size+1];
     glm::vec3 pos[size+1][size+1][2][3];
+
+    //Vertex Vertixes
     Vertex Vertices[vs_max];
 
     int dx[][3] = {{0, 1, 1}, {0, 1, 0}};

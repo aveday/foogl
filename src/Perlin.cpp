@@ -11,8 +11,8 @@
 #include <ctime>
 #include <cmath>
 
-Perlin::Perlin() {
-	srand(time(NULL));
+Perlin::Perlin(int seed) {
+	srand(seed);
 
 	p = new int[256];
 	Gx = new float[256];

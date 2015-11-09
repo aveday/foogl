@@ -81,7 +81,7 @@ int main() {
 
     // create the window and set it as current context
     GLFWwindow* window = glfwCreateWindow(screen_width, screen_height,
-            "foogl", FULLSCREEN ? glfwGetPrimaryMonitor() : NULL, NULL);
+            "Foogle", FULLSCREEN ? glfwGetPrimaryMonitor() : NULL, NULL);
     glfwMakeContextCurrent(window);
 
     // setup GLEW (must be done after creating GL context)
@@ -141,7 +141,7 @@ int main() {
             printf("%5.0f\n", dtn / dt_sum);
 
         // rotate
-        entities.begin()->rotate(dt/2, 0, 0);
+        //entities.begin()->rotate(dt/2, 0, 0);
 
         // render scene
         render(window);

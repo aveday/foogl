@@ -14,7 +14,7 @@
 
 class Perlin {
 public:
-	Perlin();
+	Perlin(int seed);
 	~Perlin();
 
 	// Generates a Perlin (smoothed) noise value between -1 and 1, at the given 3D position.
