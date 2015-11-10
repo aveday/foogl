@@ -17,13 +17,14 @@
 #include <unistd.h>
 
 // Project Headers
+#include "Perlin.h"
 #include "Terrain.h"
 #include "Shader.h"
 #include "Mesh.h"
 #include "Entity.h"
 #include "config.h"
 
-std::list<Entity> entities;
+std::list<Entity*> entities;
 GLuint projectionMatrixPtr, lightPositionPtr, lightColorPtr;
 glm::mat4 projectionMatrix;
 
@@ -63,7 +64,7 @@ void render(GLFWwindow* window) {
 
     // draw entities
     for(auto it = entities.begin(); it != entities.end(); it++)
-        it->draw();
+        (*it)->draw();
 
     // swap buffers
     glfwSwapBuffers(window);
@@ -115,7 +116,8 @@ int main() {
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
     
     // create entity
-    entities.push_front( Terrain(shaderProgram, glm::vec3(0, 0, -100.0f)) );
+    Terrain terrain(shaderProgram, 128, glm::vec3(0, 0, -100.0f));
+    entities.push_front( &terrain );
 
 
     // create timer and fps counter
@@ -126,7 +128,7 @@ int main() {
     for(int i = 0; i < dtn; i++)
         dts[i] = 0;
 
-    entities.begin()->rotate(0, M_PI/6, 0);
+    terrain.rotate(0, M_PI/6, 0);
 
     render(window);
     /* MAIN EVENT LOOP*/
@@ -143,14 +145,17 @@ int main() {
         time = newTime;
 
         // calulate average FPS
-        dt_sum += dt - dts[dti];
-        dts[dti++] = dt;
-        dti %= dtn;
-        if(dti == 0)
-            printf("%5.0f\n", dtn / dt_sum);
+        if(LOG_FPS)
+        {
+            dt_sum += dt - dts[dti];
+            dts[dti++] = dt;
+            dti %= dtn;
+            if(dti == 0)
+                printf("%5.0f\n", dtn / dt_sum);
+        }
 
         // rotate
-        entities.begin()->rotate(dt/2, 0, 0);
+        terrain.rotate(dt/2, 0, 0);
 
         // render scene
         render(window);
@@ -159,6 +164,10 @@ int main() {
         glfwPollEvents();
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, GL_TRUE);
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+            terrain.CreateModel(--terrain.size);
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+            terrain.CreateModel(++terrain.size);
     }
 
     // clean up
