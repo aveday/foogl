@@ -8,14 +8,15 @@ class Terrain : public Entity
 {
     public:
         Terrain(GLuint program, int size, glm::vec3 pos);
-        void CreateModel(int size, float seed_);
-        int size;
-        float seed;
+        void CreateModel();
+        int size = 128;
+        float seed = 0;
 
+        int octaves = 4;
+        float baseFreq = 0.02f, baseAmp= 40.0f;
+        float lac = 4.0f, pers = 0.20f;
     private:
         static Perlin perlin;
         float elevation = 2.0f;
-        int levels = 3;
-        float xScale[3] = {60, 30, 10};
-        float yScale[3] = {40, 3, 2};
+
 };

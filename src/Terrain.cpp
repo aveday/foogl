@@ -21,16 +21,16 @@ glm::vec2 gridToWorld(int x, int y, int size)
 Terrain::Terrain(GLuint program, int size_, glm::vec3 pos):
     Entity(program, pos)
 {
-    CreateModel(size_, 0);
+    size = size_;
+    CreateModel();
 }
 
-void Terrain::CreateModel(int size_, float seed_)
+void Terrain::CreateModel()
 {
-    seed = seed_;
     // limit size
-    size= size_ < 2 ? 2
-        : size_ > 150 ? 150
-        : size_;
+    size = size < 2 ? 2
+        : size > 128 ? 128
+        : size;
 
     /*  create terrain heightmap  */
 
@@ -43,12 +43,15 @@ void Terrain::CreateModel(int size_, float seed_)
                 continue;
             glm::vec2 world = gridToWorld(x, y, size);
             float noise = 0;
-            for(int i = 0; i < levels; i++)
+
+            float amp = baseAmp;
+            float freq = baseFreq;
+            for(int i = 0; i < octaves; i++, freq *= lac, amp *= pers)
             {
                 noise += perlin.noise(
-                        world.x / xScale[i],
-                        world.y / xScale[i],
-                        seed) * yScale[i];
+                        world.x * freq,
+                        world.y * freq,
+                        seed) * amp;
             }
 
             height[x][y] = noise + elevation;
