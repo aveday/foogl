@@ -31,13 +31,21 @@ void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 
     if(action != GLFW_RELEASE)
     {
+        int size = selectedTerrain->size;
+        float seed = selectedTerrain->seed;
         switch(key)
         {
             case GLFW_KEY_LEFT:
-                selectedTerrain->CreateModel(selectedTerrain->size-2, 0);
+                selectedTerrain->CreateModel(size - 2, seed);
                 break;
             case GLFW_KEY_RIGHT:
-                selectedTerrain->CreateModel(selectedTerrain->size+2, 0);
+                selectedTerrain->CreateModel(size + 2, seed);
+                break;
+            case GLFW_KEY_UP:
+                selectedTerrain->CreateModel(size, seed + 0.02f);
+                break;
+            case GLFW_KEY_DOWN:
+                selectedTerrain->CreateModel(size, seed - 0.02f);
                 break;
         }
         std::cout << "Size = " << selectedTerrain->size << std::endl;
