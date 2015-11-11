@@ -60,11 +60,19 @@ void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
                 break;
 
             case GLFW_KEY_3:
-                selectedTerrain->pers -= 0.1f;
+                selectedTerrain->pers -= 0.01f;
                 break;
 
             case GLFW_KEY_4:
-                selectedTerrain->pers += 0.1f;
+                selectedTerrain->pers += 0.01f;
+                break;
+
+            case GLFW_KEY_MINUS:
+                selectedTerrain->scale -= 0.1f;
+                break;
+
+            case GLFW_KEY_EQUAL:
+                selectedTerrain->scale += 0.1f;
                 break;
 
         }

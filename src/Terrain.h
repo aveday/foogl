@@ -11,6 +11,7 @@ class Terrain : public Entity
         void CreateModel();
         int size = 128;
         float seed = 0;
+        float scale = 1.0f;
 
         int octaves = 4;
         float baseFreq = 0.02f, baseAmp= 40.0f;

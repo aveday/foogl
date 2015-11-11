@@ -49,9 +49,9 @@ void Terrain::CreateModel()
             for(int i = 0; i < octaves; i++, freq *= lac, amp *= pers)
             {
                 noise += perlin.noise(
-                        world.x * freq,
-                        world.y * freq,
-                        seed) * amp;
+                        world.x * freq * scale,
+                        world.y * freq * scale,
+                        seed) * amp / scale;
             }
 
             height[x][y] = noise + elevation;
@@ -130,12 +130,13 @@ void Terrain::CreateModel()
                     Vertices[vs].normal = normalize(normals[X][Y]);
 
                     // set vertex color
-                    glm::vec4 water = glm::vec4(0.1f, 0.1f, 0.8f, 1) * (1+height[X][Y]/12);
-                    glm::vec4 &ground = height[X][Y] < 12 ? green : white;
+                    float h = (height[X][Y] - elevation) * scale;
+                    glm::vec4 water = glm::vec4(0.1f, 0.1f, 0.8f, 1) * (1 + h/12);
+                    glm::vec4 &ground = h < 12 ? green : white;
                     float slope = pow(Vertices[vs].normal.y, 10);
 
-                    Vertices[vs].color = height[X][Y] < 0 ? water :
-                        height[X][Y] < 0.8f ? yellow :
+                    Vertices[vs].color = h < 0 ? water :
+                        h < 0.8f ? yellow :
                         slope * ground + (1 - slope) * brown;
                 }
             }
