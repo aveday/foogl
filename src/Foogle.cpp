@@ -8,10 +8,8 @@
 #include <glm/gtx/transform.hpp>
 
 // Standard Headers
-#include <stdio.h>
-#include <math.h>
+#include <iostream>
 #include <list>
-#include <algorithm>
 #include <thread>
 #include <chrono>
 #include <unistd.h>
@@ -23,6 +21,28 @@
 #include "Mesh.h"
 #include "Entity.h"
 #include "config.h"
+
+Terrain *selectedTerrain;
+
+void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if(key == GLFW_KEY_ESCAPE)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if(action != GLFW_RELEASE)
+    {
+        switch(key)
+        {
+            case GLFW_KEY_LEFT:
+                selectedTerrain->CreateModel(selectedTerrain->size-2, 0);
+                break;
+            case GLFW_KEY_RIGHT:
+                selectedTerrain->CreateModel(selectedTerrain->size+2, 0);
+                break;
+        }
+        std::cout << "Size = " << selectedTerrain->size << std::endl;
+    }
+}
 
 std::list<Entity*> entities;
 GLuint projectionMatrixPtr, lightPositionPtr, lightColorPtr;
@@ -118,6 +138,7 @@ int main() {
     // create entity
     Terrain terrain(shaderProgram, 128, glm::vec3(0, 0, -100.0f));
     entities.push_front( &terrain );
+    selectedTerrain = &terrain;
 
 
     // create timer and fps counter
@@ -127,8 +148,12 @@ int main() {
     float dt_sum = 0;
     for(int i = 0; i < dtn; i++)
         dts[i] = 0;
+    int repeatTimer = 0;
 
     terrain.rotate(0, M_PI/6, 0);
+
+    // set key callbacks
+    glfwSetKeyCallback(window, keyPress);
 
     render(window);
     /* MAIN EVENT LOOP*/
@@ -142,6 +167,7 @@ int main() {
         }
         float newTime = glfwGetTime();
         float dt = newTime - time;
+        repeatTimer -= repeatTimer > 0 ? dt : 0;
         time = newTime;
 
         // calulate average FPS
@@ -151,23 +177,17 @@ int main() {
             dts[dti++] = dt;
             dti %= dtn;
             if(dti == 0)
-                printf("%5.0f\n", dtn / dt_sum);
+                std::cout << dtn / dt_sum << std::endl;
         }
 
         // rotate
-        terrain.rotate(dt/2, 0, 0);
+        terrain.rotate(dt/4, 0, 0);
 
         // render scene
         render(window);
 
         // receive input
         glfwPollEvents();
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-            glfwSetWindowShouldClose(window, GL_TRUE);
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-            terrain.CreateModel(--terrain.size);
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-            terrain.CreateModel(++terrain.size);
     }
 
     // clean up

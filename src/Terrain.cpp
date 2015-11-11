@@ -3,7 +3,7 @@
 #include "Terrain.h"
 #include "Util.h"
 
-static Perlin perlin(103);
+Perlin Terrain::perlin = Perlin(103);
 float root3 = sqrt(3);
 
 static glm::vec4 green = glm::vec4(0.0f, 0.4f, 0.0f, 1.0f);
@@ -13,25 +13,26 @@ static glm::vec4 yellow= glm::vec4(0.4f, 0.3f, 0.1f, 1);
 
 glm::vec2 gridToWorld(int x, int y, int size)
 {
-    return glm::vec2(
-            x-y/2.0f - size/4,
-            y*root3/2.0f - size/2 * root3/2);
+    return 128.0f * glm::vec2(
+            (2*x-y) / 2.0f / size - 0.25f,
+            y*root3/size/2 - root3/4);
 }
 
 Terrain::Terrain(GLuint program, int size_, glm::vec3 pos):
     Entity(program, pos)
 {
-    CreateModel(size_);
+    CreateModel(size_, 0);
 }
 
-void Terrain::CreateModel(int size_)
+void Terrain::CreateModel(int size_, float seed_)
 {
-    mesh.begin();
+    seed = seed_;
+    // limit size
+    size= size_ < 2 ? 2
+        : size_ > 150 ? 150
+        : size_;
+
     /*  create terrain heightmap  */
-    size = size_;
-    int levels = 3;
-    float xScale[3] = {0.6f, 0.3f, 0.1f};
-    float yScale[3] = {0.4f, 0.03f, 0.02f};
 
     float height[size+1][size+1];
     for(int x = 0; x <= size; x++)
@@ -45,9 +46,9 @@ void Terrain::CreateModel(int size_)
             for(int i = 0; i < levels; i++)
             {
                 noise += perlin.noise(
-                        world.x / size / xScale[i],
-                        world.y / size / xScale[i],
-                        i) * size * yScale[i];
+                        world.x / xScale[i],
+                        world.y / xScale[i],
+                        seed) * yScale[i];
             }
 
             height[x][y] = noise + elevation;
@@ -138,6 +139,7 @@ void Terrain::CreateModel(int size_)
         }
     }
 
+    mesh.begin();
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_DYNAMIC_DRAW);
     mesh.vertices_n = vs;
     mesh.end();
