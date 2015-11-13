@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 #include <GL/glew.h>
 #include <GL/glu.h>
 #include <glm/glm.hpp>
@@ -17,7 +19,7 @@ struct Vertex {
 class Mesh {
     public:
         Mesh(GLuint program);
-        void draw(glm::mat4 &modelMatrix);
+        void draw(glm::mat4 &modelMatrix, glm::mat4 &viewMatrix);
         void begin();
         void end();
         int vertices_n;

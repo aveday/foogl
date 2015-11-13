@@ -31,8 +31,6 @@ void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 
     if(action != GLFW_RELEASE)
     {
-        int size = selectedTerrain->size;
-        float seed = selectedTerrain->seed;
         switch(key)
         {
             case GLFW_KEY_LEFT:
@@ -110,7 +108,7 @@ void checkSize(GLFWwindow* window)
 }
 
 /* RENDER FUNCTION */
-void render(GLFWwindow* window) {
+void render(GLFWwindow* window, glm::mat4 &viewMatrix) {
 
     // manage window resizes
     checkSize(window);
@@ -121,7 +119,7 @@ void render(GLFWwindow* window) {
 
     // draw entities
     for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->draw();
+        (*it)->draw(viewMatrix);
 
     // swap buffers
     glfwSwapBuffers(window);
@@ -173,10 +171,13 @@ int main() {
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
     
     // create entity
-    Terrain terrain(shaderProgram, 128, glm::vec3(0, 0, -100.0f));
+    Terrain terrain(shaderProgram, 128, glm::vec3(0, 0, 0));
     entities.push_front( &terrain );
     selectedTerrain = &terrain;
 
+    Terrain terrain2(shaderProgram, 128, glm::vec3(0, 0, 80.0f));
+    terrain2.translate(4,0,0);
+    entities.push_front( &terrain2 );
 
     // create timer and fps counter
     float time = glfwGetTime();
@@ -187,12 +188,17 @@ int main() {
         dts[i] = 0;
     int repeatTimer = 0;
 
-    terrain.rotate(0, M_PI/6, 0);
+    //terrain.rotate(0, M_PI/6, 0);
 
     // set key callbacks
     glfwSetKeyCallback(window, keyPress);
 
-    render(window);
+    glm::mat4 viewMatrix = glm::lookAt(
+            glm::vec3(0, 200, -200),
+            glm::vec3(0, 0, 0),
+            glm::vec3(0, 1, 0));
+
+    render(window, viewMatrix);
     /* MAIN EVENT LOOP*/
     while(!glfwWindowShouldClose(window))
     {
@@ -218,10 +224,10 @@ int main() {
         }
 
         // rotate
-        terrain.rotate(dt/4, 0, 0);
+        //terrain.rotate(dt/4, 0, 0);
 
         // render scene
-        render(window);
+        render(window, viewMatrix);
 
         // receive input
         glfwPollEvents();

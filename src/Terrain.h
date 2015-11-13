@@ -19,5 +19,5 @@ class Terrain : public Entity
     private:
         static Perlin perlin;
         float elevation = 2.0f;
-
+        glm::vec2 gridToWorld(int x, int y, int size);
 };

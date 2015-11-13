@@ -1,6 +1,6 @@
 #version 330
 
-uniform mat4 model;
+uniform mat4 modelview;
 uniform vec3 lightPosition;
 
 in vec3 fragVert;
@@ -13,11 +13,11 @@ vec3 lightColor = vec3(1, 1, 1);
 
 void main()
 {
-    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    mat3 normalMatrix = transpose(inverse(mat3(modelview)));
     vec3 normal = normalize(normalMatrix * fragNormal);
     
     // calculate the location of this fragment (pixel) in world coordinates
-    vec3 fragPosition = vec3(model * vec4(fragVert, 1));
+    vec3 fragPosition = vec3(modelview  * vec4(fragVert, 1));
     
     // calculate the vector from this pixels surface to the light source
     vec3 surfaceToLight = lightPosition - fragPosition;

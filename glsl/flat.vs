@@ -1,7 +1,7 @@
 #version 330
 
 uniform mat4 projection;
-uniform mat4 model;
+uniform mat4 modelview;
 
 in vec3 Position;
 in vec4 Color;
@@ -17,5 +17,5 @@ void main()
     fragColor = Color;
     fragNormal = Normal;
 
-    gl_Position = projection * model * vec4(Position, 1.0);
+    gl_Position = projection * modelview * vec4(Position, 1.0);
 }

@@ -9,10 +9,10 @@ Entity::Entity(GLuint program, glm::vec3 pos) :
     updateModelMatrix();
 }
 
-void Entity::draw()
+void Entity::draw(glm::mat4 &viewMatrix)
 {
     // draw the mesh with the 
-    mesh.draw(modelMatrix);
+    mesh.draw(modelMatrix, viewMatrix);
 }
 
 void Entity::updateModelMatrix()

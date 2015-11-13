@@ -35,12 +35,14 @@ void Mesh::initVertexAttrib(GLuint program, const GLchar* attribName,
     glEnableVertexAttribArray(attrib);
 }
 
-void Mesh::draw(glm::mat4 &modelMatrix)
+void Mesh::draw(glm::mat4 &modelMatrix, glm::mat4 &viewMatrix)
 {
+    glm::mat4 modelview = viewMatrix * modelMatrix;
+
     // update uniform shader inputs
     glUniformMatrix4fv(
-            glGetUniformLocation(shaderProgram, "model"),
-            1, GL_FALSE, glm::value_ptr(modelMatrix));
+            glGetUniformLocation(shaderProgram, "modelview"),
+            1, GL_FALSE, glm::value_ptr(modelview));
 
     // bind vertex array and draw vertices
     glBindVertexArray(vao);

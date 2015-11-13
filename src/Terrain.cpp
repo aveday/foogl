@@ -11,7 +11,7 @@ static glm::vec4 white = glm::vec4(0.8f, 0.8f, 0.8f, 1.0f);
 static glm::vec4 brown = glm::vec4(0.2f, 0.1f, 0.02f, 1);
 static glm::vec4 yellow= glm::vec4(0.4f, 0.3f, 0.1f, 1);
 
-glm::vec2 gridToWorld(int x, int y, int size)
+glm::vec2 Terrain::gridToWorld(int x, int y, int size)
 {
     return 128.0f * glm::vec2(
             (2*x-y) / 2.0f / size - 0.25f,
@@ -49,8 +49,8 @@ void Terrain::CreateModel()
             for(int i = 0; i < octaves; i++, freq *= lac, amp *= pers)
             {
                 noise += perlin.noise(
-                        world.x * freq * scale,
-                        world.y * freq * scale,
+                        position.x + world.x * freq * scale,
+                        position.z + world.y * freq * scale,
                         seed) * amp / scale;
             }
 

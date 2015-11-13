@@ -11,16 +11,16 @@
 class Entity
 {
     private:
-        glm::vec3 position, scale, rotation;
         glm::mat4 modelMatrix;
         void updateModelMatrix();
 
     
     public:
+        glm::vec3 position, scale, rotation;
         Entity(GLuint program, glm::vec3 pos);
         Mesh mesh;
 
-        void draw();
+        void draw(glm::mat4 &viewMatrix);
         void rotate(float yaw, float pitch, float roll);
         void translate(float x, float y, float z);
 };
