@@ -187,14 +187,23 @@ int main() {
     glUniform3f(lightPositionPtr, lightPosition.x, lightPosition.y, lightPosition.z);
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
     
-    // create entity
-    Terrain terrain(shaderProgram, 128, glm::vec3(0, 0, 0));
-    entities.push_front( &terrain );
-    selectedTerrain = &terrain;
+    // create tiles
+    int size = 128;
+    float root3 = sqrt(3);
+    bool alt;
+    for(int x = -1; x < 2; x++, alt = !alt)
+    {
+            for(int y = -1; y < 2; y++)
+            {
+                float X = x * size * 3/4.0f * 1.00f;
+                float Y = 0;
+                float Z = (2 * y + alt) * size * root3/4;
+                entities.push_front(
+                        new Terrain (shaderProgram, size, glm::vec3(X, Y, Z)) );
+            }
+        }
 
-    Terrain terrain2(shaderProgram, 128, glm::vec3(120, 0, 0));
-    terrain2.translate(4,0,0);
-    entities.push_front( &terrain2 );
+    selectedTerrain = (Terrain*)(*entities.begin());
 
     // create timer and fps counter
     float time = glfwGetTime();

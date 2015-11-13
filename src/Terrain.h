@@ -9,9 +9,9 @@ class Terrain : public Entity
     public:
         Terrain(GLuint program, int size, glm::vec3 pos);
         void CreateModel();
-        int size = 128;
+        int size = 64;
         float seed = 0;
-        float scale = 1.0f;
+        float scale = 0.2f;
 
         int octaves = 4;
         float baseFreq = 0.02f, baseAmp= 40.0f;
