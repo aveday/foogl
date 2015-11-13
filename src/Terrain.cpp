@@ -46,11 +46,12 @@ void Terrain::CreateModel()
 
             float amp = baseAmp;
             float freq = baseFreq;
+            //float offsetX = position.x k
             for(int i = 0; i < octaves; i++, freq *= lac, amp *= pers)
             {
                 noise += perlin.noise(
-                        position.x + world.x * freq * scale,
-                        position.z + world.y * freq * scale,
+                        (position.x + world.x) * freq * scale,
+                        (position.z + world.y) * freq * scale,
                         seed) * amp / scale;
             }
 

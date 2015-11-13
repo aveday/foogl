@@ -26,6 +26,7 @@ Terrain *selectedTerrain;
 
 void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    float camSpeed = 1;
     if(key == GLFW_KEY_ESCAPE)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
@@ -71,6 +72,22 @@ void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 
             case GLFW_KEY_EQUAL:
                 selectedTerrain->scale += 0.1f;
+                break;
+
+            case GLFW_KEY_W:
+                selectedTerrain->position += glm::vec3(0, 0, camSpeed);
+                break;
+
+            case GLFW_KEY_A:
+                selectedTerrain->position += glm::vec3(camSpeed, 0, 0);
+                break;
+
+            case GLFW_KEY_S:
+                selectedTerrain->position += glm::vec3(0, 0, -camSpeed);
+                break;
+
+            case GLFW_KEY_D:
+                selectedTerrain->position += glm::vec3(-camSpeed, 0, 0);
                 break;
 
         }
@@ -175,7 +192,7 @@ int main() {
     entities.push_front( &terrain );
     selectedTerrain = &terrain;
 
-    Terrain terrain2(shaderProgram, 128, glm::vec3(0, 0, 80.0f));
+    Terrain terrain2(shaderProgram, 128, glm::vec3(120, 0, 0));
     terrain2.translate(4,0,0);
     entities.push_front( &terrain2 );
 
