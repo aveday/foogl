@@ -15,14 +15,10 @@
 #include <unistd.h>
 
 // Project Headers
-#include "Perlin.h"
-#include "Terrain.h"
+#include "Box.h"
 #include "Shader.h"
-#include "Mesh.h"
 #include "Entity.h"
 #include "config.h"
-
-Terrain *selectedTerrain;
 
 void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -34,65 +30,8 @@ void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         switch(key)
         {
-            case GLFW_KEY_LEFT:
-                selectedTerrain->size /= 2;
-                break;
-
-            case GLFW_KEY_RIGHT:
-                selectedTerrain->size *= 2;
-                break;
-
-            case GLFW_KEY_UP:
-                selectedTerrain->seed += 0.02f;
-                break;
-
-            case GLFW_KEY_DOWN:
-                selectedTerrain->seed -= 0.02f;
-                break;
-
-            case GLFW_KEY_1:
-                selectedTerrain->lac -= 0.1f;
-                break;
-
-            case GLFW_KEY_2:
-                selectedTerrain->lac += 0.1f;
-                break;
-
-            case GLFW_KEY_3:
-                selectedTerrain->pers -= 0.01f;
-                break;
-
-            case GLFW_KEY_4:
-                selectedTerrain->pers += 0.01f;
-                break;
-
-            case GLFW_KEY_MINUS:
-                selectedTerrain->scale -= 0.1f;
-                break;
-
-            case GLFW_KEY_EQUAL:
-                selectedTerrain->scale += 0.1f;
-                break;
-
-            case GLFW_KEY_W:
-                selectedTerrain->position += glm::vec3(0, 0, camSpeed);
-                break;
-
-            case GLFW_KEY_A:
-                selectedTerrain->position += glm::vec3(camSpeed, 0, 0);
-                break;
-
-            case GLFW_KEY_S:
-                selectedTerrain->position += glm::vec3(0, 0, -camSpeed);
-                break;
-
-            case GLFW_KEY_D:
-                selectedTerrain->position += glm::vec3(-camSpeed, 0, 0);
-                break;
-
+            // put input here
         }
-        selectedTerrain->CreateModel();
-        std::cout << "Size = " << selectedTerrain->size << std::endl;
     }
 }
 
@@ -187,23 +126,8 @@ int main() {
     glUniform3f(lightPositionPtr, lightPosition.x, lightPosition.y, lightPosition.z);
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
     
-    // create tiles
-    int size = 128;
-    float root3 = sqrt(3);
-    bool alt;
-    for(int x = -1; x < 2; x++, alt = !alt)
-    {
-            for(int y = -1; y < 2; y++)
-            {
-                float X = x * size * 3/4.0f * 1.00f;
-                float Y = 0;
-                float Z = (2 * y + alt) * size * root3/4;
-                entities.push_front(
-                        new Terrain (shaderProgram, size, glm::vec3(X, Y, Z)) );
-            }
-        }
-
-    selectedTerrain = (Terrain*)(*entities.begin());
+    Box box(shaderProgram, glm::vec3(3,3,3), glm::vec3(0,0,0));
+    entities.push_front( &box );
 
     // create timer and fps counter
     float time = glfwGetTime();
@@ -214,13 +138,11 @@ int main() {
         dts[i] = 0;
     int repeatTimer = 0;
 
-    //terrain.rotate(0, M_PI/6, 0);
-
     // set key callbacks
     glfwSetKeyCallback(window, keyPress);
 
     glm::mat4 viewMatrix = glm::lookAt(
-            glm::vec3(0, 200, -200),
+            glm::vec3(0, 5, -10),
             glm::vec3(0, 0, 0),
             glm::vec3(0, 1, 0));
 
@@ -249,8 +171,8 @@ int main() {
                 std::cout << dtn / dt_sum << std::endl;
         }
 
-        // rotate
-        //terrain.rotate(dt/4, 0, 0);
+        // rotate box
+        box.rotate(dt, 0, 0);
 
         // render scene
         render(window, viewMatrix);
