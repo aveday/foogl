@@ -2,7 +2,6 @@
 
 #include <GLFW/glfw3.h>
 #include <list>
-#include "Input.h"
 #include "Camera.h"
 #include "Entity.h"
 
