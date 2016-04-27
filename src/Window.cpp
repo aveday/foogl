@@ -1,6 +1,23 @@
+#include <stdio.h>
 #include <GL/glew.h>
 #include <stdio.h>
 #include "Window.h"
+
+const float mouseSensitivity = 0.005f;
+
+static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if(key == GLFW_KEY_ESCAPE)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if(action != GLFW_RELEASE)
+    {
+        switch(key)
+        {
+            // put input here
+        }
+    }
+}
 
 Window::Window(const char* title,
         int w, int h,
@@ -31,7 +48,8 @@ Window::Window(const char* title,
     glDepthFunc(GL_LEQUAL);
 
     // set key callbacks
-    glfwSetKeyCallback(window, input.keyPress);
+    glfwSetKeyCallback(window, keyPress);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 bool Window::hasResized()
@@ -66,6 +84,22 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
         (*it)->draw(camera.viewMatrix, camera.projectionMatrix);
 
     glfwSwapBuffers(window);
+}
+
+void Window::control(Camera &camera)
+{
+    // rotate camera based on mouse movement
+    double mouseX, mouseY;
+    glfwGetCursorPos(this->window, &mouseX, &mouseY);
+
+    camera.turn(
+            mouseSensitivity * (mouseY - height / 2.0f),
+            mouseSensitivity * (mouseX - width / 2.0f));
+
+    //reset the mouse, so it doesn't go out of the window
+    glfwSetCursorPos(window, width / 2, height / 2);
+
+    // poll for keyboard input
     glfwPollEvents();
 }
 

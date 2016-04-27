@@ -11,6 +11,7 @@ class Window
     public:
         Window(const char* title, int width, int height, bool fullscreen, bool resizable);
         void render(Camera &camera, std::list<Entity*> entities);
+        void control(Camera &camera);
         bool hasResized();
         bool stillOpen();
         void close();
@@ -18,6 +19,5 @@ class Window
     private:
         GLFWwindow* window;
         int width, height;
-        Input input;
 };
 
