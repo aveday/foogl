@@ -77,6 +77,7 @@ int main() {
         // rotate box
         // box.rotate(dt, 0, 0);
 
+        window.control(camera);
         // render scene
         window.render(camera, entities);
     }
