@@ -51,8 +51,20 @@ bool Window::hasResized()
     return false;
 }
 
-void Window::display()
+void Window::render(Camera &camera, std::list<Entity*> entities)
 {
+    // update aspect ratio for camera projection when resized
+    if(hasResized())
+        camera.updateProjection((float)width / height);
+
+    // clear screen
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // draw entities
+    for(auto it = entities.begin(); it != entities.end(); it++)
+        (*it)->draw(camera.viewMatrix, camera.projectionMatrix);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
 }
@@ -67,4 +79,3 @@ void Window::close()
     glfwDestroyWindow(window);
     glfwTerminate();
 }
-

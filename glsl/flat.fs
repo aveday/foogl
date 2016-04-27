@@ -1,6 +1,7 @@
 #version 330
 
-uniform mat4 modelview;
+uniform mat4 model;
+uniform mat4 view;
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 
@@ -12,6 +13,7 @@ out vec4 finalColor;
 
 void main()
 {
+    mat4 modelview = view * model;
     mat3 normalMatrix = transpose(inverse(mat3(modelview)));
     vec3 normal = normalize(normalMatrix * fragNormal);
     
