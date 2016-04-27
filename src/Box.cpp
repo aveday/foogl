@@ -1,20 +1,18 @@
 #include "Box.h"
 
-Box::Box(GLuint program, glm::vec3 size_, glm::vec3 pos):
-    Entity(program, pos)
+Box::Box(GLuint program, glm::vec3 size, glm::vec3 pos, glm::vec4 color):
+    Entity(program, pos, size)
 {
-    size = size_;
 
     // vertex positions
     glm::vec3 position[8];
 
     int n = 0;
-    for(int x = -1; x <= 1; x += 2)
-    for(int y = -1; y <= 1; y += 2)
-    for(int z = -1; z <= 1; z += 2)
+    for(float x = -1; x <= 1; x += 2)
+    for(float y = -1; y <= 1; y += 2)
+    for(float z = -1; z <= 1; z += 2)
         position[n++] = glm::vec3(x, y, z);
 
-    
     Vertex Vertices[36];
 
     int indices[] = {
@@ -45,7 +43,7 @@ Box::Box(GLuint program, glm::vec3 size_, glm::vec3 pos):
     {
         Vertices[vs].position = position[indices[i]];
         Vertices[vs].normal = normals[i/6];
-        Vertices[vs].color = glm::vec4(0.0f, 0.4f, 0.0f, 1.0f);
+        Vertices[vs].color = color;
         vs++;
    }
 
@@ -53,5 +51,4 @@ Box::Box(GLuint program, glm::vec3 size_, glm::vec3 pos):
     glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
     mesh.vertices_n = vs;
     mesh.end();
-
 }

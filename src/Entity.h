@@ -11,14 +11,20 @@
 class Entity
 {
     private:
+        // matrix transform defining the position/scale/rotation of the entity
         glm::mat4 modelMatrix;
         void updateModelMatrix();
 
-    
-    public:
+    protected:
         glm::vec3 position, scale, rotation;
-        Entity(GLuint program, glm::vec3 pos);
         Mesh mesh;
+
+    public:
+        Entity(
+                GLuint program,
+                glm::vec3 pos = glm::vec3(0,0,0),
+                glm::vec3 size = glm::vec3(1,1,1)
+        );
 
         void draw(glm::mat4 &viewMatrix);
         void rotate(float yaw, float pitch, float roll);

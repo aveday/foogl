@@ -2,14 +2,13 @@
 
 uniform mat4 modelview;
 uniform vec3 lightPosition;
+uniform vec3 lightColor;
 
 in vec3 fragVert;
 in vec4 fragColor;
 in vec3 fragNormal;
 
 out vec4 finalColor;
-
-vec3 lightColor = vec3(1, 1, 1);
 
 void main()
 {
