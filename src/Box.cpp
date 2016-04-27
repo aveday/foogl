@@ -8,9 +8,9 @@ Box::Box(GLuint program, glm::vec3 size, glm::vec3 pos, glm::vec4 color):
     glm::vec3 position[8];
 
     int n = 0;
-    for(float x = -1; x <= 1; x += 2)
-    for(float y = -1; y <= 1; y += 2)
-    for(float z = -1; z <= 1; z += 2)
+    for(float x = -0.5f; x <= 0.5f; x += 1)
+    for(float y = -0.5f; y <= 0.5f; y += 1)
+    for(float z = -0.5f; z <= 0.5f; z += 1)
         position[n++] = glm::vec3(x, y, z);
 
     Vertex Vertices[36];
