@@ -12,10 +12,10 @@ Entity::Entity(
     updateModelMatrix();
 }
 
-void Entity::draw(glm::mat4 &viewMatrix)
+void Entity::draw(glm::mat4 &viewMatrix, glm::mat4 &projectionMatrix)
 {
     // draw the mesh with the 
-    mesh.draw(modelMatrix, viewMatrix);
+    mesh.draw(modelMatrix, viewMatrix, projectionMatrix);
 }
 
 void Entity::updateModelMatrix()
