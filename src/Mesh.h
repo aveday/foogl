@@ -19,7 +19,7 @@ struct Vertex {
 class Mesh {
     public:
         Mesh(GLuint program);
-        void draw(glm::mat4 &modelMatrix, glm::mat4 &viewMatrix);
+        void draw(glm::mat4 &modelMatrix, glm::mat4 &viewMatrix, glm::mat4 &projectionMatrix);
         void begin();
         void end();
         int vertices_n;
