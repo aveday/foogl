@@ -3,13 +3,22 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Camera::Camera(float fov, float aspect, float near, float far) :
-    fov(fov), aspect(aspect), near(near), far(far)
+Camera::Camera(glm::vec3 position, glm::vec3 direction) :
+    position(position), direction(direction)
 {
     viewMatrix = glm::lookAt(
-            glm::vec3(0, 5, -10),
-            glm::vec3(0, 0, 0),
+            position,
+            position + direction,
             glm::vec3(0, 1, 0));
+    updateProjection(aspect);
+}
+
+void Camera::configure(float fov, float aspect, float near, float far)
+{
+    this->fov = fov;
+    this->aspect = aspect;
+    this->near = near;
+    this->far = far;
     updateProjection(aspect);
 }
 

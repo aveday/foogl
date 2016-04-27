@@ -17,6 +17,7 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "config.h"
+#include "colors.h"
 
 std::list<Entity*> entities;
 GLuint lightPositionPtr, lightColorPtr;
@@ -33,12 +34,15 @@ int main() {
     glUseProgram(shaderProgram);
 
     // setup camera
-    Camera camera(fov, aspect, near, far);
+    Camera camera(
+            glm::vec3(0, 5, -10),
+            glm::vec3(0, -1, 2));
+    camera.configure(fov, aspect, near, far);
 
     // setup lighting
     lightPositionPtr = glGetUniformLocation(shaderProgram, "lightPosition");
     lightColorPtr = glGetUniformLocation(shaderProgram, "lightColor");
-    glm::vec3 lightPosition(-3, 4, 0);
+    glm::vec3 lightPosition(0, 5, 10);
     glm::vec3 lightColor(1, 1, 1);
     glUniform3f(lightPositionPtr, lightPosition.x, lightPosition.y, lightPosition.z);
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
@@ -51,9 +55,16 @@ int main() {
             shaderProgram,
             glm::vec3(5, 0.2f, 5),  // size
             glm::vec3(0, 0, 0),     // position
-            glm::vec4(1, 0, 0, 1)); // color
+            darkRed);
+
+    Box wall(
+            shaderProgram,
+            glm::vec3(0.2f, 5, 5),  // size
+            glm::vec3(2.6f, 2.6f, 0),     // position
+            darkBlue);
 
     entities.push_front( &box );
+    entities.push_front( &wall);
 
     window.render(camera, entities);
 
@@ -64,7 +75,7 @@ int main() {
         float dt = clock.tick();
 
         // rotate box
-        box.rotate(dt, 0, 0);
+        // box.rotate(dt, 0, 0);
 
         // render scene
         window.render(camera, entities);
