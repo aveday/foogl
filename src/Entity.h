@@ -26,7 +26,7 @@ class Entity
                 glm::vec3 size = glm::vec3(1,1,1)
         );
 
-        void draw(glm::mat4 &viewMatrix);
+        void draw(glm::mat4 &viewMatrix, glm::mat4 &projectionMatrix);
         void rotate(float yaw, float pitch, float roll);
         void translate(float x, float y, float z);
 };
