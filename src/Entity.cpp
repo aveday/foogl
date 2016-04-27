@@ -1,8 +1,11 @@
 #include "Entity.h"
 
-Entity::Entity(GLuint program, glm::vec3 pos) :
+Entity::Entity(
+        GLuint program,
+        glm::vec3 pos,
+        glm::vec3 size) :
     position( pos ),
-    scale( glm::vec3(1, 1, 1) ),
+    scale( size ),
     rotation( glm::vec3(0, 0, 0) ),
     mesh(program)
 {
@@ -20,6 +23,7 @@ void Entity::updateModelMatrix()
     // calculate entity model matrix
     modelMatrix
         = glm::translate<GLfloat>( position )
+        //FIXME there's probably a better way to do this
         * glm::rotate<GLfloat>( rotation.x, glm::vec3(1, 0, 0) )
         * glm::rotate<GLfloat>( rotation.y, glm::vec3(0, 1, 0) )
         * glm::rotate<GLfloat>( rotation.z, glm::vec3(0, 0, 1) )

@@ -1,39 +1,21 @@
 // OpenGL Headers
 #include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <GL/glu.h>
 
 // GLM Headers
 #include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
 
 // Standard Headers
 #include <iostream>
 #include <list>
-#include <thread>
-#include <chrono>
-#include <unistd.h>
 
 // Project Headers
+#include "Window.h"
+#include "Clock.h"
 #include "Box.h"
 #include "Shader.h"
 #include "Entity.h"
 #include "config.h"
-
-void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    float camSpeed = 1;
-    if(key == GLFW_KEY_ESCAPE)
-        glfwSetWindowShouldClose(window, GL_TRUE);
-
-    if(action != GLFW_RELEASE)
-    {
-        switch(key)
-        {
-            // put input here
-        }
-    }
-}
 
 std::list<Entity*> entities;
 GLuint projectionMatrixPtr, lightPositionPtr, lightColorPtr;
@@ -47,27 +29,12 @@ void updateProjection()
             glm::value_ptr(projectionMatrix));
 }
 
-void checkSize(GLFWwindow* window)
-{
-    // get size of OpenGL window
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
-
-    // recalculate projection matrix
-    if (width  != screen_width || height != screen_height)
-    {
-        screen_height = height;
-        screen_width  = width;
-        updateProjection();
-    }
-}
-
 /* RENDER FUNCTION */
-void render(GLFWwindow* window, glm::mat4 &viewMatrix) {
+void render(Window &window, glm::mat4 &viewMatrix) {
 
     // manage window resizes
-    checkSize(window);
+    if(window.hasResized())
+        updateProjection();
 
     // clear screen
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
@@ -78,37 +45,13 @@ void render(GLFWwindow* window, glm::mat4 &viewMatrix) {
         (*it)->draw(viewMatrix);
 
     // swap buffers
-    glfwSwapBuffers(window);
+    window.display();
 }
 
 /* MAIN FUNCTION */
 int main() {
     
-    /* OPENGL CONTEXT CREATION */
-
-    // initialize GLFW and set window options
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_RESIZABLE, RESIZABLE? GL_TRUE : GL_FALSE);
-
-    // create the window and set it as current context
-    GLFWwindow* window = glfwCreateWindow(screen_width, screen_height,
-            "Foogle", FULLSCREEN ? glfwGetPrimaryMonitor() : NULL, NULL);
-    glfwMakeContextCurrent(window);
-
-    // setup GLEW (must be done after creating GL context)
-    glewExperimental = GL_TRUE;
-    glewInit();
-
-    // enable depth tests
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-
-
-    /*  GLSL SHADERS  */
+    Window window("Foogle", screen_width, screen_height, FULLSCREEN, RESIZABLE);
 
     // create the shader program
     GLuint shaderProgram = loadProgram("glsl/flat.vs", "glsl/flat.fs");
@@ -121,25 +64,23 @@ int main() {
     // setup lighting
     lightPositionPtr = glGetUniformLocation(shaderProgram, "lightPosition");
     lightColorPtr = glGetUniformLocation(shaderProgram, "lightColor");
-    glm::vec3 lightPosition(0, 0, 0);
+    glm::vec3 lightPosition(-3, 4, 0);
     glm::vec3 lightColor(1, 1, 1);
     glUniform3f(lightPositionPtr, lightPosition.x, lightPosition.y, lightPosition.z);
     glUniform3f(lightColorPtr, lightColor.x, lightColor.y, lightColor.z);
     
-    Box box(shaderProgram, glm::vec3(3,3,3), glm::vec3(0,0,0));
+    // setup clock
+    Clock clock;
+
+    // create a large flat box
+    Box box(
+            shaderProgram,
+            glm::vec3(5, 0.2f, 5), // size
+            glm::vec3(0, 0, 0),    // position
+            glm::vec4(1, 0, 0, 1)  // color
+    );
+
     entities.push_front( &box );
-
-    // create timer and fps counter
-    float time = glfwGetTime();
-    int dtn = 10, dti = 0;
-    float dts[dtn];
-    float dt_sum = 0;
-    for(int i = 0; i < dtn; i++)
-        dts[i] = 0;
-    int repeatTimer = 0;
-
-    // set key callbacks
-    glfwSetKeyCallback(window, keyPress);
 
     glm::mat4 viewMatrix = glm::lookAt(
             glm::vec3(0, 5, -10),
@@ -147,43 +88,21 @@ int main() {
             glm::vec3(0, 1, 0));
 
     render(window, viewMatrix);
+
     /* MAIN EVENT LOOP*/
-    while(!glfwWindowShouldClose(window))
+    while(window.stillOpen())
     {
         // manage time
-        if(glfwGetTime() - time < 1/60.0f)
-        {
-            int ms = 1000 * ( time + 1/60.0f - glfwGetTime() );
-            std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-        }
-        float newTime = glfwGetTime();
-        float dt = newTime - time;
-        repeatTimer -= repeatTimer > 0 ? dt : 0;
-        time = newTime;
-
-        // calulate average FPS
-        if(LOG_FPS)
-        {
-            dt_sum += dt - dts[dti];
-            dts[dti++] = dt;
-            dti %= dtn;
-            if(dti == 0)
-                std::cout << dtn / dt_sum << std::endl;
-        }
+        float dt = clock.tick();
 
         // rotate box
         box.rotate(dt, 0, 0);
 
         // render scene
         render(window, viewMatrix);
-
-        // receive input
-        glfwPollEvents();
     }
 
-    // clean up
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    window.close(); 
     return 0;
 }
 
