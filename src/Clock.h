@@ -1,6 +1,6 @@
 #pragma once
 
-static const bool LOG_FPS = true;
+static const bool LOG_FPS = false;
 static const int SAMPLES_FOR_AVERAGE = 10;
 static const int FPS_CAP = 60;
 
