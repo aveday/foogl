@@ -1,7 +1,6 @@
 #version 330
 
 uniform mat4 model;
-uniform mat4 view;
 uniform vec3 lightPosition;
 uniform vec3 lightColor;
 
@@ -13,19 +12,18 @@ out vec4 finalColor;
 
 void main()
 {
-    mat4 modelview = view * model;
-    mat3 normalMatrix = transpose(inverse(mat3(modelview)));
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
     vec3 normal = normalize(normalMatrix * fragNormal);
     
     // calculate the location of this fragment (pixel) in world coordinates
-    vec3 fragPosition = vec3(modelview  * vec4(fragVert, 1));
+    vec3 fragPosition = vec3(model  * vec4(fragVert, 1));
     
     // calculate the vector from this pixels surface to the light source
     vec3 surfaceToLight = lightPosition - fragPosition;
 
     // calculate the cosine of the angle of incidence
     float brightness = dot(normal, surfaceToLight) / (length(surfaceToLight) * length(normal));
-    brightness = clamp(brightness, 0, 1);
+    brightness = clamp(brightness, 0.1f, 1);
 
     // calculate final color of the pixel, based on:
     // 1. The angle of incidence: brightness
