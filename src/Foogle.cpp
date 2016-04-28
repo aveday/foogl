@@ -1,12 +1,5 @@
-// OpenGL Headers
-#include <GL/glew.h>
-#include <GL/glu.h>
-
-// Standard Headers
-#include <iostream>
 #include <list>
 
-// Project Headers
 #include "Window.h"
 #include "Light.h"
 #include "Clock.h"
