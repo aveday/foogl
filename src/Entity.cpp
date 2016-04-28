@@ -1,4 +1,5 @@
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <stdio.h>
 #include <math.h>
@@ -40,6 +41,13 @@ void Entity::draw(mat4 &viewMatrix, mat4 &projectionMatrix)
     mat4 childViewMatrix = viewMatrix * modelMatrix;
     for(auto it = children.begin(); it != children.end(); it++)
         (*it)->draw(childViewMatrix, projectionMatrix);
+}
+
+void Entity::update(float dt)
+{
+    position += dt * glm::rotateY(heading, glm::radians(rotation.y));
+    for(auto it = children.begin(); it != children.end(); it++)
+        (*it)->update(dt);
 }
 
 void Entity::updateModelMatrix()

@@ -9,12 +9,26 @@ void Window::keyPress(GLFWwindow* window, int key, int scancode, int action, int
     if(key == GLFW_KEY_ESCAPE)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
+
+    float speed = 1.0f;
     if(action == GLFW_PRESS)
     {
         switch(key)
         {
-            case GLFW_KEY_W:
-                break;
+            case GLFW_KEY_W: entity->heading.z += speed; break;
+            case GLFW_KEY_A: entity->heading.x += speed; break;
+            case GLFW_KEY_S: entity->heading.z -= speed; break;
+            case GLFW_KEY_D: entity->heading.x -= speed; break;
+        }
+    }
+    else if(action == GLFW_RELEASE)
+    {
+        switch(key)
+        {
+            case GLFW_KEY_W: entity->heading.z -= speed; break;
+            case GLFW_KEY_A: entity->heading.x -= speed; break;
+            case GLFW_KEY_S: entity->heading.z += speed; break;
+            case GLFW_KEY_D: entity->heading.x += speed; break;
         }
     }
 }
@@ -86,6 +100,12 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
         (*it)->draw(view, camera.projectionMatrix);//FIXME
 
     glfwSwapBuffers(window);
+}
+
+void Window::update(std::list<Entity*> entities, float dt)
+{
+    for(auto it = entities.begin(); it != entities.end(); it++)
+        (*it)->update(dt);
 }
 
 void Window::control(Entity &entity)

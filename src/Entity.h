@@ -22,6 +22,7 @@ class Entity
         Mesh mesh;
 
     public:
+        vec3 heading;
         mat4 modelMatrix, orientation;
         mat4 absModelMatrix();
         Entity(
@@ -34,4 +35,5 @@ class Entity
         void draw(mat4 &viewMatrix, mat4 &projectionMatrix);
         void rotate(float x, float y, float z);
         void translate(float x, float y, float z);
+        void update(float dt);
 };
