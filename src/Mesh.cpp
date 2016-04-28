@@ -1,4 +1,7 @@
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Mesh.h"
+#include "glm.h"
 
 Mesh::Mesh(GLuint program) :
     shaderProgram(program)
@@ -35,7 +38,7 @@ void Mesh::initVertexAttrib(GLuint program, const GLchar* attribName,
     glEnableVertexAttribArray(attrib);
 }
 
-void Mesh::draw(glm::mat4 &modelMatrix, glm::mat4 &viewMatrix, glm::mat4 &projectionMatrix)
+void Mesh::draw(mat4 &modelMatrix, mat4 &viewMatrix, mat4 &projectionMatrix)
 {
     glUseProgram(shaderProgram);
     // update uniform shader inputs
