@@ -1,10 +1,11 @@
 #include <stdio.h>
-#include "Camera.h"
-
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-Camera::Camera(glm::vec3 position, glm::vec3 direction) :
+#include "Camera.h"
+#include "glm.h"
+
+Camera::Camera(vec3 position, vec3 direction) :
     position(position), direction(direction)
 {
     v_angle = 0.3f;
@@ -24,16 +25,10 @@ void Camera::configure(float fov, float aspect, float near, float far)
 
 void Camera::updateView()
 {
-    glm::mat4 orientation;
-    orientation = glm::rotate(orientation, v_angle, glm::vec3(1,0,0));
-    orientation = glm::rotate(orientation, h_angle, glm::vec3(0,1,0));
-    viewMatrix = orientation * glm::translate(glm::mat4(), -position);
-
-    /*
-    viewMatrix = glm::lookAt(
-            position,
-            position + direction,
-            glm::vec3(0, 1, 0));*/
+    mat4 orientation;
+    orientation = glm::rotate(orientation, v_angle, vec3(1,0,0));
+    orientation = glm::rotate(orientation, h_angle, vec3(0,1,0));
+    viewMatrix = orientation * glm::translate(mat4(), -position);
 }
 
 void Camera::turn(float v, float h) {

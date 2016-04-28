@@ -7,7 +7,6 @@
 #include <list>
 
 // Project Headers
-#include "glm_types.h"
 #include "Window.h"
 #include "Light.h"
 #include "Clock.h"
@@ -17,10 +16,11 @@
 #include "Entity.h"
 #include "config.h"
 #include "colors.h"
+#include "glm.h"
 
 std::list<Entity*> entities;
 GLuint lightPositionPtr, lightColorPtr;
-glm::mat4 projectionMatrix;
+mat4 projectionMatrix;
 
 /* MAIN FUNCTION */
 int main() {
@@ -31,11 +31,11 @@ int main() {
     GLuint shader = loadProgram("glsl/flat.vs", "glsl/flat.fs");
 
     // setup camera
-    Camera camera(glm::vec3(0, 5, -10), glm::vec3(0, -1, 2));
+    Camera camera(vec3(0, 5, -10), vec3(0, -1, 2));
     camera.configure(fov, aspect, near, far);
 
     // setup lighting
-    Light light(shader, glm::vec3(0,5,10), white);
+    Light light(shader, vec3(0,5,10), white);
 
     // setup clock
     Clock clock;
