@@ -19,8 +19,6 @@
 #include "glm.h"
 
 std::list<Entity*> entities;
-GLuint lightPositionPtr, lightColorPtr;
-mat4 projectionMatrix;
 
 /* MAIN FUNCTION */
 int main() {
