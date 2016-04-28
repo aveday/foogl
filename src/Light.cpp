@@ -15,11 +15,11 @@ void Light::move(glm::vec3 diff)
 void Light::updateShader()
 {
     glUseProgram(shaderProgram);
-        glUniform3f(
-                glGetUniformLocation(shaderProgram, "lightPosition"),
-                position.x, position.y, position.z);
+    glUniform3f(
+            glGetUniformLocation(shaderProgram, "lightPosition"),
+            position.x, position.y, position.z);
 
-        glUniform3f(
-                glGetUniformLocation(shaderProgram, "lightColor"),
-                color.x, color.y, color.z);
+    glUniform3f(
+            glGetUniformLocation(shaderProgram, "lightColor"),
+            color.x, color.y, color.z);
 }
