@@ -39,14 +39,12 @@ int main() {
     entities.push_front( &wall);
 
     /* MAIN EVENT LOOP*/
-    while(window.stillOpen())
+    while(window.running())
     {
         float dt = clock.tick();
         window.control(camera);
         window.render(camera, entities);
     }
-
-    window.close(); 
     return 0;
 }
 
