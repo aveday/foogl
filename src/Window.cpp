@@ -1,17 +1,20 @@
 #include "Window.h"
 
-const float mouseSensitivity = 0.005f;
+const float mouseSensitivity = 0.05f;
 
-static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Window::keyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    Entity *entity = static_cast<Entity*>(glfwGetWindowUserPointer(window));
+
     if(key == GLFW_KEY_ESCAPE)
         glfwSetWindowShouldClose(window, GL_TRUE);
 
-    if(action != GLFW_RELEASE)
+    if(action == GLFW_PRESS)
     {
         switch(key)
         {
-            // put input here
+            case GLFW_KEY_W:
+                break;
         }
     }
 }
@@ -44,10 +47,9 @@ Window::Window(const char* title,
 
     // set key callbacks
     glfwSetKeyCallback(window, keyPress);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-    // move the mouse to the middle
-    glfwSetCursorPos(window, width / 2, height / 2);
+    // hide mouse and move to the middle of the screen
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 bool Window::hasResized()
@@ -78,27 +80,32 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // draw entities
+    
     for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->draw(camera.viewMatrix, camera.projectionMatrix);
+        (*it)->draw(camera.modelMatrix, camera.projectionMatrix);//FIXME
 
     glfwSwapBuffers(window);
 }
 
-void Window::control(Camera &camera)
+void Window::control(Entity &entity)
 {
+    //TODO reimplement with glfw mouse callback function
     // rotate camera based on mouse movement
     double mouseX, mouseY;
     glfwGetCursorPos(this->window, &mouseX, &mouseY);
-
-    camera.turn(
+    entity.rotate(
             mouseSensitivity * (mouseY - height / 2.0f),
-            mouseSensitivity * (mouseX - width / 2.0f));
+            -mouseSensitivity * (mouseX - width / 2.0f),
+            0);
 
-    //reset the mouse, so it doesn't go out of the window
+    // reset cursor to center
     glfwSetCursorPos(window, width / 2, height / 2);
 
     // poll for keyboard input
     glfwPollEvents();
+
+    // set the window's user pointer to the camera
+    glfwSetWindowUserPointer(window, (void*)&entity);
 }
 
 bool Window::running()
