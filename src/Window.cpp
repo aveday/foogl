@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <GL/glew.h>
-#include <stdio.h>
 #include "Window.h"
 
 const float mouseSensitivity = 0.005f;

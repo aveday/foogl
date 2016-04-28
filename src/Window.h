@@ -1,7 +1,9 @@
 #pragma once
 
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <list>
+
 #include "Camera.h"
 #include "Entity.h"
 

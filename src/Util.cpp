@@ -1,4 +1,3 @@
-
 #include "Util.h"
 #include "glm.h"
 
