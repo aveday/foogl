@@ -45,6 +45,9 @@ Window::Window(const char* title,
     // set key callbacks
     glfwSetKeyCallback(window, keyPress);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+    // move the mouse to the middle
+    glfwSetCursorPos(window, width / 2, height / 2);
 }
 
 bool Window::hasResized()
@@ -98,13 +101,13 @@ void Window::control(Camera &camera)
     glfwPollEvents();
 }
 
-bool Window::stillOpen()
+bool Window::running()
 {
-    return !glfwWindowShouldClose(window);
-}
-
-void Window::close()
-{
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    if(glfwWindowShouldClose(window))
+    {
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return false;
+    }
+    return true;
 }

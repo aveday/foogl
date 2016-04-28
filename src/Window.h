@@ -14,8 +14,7 @@ class Window
         void render(Camera &camera, std::list<Entity*> entities);
         void control(Camera &camera);
         bool hasResized();
-        bool stillOpen();
-        void close();
+        bool running();
 
     private:
         GLFWwindow* window;
