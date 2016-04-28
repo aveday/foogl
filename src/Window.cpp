@@ -24,8 +24,6 @@ Window::Window(const char* title,
         bool fullscreen, bool resizable):
     width(w), height(h)
 {
-    /* OPENGL CONTEXT CREATION */
-
     // initialize GLFW and set window options
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
