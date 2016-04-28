@@ -12,11 +12,12 @@ class Window
     public:
         Window(const char* title, int width, int height, bool fullscreen, bool resizable);
         void render(Camera &camera, std::list<Entity*> entities);
-        void control(Camera &camera);
+        void control(Entity &entity);
         bool hasResized();
         bool running();
 
     private:
+        static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods);
         GLFWwindow* window;
         int width, height;
 };

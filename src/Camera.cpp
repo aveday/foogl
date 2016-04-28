@@ -5,13 +5,14 @@
 #include "Camera.h"
 #include "glm.h"
 
-Camera::Camera(vec3 position, vec3 direction) :
-    position(position), direction(direction)
+Camera::Camera(vec3 position) :
+    Entity(0, position, vec3(1,1,1))
 {
-    v_angle = 0.3f;
-    h_angle = 3.2f;
-    updateView();
+    rotation.x = 0;
+    rotation.y = 180;
+    updateModelMatrix();
     updateProjection(aspect);
+    
 }
 
 void Camera::configure(float fov, float aspect, float near, float far)
@@ -21,20 +22,6 @@ void Camera::configure(float fov, float aspect, float near, float far)
     this->near = near;
     this->far = far;
     updateProjection(aspect);
-}
-
-void Camera::updateView()
-{
-    mat4 orientation;
-    orientation = glm::rotate(orientation, v_angle, vec3(1,0,0));
-    orientation = glm::rotate(orientation, h_angle, vec3(0,1,0));
-    viewMatrix = orientation * glm::translate(mat4(), -position);
-}
-
-void Camera::turn(float v, float h) {
-    v_angle += v;
-    h_angle += h;
-    updateView();
 }
 
 void Camera::updateProjection(float new_aspect)
