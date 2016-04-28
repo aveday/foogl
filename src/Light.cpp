@@ -1,12 +1,13 @@
 #include "Light.h"
+#include "glm.h"
 
-Light::Light(GLuint program, glm::vec3 position, Color color) :
+Light::Light(GLuint program, vec3 position, Color color) :
     shaderProgram(program), position(position), color(color)
 {
     updateShader();
 }
 
-void Light::move(glm::vec3 diff)
+void Light::move(vec3 diff)
 {
     position += diff;
     updateShader();

@@ -1,13 +1,13 @@
 #pragma once
 
-
 #include "Entity.h"
 #include "Perlin.h"
+#include "glm.h"
 
 class Terrain : public Entity
 {
     public:
-        Terrain(GLuint program, int size, glm::vec3 pos);
+        Terrain(GLuint program, int size, vec3 pos);
         void CreateModel();
         int size = 64;
         float seed = 0;
@@ -19,5 +19,5 @@ class Terrain : public Entity
     private:
         static Perlin perlin;
         float elevation = 2.0f;
-        glm::vec2 gridToWorld(int x, int y, int size);
+        vec2 gridToWorld(int x, int y, int size);
 };
