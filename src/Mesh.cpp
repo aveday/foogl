@@ -37,6 +37,7 @@ void Mesh::initVertexAttrib(GLuint program, const GLchar* attribName,
 
 void Mesh::draw(glm::mat4 &modelMatrix, glm::mat4 &viewMatrix, glm::mat4 &projectionMatrix)
 {
+    glUseProgram(shaderProgram);
     // update uniform shader inputs
     glUniformMatrix4fv(
             glGetUniformLocation(shaderProgram, "model"),
