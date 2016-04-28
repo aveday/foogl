@@ -10,6 +10,7 @@ Entity::Entity(
         GLuint program,
         vec3 pos,
         vec3 size) :
+    parent( nullptr ),
     position( pos ),
     scale( size ),
     rotation( vec3(0, 0, 0) ),
@@ -18,9 +19,16 @@ Entity::Entity(
     updateModelMatrix();
 }
 
+mat4 Entity::absModelMatrix()
+{
+    if(parent == nullptr)
+        return modelMatrix;
+    return modelMatrix * glm::inverse(parent->absModelMatrix());
+}
+
 void Entity::add_child(Entity *child)
 {
-    //std::unique_ptr<Entity> ptr(child);
+    child->parent = this;
     children.push_back(child);
 }
 void Entity::draw(mat4 &viewMatrix, mat4 &projectionMatrix)
@@ -37,13 +45,13 @@ void Entity::draw(mat4 &viewMatrix, mat4 &projectionMatrix)
 void Entity::updateModelMatrix()
 {
     orientation = mat4();
-    orientation = glm::rotate(orientation, glm::radians(rotation.z), vec3(0,0,1));
     orientation = glm::rotate(orientation, glm::radians(rotation.y), vec3(0,1,0));
     orientation = glm::rotate(orientation, glm::radians(rotation.x), vec3(1,0,0));
+    orientation = glm::rotate(orientation, glm::radians(rotation.z), vec3(0,0,1));
 
     // calculate entity model matrix
-    modelMatrix = glm::translate<GLfloat>( position )
-        * orientation * glm::scale<GLfloat>( scale );
+    modelMatrix = glm::translate<GLfloat>(position)
+        * orientation * glm::scale<GLfloat>(scale);
 }
 
 void Entity::rotate(float x, float y, float z)
