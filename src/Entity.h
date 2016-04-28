@@ -14,6 +14,7 @@ class Entity
     private:
         // matrix transform defining the position/scale/rotation of the entity
         Entity_pl children;
+        Entity *parent;
 
     protected:
         void updateModelMatrix();
@@ -22,6 +23,7 @@ class Entity
 
     public:
         mat4 modelMatrix, orientation;
+        mat4 absModelMatrix();
         Entity(
                 GLuint program,
                 vec3 pos = vec3(0,0,0),

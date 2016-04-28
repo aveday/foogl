@@ -6,13 +6,16 @@
 #include "glm.h"
 
 Camera::Camera(vec3 position) :
-    Entity(0, position, vec3(1,1,1))
+    Entity(0, position, vec3(1,1,1)),
+    fov(45),
+    aspect(16/10.0f),//FIXME
+    near(0.1f),
+    far(1000.0f)
 {
     rotation.x = 0;
     rotation.y = 180;
     updateModelMatrix();
     updateProjection(aspect);
-    
 }
 
 void Camera::configure(float fov, float aspect, float near, float far)
