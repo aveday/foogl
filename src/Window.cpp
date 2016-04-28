@@ -81,8 +81,9 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
 
     // draw entities
     
+    mat4 view = camera.absModelMatrix();
     for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->draw(camera.modelMatrix, camera.projectionMatrix);//FIXME
+        (*it)->draw(view, camera.projectionMatrix);//FIXME
 
     glfwSwapBuffers(window);
 }

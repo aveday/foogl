@@ -22,23 +22,21 @@ int main() {
     GLuint shader = loadProgram("glsl/flat.vs", "glsl/flat.fs");
 
     // setup lighting
-    Light light(shader, vec3(0,7,-7), white);
+    Light light(shader, vec3(3,7,-7), white);
 
     // setup clock
     Clock clock;
-
-    Box player(shader, vec3(1,1,1), vec3(0,3,0), green);
-    player.rotate(0, 0, 0);
 
     /*       SHADER  SIZE                  POSITION          COLOR */
     Box box (shader, vec3(5.0f,0.2f,5.0f), vec3(0,-2.6f, 0), darkRed);
     Box wall(shader, vec3(0.2f,5.0f,5.0f), vec3(2.4f, 0, 0), darkBlue);
     Box back(shader, vec3(5.0f,5.0f,0.2f), vec3(0, 0, 2.6f), darkGreen);
 
-    // setup camera
-    Camera camera(vec3(0, 0, -10));
-    camera.configure(fov, aspect, near, far);
+    box.add_child(new Box(shader, vec3(0.5f,1.0f,0.5f), vec3(0, 1, 0), white));
 
+    // setup player and player camera
+    Box player(shader, vec3(1,1,1), vec3(0,-2,-2), green);
+    Camera camera(vec3(0, 0, -2.5f));
     player.add_child(&camera);
 
     entities.push_front( &player);
