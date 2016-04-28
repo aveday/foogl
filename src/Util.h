@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdlib>
+
 #include "glm.h"
 
 float random_f();
