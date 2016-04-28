@@ -1,5 +1,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <stdio.h>
+#include <math.h>
 
 #include "Entity.h"
 #include "glm.h"
@@ -16,27 +18,37 @@ Entity::Entity(
     updateModelMatrix();
 }
 
+void Entity::add_child(Entity *child)
+{
+    //std::unique_ptr<Entity> ptr(child);
+    children.push_back(child);
+}
 void Entity::draw(mat4 &viewMatrix, mat4 &projectionMatrix)
 {
-    // draw the mesh with the 
+    // draw model mesh
     mesh.draw(modelMatrix, viewMatrix, projectionMatrix);
+
+    // calculate child view matrix and draw children
+    mat4 childViewMatrix = viewMatrix * modelMatrix;
+    for(auto it = children.begin(); it != children.end(); it++)
+        (*it)->draw(childViewMatrix, projectionMatrix);
 }
 
 void Entity::updateModelMatrix()
 {
+    orientation = mat4();
+    orientation = glm::rotate(orientation, glm::radians(rotation.z), vec3(0,0,1));
+    orientation = glm::rotate(orientation, glm::radians(rotation.y), vec3(0,1,0));
+    orientation = glm::rotate(orientation, glm::radians(rotation.x), vec3(1,0,0));
+
     // calculate entity model matrix
-    modelMatrix
-        = glm::translate<GLfloat>( position )
-        //FIXME there's probably a better way to do this
-        * glm::rotate<GLfloat>( rotation.x, vec3(1, 0, 0) )
-        * glm::rotate<GLfloat>( rotation.y, vec3(0, 1, 0) )
-        * glm::rotate<GLfloat>( rotation.z, vec3(0, 0, 1) )
-        * glm::scale<GLfloat>( scale );
+    modelMatrix = glm::translate<GLfloat>( position )
+        * orientation * glm::scale<GLfloat>( scale );
 }
 
-void Entity::rotate(float yaw, float pitch, float roll)
+void Entity::rotate(float x, float y, float z)
 {
-    rotation += vec3(pitch, yaw, roll);
+    rotation += vec3(x, y, z);
     updateModelMatrix();
 }
 
