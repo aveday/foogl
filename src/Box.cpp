@@ -1,17 +1,18 @@
 #include "Box.h"
+#include "glm.h"
 
-Box::Box(GLuint program, glm::vec3 size, glm::vec3 pos, glm::vec4 color):
+Box::Box(GLuint program, vec3 size, vec3 pos, vec4 color):
     Entity(program, pos, size)
 {
 
     // vertex positions
-    glm::vec3 position[8];
+    vec3 position[8];
 
     int n = 0;
     for(float x = -0.5f; x <= 0.5f; x += 1)
     for(float y = -0.5f; y <= 0.5f; y += 1)
     for(float z = -0.5f; z <= 0.5f; z += 1)
-        position[n++] = glm::vec3(x, y, z);
+        position[n++] = vec3(x, y, z);
 
     Vertex Vertices[36];
 
@@ -29,13 +30,13 @@ Box::Box(GLuint program, glm::vec3 size, glm::vec3 pos, glm::vec4 color):
         4,6,7, //right
         4,7,5
     };
-    glm::vec3 normals[] = {
-        glm::vec3(-1, 0, 0),
-        glm::vec3( 0, 0,-1),
-        glm::vec3( 0, 1, 0),
-        glm::vec3( 0,-1, 0),
-        glm::vec3( 0, 0, 1),
-        glm::vec3( 1, 0, 0),
+    vec3 normals[] = {
+        vec3(-1, 0, 0),
+        vec3( 0, 0,-1),
+        vec3( 0, 1, 0),
+        vec3( 0,-1, 0),
+        vec3( 0, 0, 1),
+        vec3( 1, 0, 0),
     };
 
     int vs = 0;
