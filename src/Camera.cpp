@@ -8,7 +8,7 @@
 Camera::Camera(vec3 position) :
     Entity(0, position, vec3(1,1,1)),
     fov(45),
-    aspect(16/10.0f),//FIXME
+    aspect(16/9.0f),//FIXME
     near(0.1f),
     far(1000.0f)
 {
