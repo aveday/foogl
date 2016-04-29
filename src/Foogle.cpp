@@ -32,7 +32,8 @@ int main() {
     Box wall(shader, vec3(0.2f,1.0f,5.0f), vec3(2.6f, 0.6f,    0), darkBlue);
     Box back(shader, vec3(5.0f,1.0f,0.2f), vec3(0,    0.6f, 2.6f), darkGreen);
 
-    floor.add_child(new Box(shader, vec3(0.5f,1.0f,0.5f), vec3(0, 1, 0), white));
+    for(float i=-0.4f; i<=0.4f; i+=0.2f)
+        floor.add_child(new Box(shader, vec3(0.1f,3.0f,0.1f), vec3(i, 2, 0.4f), white));
 
     // setup player and player camera
     Box player(shader, vec3(0.1f,0.1f,0.1f), vec3(2,0.5f,-2), Color(0,0,0,0));
