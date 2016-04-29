@@ -90,7 +90,7 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
         camera.updateProjection((float)width / height);
 
     // clear screen
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // draw entities
