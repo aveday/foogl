@@ -34,7 +34,6 @@ void Entity::add_child(Entity *child)
 }
 void Entity::draw()
 {
-    // draw model mesh
     mesh.draw(modelMatrix);
 
     //FIXME

@@ -12,7 +12,6 @@ class Window
     public:
         Window(const char* title, int width, int height, bool fullscreen, bool resizable);
         void render(Camera &camera, std::list<Entity*> entities);
-        void update(std::list<Entity*> entities, float dt);
         void control(Entity &entity);
         bool hasResized();
         bool running();

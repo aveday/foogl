@@ -11,7 +11,17 @@
 #include "colors.h"
 #include "glm.h"
 
-std::list<Entity*> entities;
+/* UPDATE FUNCTION */
+void update(std::list<Entity*> entities, float dt, GLuint shader)
+{
+    // simulate world
+    for(auto it = entities.begin(); it != entities.end(); it++)
+        (*it)->update(dt);
+
+    // update shader with new uniforms for lights/camera etc.
+    for(auto it = entities.begin(); it != entities.end(); it++)
+        (*it)->updateShader(shader);
+}
 
 /* MAIN FUNCTION */
 int main() {
@@ -23,6 +33,9 @@ int main() {
 
     // setup clock
     Clock clock;
+
+    // create and populate the entity list
+    std::list<Entity*> entities;
 
     /*       SHADER  SIZE                  POSITION                COLOR */
     Box floor(shader,vec3(5.0f,0.2f,5.0f), vec3(0,       0,    0), darkRed);
@@ -45,6 +58,7 @@ int main() {
     entities.push_front( &wall);
     entities.push_front( &back);
     entities.push_front( &camera);
+    entities.push_front( &light);
 
     /* MAIN EVENT LOOP*/
     while(window.running())
@@ -56,11 +70,8 @@ int main() {
         player.warp(p);
         light.warp(p);
 
-        light.updateShader(shader);
-        camera.updateShader(shader);
-
         window.control(camera);
-        window.update(entities, dt);
+        update(entities, dt, shader);
         window.render(camera, entities);
     }
     return 0;
