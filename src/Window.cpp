@@ -15,20 +15,20 @@ void Window::keyPress(GLFWwindow* window, int key, int scancode, int action, int
     {
         switch(key)
         {
-            case GLFW_KEY_W: entity->heading.z += speed; break;
-            case GLFW_KEY_A: entity->heading.x += speed; break;
-            case GLFW_KEY_S: entity->heading.z -= speed; break;
-            case GLFW_KEY_D: entity->heading.x -= speed; break;
+            case GLFW_KEY_W: entity->heading.z -= speed; break;
+            case GLFW_KEY_A: entity->heading.x -= speed; break;
+            case GLFW_KEY_S: entity->heading.z += speed; break;
+            case GLFW_KEY_D: entity->heading.x += speed; break;
         }
     }
     else if(action == GLFW_RELEASE)
     {
         switch(key)
         {
-            case GLFW_KEY_W: entity->heading.z -= speed; break;
-            case GLFW_KEY_A: entity->heading.x -= speed; break;
-            case GLFW_KEY_S: entity->heading.z += speed; break;
-            case GLFW_KEY_D: entity->heading.x += speed; break;
+            case GLFW_KEY_W: entity->heading.z += speed; break;
+            case GLFW_KEY_A: entity->heading.x += speed; break;
+            case GLFW_KEY_S: entity->heading.z -= speed; break;
+            case GLFW_KEY_D: entity->heading.x -= speed; break;
         }
     }
 }
@@ -95,7 +95,7 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
 
     // draw entities
     
-    mat4 view = camera.absModelMatrix();
+    mat4 view = glm::inverse( camera.modelMatrix );
     for(auto it = entities.begin(); it != entities.end(); it++)
         (*it)->draw(view, camera.projectionMatrix);//FIXME
 
@@ -115,7 +115,7 @@ void Window::control(Entity &entity)
     double mouseX, mouseY;
     glfwGetCursorPos(this->window, &mouseX, &mouseY);
     entity.rotate(
-            mouseSensitivity * (mouseY - height / 2.0f),
+            -mouseSensitivity * (mouseY - height / 2.0f),
             -mouseSensitivity * (mouseX - width / 2.0f),
             0);
 

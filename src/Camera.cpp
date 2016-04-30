@@ -13,7 +13,7 @@ Camera::Camera(vec3 position) :
     far(1000.0f)
 {
     rotation.x = 0;
-    rotation.y = 180;
+    rotation.y = 0;
     updateModelMatrix();
     updateProjection(aspect);
 }
