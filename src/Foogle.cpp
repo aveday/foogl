@@ -19,10 +19,7 @@ int main() {
     Window window("Foogle", screen_width, screen_height, FULLSCREEN, RESIZABLE);
 
     // create the shader program
-    GLuint shader = loadProgram("glsl/flat.vs", "glsl/flat.fs");
-
-    // setup lighting
-    Light light(shader, vec3(3,7,-7), white);
+    GLuint shader = loadProgram("glsl/specular.vs", "glsl/specular.fs");
 
     // setup clock
     Clock clock;
@@ -38,6 +35,9 @@ int main() {
     // setup player and player camera
     Box player(shader, vec3(0.1f,0.1f,0.1f), vec3(0,0.5f,-1), Color(0,1,1,1));
 
+    // setup lighting
+    Light light(shader, vec3(0, 0.5f, -2.4f), white);
+
     Camera camera(vec3(0, 0.5f, 0));
 
     entities.push_front( &player);
@@ -50,7 +50,14 @@ int main() {
     while(window.running())
     {
         float dt = clock.tick();
-        //player.rotate(0,0,100*dt);
+        float t = clock.time;
+        vec3 p(cos(t), 0.5f, -2.4f);
+
+        player.warp(p);
+        light.warp(p);
+        light.updateShader(shader);
+
+        camera.updateShader(shader);
         window.control(camera);
         window.update(entities, dt);
         window.render(camera, entities);

@@ -27,6 +27,13 @@ void Camera::configure(float fov, float aspect, float near, float far)
     updateProjection(aspect);
 }
 
+void Camera::updateShader(GLuint shader)
+{
+    glUniform3f(
+            glGetUniformLocation(shader, "cameraPosition"),
+            position.x, position.y, position.z);
+}
+
 void Camera::updateProjection(float new_aspect)
 {
     aspect = new_aspect;
