@@ -55,9 +55,10 @@ int main() {
 
         player.warp(p);
         light.warp(p);
-        light.updateShader(shader);
 
+        light.updateShader(shader);
         camera.updateShader(shader);
+
         window.control(camera);
         window.update(entities, dt);
         window.render(camera, entities);

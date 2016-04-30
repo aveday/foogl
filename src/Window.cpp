@@ -97,7 +97,7 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
     
     mat4 view = glm::inverse( camera.modelMatrix );
     for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->draw(view, camera.projectionMatrix);//FIXME
+        (*it)->draw();
 
     glfwSwapBuffers(window);
 }
