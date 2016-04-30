@@ -4,7 +4,6 @@
 #include "Light.h"
 #include "Clock.h"
 #include "Camera.h"
-#include "Box.h"
 #include "Shader.h"
 #include "Entity.h"
 #include "config.h"
@@ -34,26 +33,25 @@ int main() {
     // setup clock
     Clock clock;
 
+    Mesh cube = Mesh::Cube(shader);
+    Mesh invisible(shader);
+
     // create and populate the entity list
     std::list<Entity*> entities;
 
-    /*                                SIZE                 POSITION              COLOR */
-    entities.push_back(new Box(shader,vec3(5.0f,0.2f,5.0f),vec3(0,      0,    0),darkRed));
-    entities.push_back(new Box(shader,vec3(0.2f,1.0f,5.0f),vec3(2.6f,0.6f,    0),darkBlue));
-    entities.push_back(new Box(shader,vec3(5.0f,1.0f,0.2f),vec3(0,   0.6f,-2.6f),darkGreen));
+    /*                            MODEL POSITION        SCALE         COLOR */
+    entities.push_back(new Entity(cube, vec3(0, 0,  0), vec3(5,0.2,5),white*.5f));
+    entities.push_back(new Entity(cube, vec3(2.6,.6,0), vec3(0.2,1,5),blue));
+    entities.push_back(new Entity(cube, vec3(0,.6,-2.6),vec3(5,1,0.2),green));
 
     for(float i=-2; i<=2; i+=1)
-        entities.push_front(new Box(shader, vec3(0.1f,1.0f,0.1f), vec3(i, 0.5f, -2), white));
-
-    // setup player and player camera
-    Box player(shader, vec3(0.1f,0.1f,0.1f), vec3(0,0.5f,-1), Color(0,1,1,1));
+        entities.push_front(new Entity(cube, vec3(i, 0.5f, -2), vec3(.1,1,.1), darkRed));
 
     // setup lighting
-    Light bulb(shader, vec3(0, 0.5f, -2.4f), white);
+    Light bulb(cube, vec3(0, 0.5f, -2.4f), white);
 
-    Camera camera(vec3(0, 0.5f, 0));
+    Camera camera(invisible, vec3(0, 0.5f, 0));
 
-    entities.push_back(&player);
     entities.push_back(&camera);
     entities.push_back(&bulb);
 
@@ -62,10 +60,8 @@ int main() {
     {
         float dt = clock.tick();
         float t = clock.time;
-        vec3 p(cos(t), 0.5f, -2.4f);
-
-        player.warp(p);
-        bulb.warp(p);
+        
+        bulb.warp( vec3(cos(t), 0.5f, -2.4f) );
 
         window.control(camera);
         update(entities, dt, shader);
