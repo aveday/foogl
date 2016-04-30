@@ -17,18 +17,22 @@ class Entity
         Entity *parent;
 
     protected:
+        Mesh &mesh;
+        vec3 position, scale;
+        vec4 color;
+        vec3 rotation;
+
         void updateModelMatrix();
-        vec3 position, scale, rotation;
-        Mesh mesh;
 
     public:
         vec3 heading;
         mat4 modelMatrix, orientation;
         mat4 absModelMatrix();
         Entity(
-                GLuint program,
-                vec3 pos = vec3(0,0,0),
-                vec3 size = vec3(1,1,1)
+                Mesh &mesh,
+                vec3 pos = vec3(0),
+                vec3 size = vec3(1),
+                vec4 color = vec4(0)
         );
 
         void add_child(Entity *child);

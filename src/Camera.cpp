@@ -5,8 +5,8 @@
 #include "Camera.h"
 #include "glm.h"
 
-Camera::Camera(vec3 position) :
-    Entity(0, position, vec3(1,1,1)),
+Camera::Camera(Mesh &mesh, vec3 position) :
+    Entity(mesh, position, vec3(1)),
     fov(45),
     aspect(16/9.0f),//FIXME
     near(0.1f),

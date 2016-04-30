@@ -16,7 +16,8 @@ struct Vertex {
 class Mesh {
     public:
         Mesh(GLuint program);
-        void draw(mat4 &modelMatrix);
+        static Mesh Cube(GLuint shader);
+        void draw(mat4 &modelMatrix, vec4 color = vec4());
         void begin();
         void end();
         int vertices_n;

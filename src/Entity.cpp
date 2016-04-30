@@ -8,14 +8,16 @@
 #include "glm.h"
 
 Entity::Entity(
-        GLuint program,
+        Mesh &mesh,
         vec3 pos,
-        vec3 size) :
+        vec3 size,
+        vec4 color) :
     parent( nullptr ),
-    position( pos ),
-    scale( size ),
-    rotation(0, 0, 0),
-    mesh(program)
+    mesh(mesh),
+    position(pos),
+    scale(size),
+    color(color),
+    rotation(0)
 {
     updateModelMatrix();
 }
@@ -34,7 +36,7 @@ void Entity::add_child(Entity *child)
 }
 void Entity::draw()
 {
-    mesh.draw(modelMatrix);
+    mesh.draw(modelMatrix, color);
 
     //FIXME
     // calculate child view matrix and draw children
