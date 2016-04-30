@@ -15,12 +15,12 @@
 void update(std::list<Entity*> entities, float dt, GLuint shader)
 {
     // simulate world
-    for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->update(dt);
+    for(auto entity : entities)
+        entity->update(dt);
 
     // update shader with new uniforms for lights/camera etc.
-    for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->updateShader(shader);
+    for(auto entity : entities)
+        entity->updateShader(shader);
 }
 
 /* MAIN FUNCTION */
