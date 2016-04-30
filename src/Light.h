@@ -2,19 +2,17 @@
 
 #include <GL/glew.h>
 
+#include "Entity.h"
 #include "glm.h"
 #include "colors.h"
 
-class Light
+class Light : public Entity
 {
     public:
-        Light(GLuint program, vec3 position, Color color = white);
-        void move(vec3 diff);
+        Light(GLuint shader, vec3 position, Color color = white);
 
+        void updateShader(GLuint shader);
     private:
-        void updateShader();
-        GLuint shaderProgram;
-        vec3 position;
         vec3 color;
 };
 

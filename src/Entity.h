@@ -35,5 +35,6 @@ class Entity
         void draw(mat4 &viewMatrix, mat4 &projectionMatrix);
         void rotate(float x, float y, float z);
         void translate(float x, float y, float z);
+        void warp(vec3 pos);
         void update(float dt);
 };
