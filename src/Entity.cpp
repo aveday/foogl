@@ -14,7 +14,7 @@ Entity::Entity(
     parent( nullptr ),
     position( pos ),
     scale( size ),
-    rotation( vec3(0, 0, 0) ),
+    rotation(0, 0, 0),
     mesh(program)
 {
     updateModelMatrix();
