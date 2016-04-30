@@ -1,26 +1,20 @@
 #include "Light.h"
 #include "glm.h"
 
-Light::Light(GLuint program, vec3 position, Color color) :
-    shaderProgram(program), position(position), color(color)
+Light::Light(GLuint shader, vec3 position, Color color) :
+    Entity(shader, position, vec3()), color(color)
 {
-    updateShader();
+    updateShader(shader);
 }
 
-void Light::move(vec3 diff)
+void Light::updateShader(GLuint shader)
 {
-    position += diff;
-    updateShader();
-}
-
-void Light::updateShader()
-{
-    glUseProgram(shaderProgram);
+    glUseProgram(shader);
     glUniform3f(
-            glGetUniformLocation(shaderProgram, "lightPosition"),
+            glGetUniformLocation(shader, "lightPosition"),
             position.x, position.y, position.z);
 
     glUniform3f(
-            glGetUniformLocation(shaderProgram, "lightColor"),
+            glGetUniformLocation(shader, "lightColor"),
             color.x, color.y, color.z);
 }
