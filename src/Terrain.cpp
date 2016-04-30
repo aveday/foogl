@@ -18,13 +18,14 @@ vec2 Terrain::gridToWorld(int x, int y, int size)
             (2*x-y) / 2.0f / size - 0.25f,
             y*root3/size/2 - root3/4);
 }
-
+/*FIXME
 Terrain::Terrain(GLuint program, int size_, vec3 pos):
     Entity(program, pos)
 {
     size = size_;
     CreateModel();
 }
+*/
 
 void Terrain::CreateModel()
 {

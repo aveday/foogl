@@ -1,10 +1,9 @@
 #include "Light.h"
 #include "glm.h"
 
-Light::Light(GLuint shader, vec3 position, Color color) :
-    Entity(shader, position, vec3()), color(color)
+Light::Light(Mesh &mesh, vec3 position, Color color) :
+    Entity(mesh, position, vec3(.1)), color(color)
 {
-    updateShader(shader);
 }
 
 void Light::updateShader(GLuint shader)
