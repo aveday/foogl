@@ -9,9 +9,10 @@ class Clock
     public:
         Clock();
         float tick();
+        float time;
 
     private:
-        float startTime, time;
+        float startTime;
         int fps_sample_index;
         float fps_samples[SAMPLES_FOR_AVERAGE];
 };

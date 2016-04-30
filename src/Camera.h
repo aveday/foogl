@@ -9,6 +9,7 @@ class Camera : public Entity
         mat4 projectionMatrix;
         Camera(vec3 position);
         void configure(float fov, float aspect, float near, float far);
+        void updateShader(GLuint shader);
         void updateProjection(float aspect);
 
     private:

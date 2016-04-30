@@ -73,3 +73,10 @@ void Entity::translate(float x, float y, float z)
     position += vec3( x, y, z );
     updateModelMatrix();
 }
+
+void Entity::warp(vec3 pos)
+{
+    position = pos;
+    updateModelMatrix();
+}
+
