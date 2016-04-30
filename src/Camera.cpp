@@ -32,6 +32,15 @@ void Camera::updateShader(GLuint shader)
     glUniform3f(
             glGetUniformLocation(shader, "cameraPosition"),
             position.x, position.y, position.z);
+
+    mat4 viewMatrix = glm::inverse( modelMatrix );
+    glUniformMatrix4fv(
+            glGetUniformLocation(shader, "view"),
+            1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+    glUniformMatrix4fv(
+            glGetUniformLocation(shader, "projection"),
+            1, GL_FALSE, glm::value_ptr(projectionMatrix));
 }
 
 void Camera::updateProjection(float new_aspect)

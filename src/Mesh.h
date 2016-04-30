@@ -16,7 +16,7 @@ struct Vertex {
 class Mesh {
     public:
         Mesh(GLuint program);
-        void draw(mat4 &modelMatrix, mat4 &viewMatrix, mat4 &projectionMatrix);
+        void draw(mat4 &modelMatrix);
         void begin();
         void end();
         int vertices_n;

@@ -32,9 +32,11 @@ class Entity
         );
 
         void add_child(Entity *child);
-        void draw(mat4 &viewMatrix, mat4 &projectionMatrix);
+        void draw();
         void rotate(float x, float y, float z);
         void translate(float x, float y, float z);
         void warp(vec3 pos);
-        void update(float dt);
+
+        virtual void update(float dt);
+        virtual void updateShader(GLuint shader);
 };
