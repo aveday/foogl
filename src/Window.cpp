@@ -94,18 +94,10 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // draw entities
-    
-    mat4 view = glm::inverse( camera.modelMatrix );
     for(auto it = entities.begin(); it != entities.end(); it++)
         (*it)->draw();
 
     glfwSwapBuffers(window);
-}
-
-void Window::update(std::list<Entity*> entities, float dt)
-{
-    for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->update(dt);
 }
 
 void Window::control(Entity &entity)
@@ -113,7 +105,7 @@ void Window::control(Entity &entity)
     //TODO reimplement with glfw mouse callback function
     // rotate camera based on mouse movement
     double mouseX, mouseY;
-    glfwGetCursorPos(this->window, &mouseX, &mouseY);
+    glfwGetCursorPos(window, &mouseX, &mouseY);
     entity.rotate(
             -mouseSensitivity * (mouseY - height / 2.0f),
             -mouseSensitivity * (mouseX - width / 2.0f),
