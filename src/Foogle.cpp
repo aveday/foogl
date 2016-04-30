@@ -30,28 +30,28 @@ int main() {
     /*       SHADER  SIZE                  POSITION                COLOR */
     Box floor(shader,vec3(5.0f,0.2f,5.0f), vec3(0,       0,    0), darkRed);
     Box wall(shader, vec3(0.2f,1.0f,5.0f), vec3(2.6f, 0.6f,    0), darkBlue);
-    Box back(shader, vec3(5.0f,1.0f,0.2f), vec3(0,    0.6f, 2.6f), darkGreen);
+    Box back(shader, vec3(5.0f,1.0f,0.2f), vec3(0,    0.6f,-2.6f), darkGreen);
 
-    for(float i=-0.4f; i<=0.4f; i+=0.2f)
-        floor.add_child(new Box(shader, vec3(0.1f,3.0f,0.1f), vec3(i, 2, 0.4f), white));
+    for(float i=-2; i<=2; i+=1)
+        entities.push_front(new Box(shader, vec3(0.1f,1.0f,0.1f), vec3(i, 0.1f, -2), white));
 
     // setup player and player camera
-    Box player(shader, vec3(0.1f,0.1f,0.1f), vec3(2,0.5f,-2), Color(0,0,0,0));
+    Box player(shader, vec3(0.1f,0.1f,0.1f), vec3(0,0.5f,-1), Color(0,1,1,1));
 
-    Camera camera(vec3(0, 0, 0.5f));
-    player.add_child(&camera);
+    Camera camera(vec3(0, 0.5f, 0));
 
     entities.push_front( &player);
     entities.push_front( &floor);
     entities.push_front( &wall);
     entities.push_front( &back);
+    entities.push_front( &camera);
 
     /* MAIN EVENT LOOP*/
     while(window.running())
     {
         float dt = clock.tick();
         //player.rotate(0,0,100*dt);
-        window.control(player);
+        window.control(camera);
         window.update(entities, dt);
         window.render(camera, entities);
     }
