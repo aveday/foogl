@@ -32,15 +32,16 @@ void Entity::add_child(Entity *child)
     child->parent = this;
     children.push_back(child);
 }
-void Entity::draw(mat4 &viewMatrix, mat4 &projectionMatrix)
+void Entity::draw()
 {
     // draw model mesh
-    mesh.draw(modelMatrix, viewMatrix, projectionMatrix);
+    mesh.draw(modelMatrix);
 
+    //FIXME
     // calculate child view matrix and draw children
-    mat4 childViewMatrix = viewMatrix * modelMatrix;
-    for(auto it = children.begin(); it != children.end(); it++)
-        (*it)->draw(childViewMatrix, projectionMatrix);
+    //mat4 childViewMatrix = viewMatrix * modelMatrix;
+    //for(auto it = children.begin(); it != children.end(); it++)
+        //(*it)->draw(childViewMatrix, projectionMatrix);
 }
 
 void Entity::update(float dt)
@@ -49,6 +50,8 @@ void Entity::update(float dt)
     for(auto it = children.begin(); it != children.end(); it++)
         (*it)->update(dt);
 }
+
+void Entity::updateShader(GLuint shader) { }
 
 void Entity::updateModelMatrix()
 {
