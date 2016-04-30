@@ -94,8 +94,8 @@ void Window::render(Camera &camera, std::list<Entity*> entities)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // draw entities
-    for(auto it = entities.begin(); it != entities.end(); it++)
-        (*it)->draw();
+    for(auto entity : entities)
+        entity->draw();
 
     glfwSwapBuffers(window);
 }
