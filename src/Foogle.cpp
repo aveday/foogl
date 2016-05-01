@@ -1,4 +1,5 @@
 #include <list>
+#include <math.h>
 
 #include "Window.h"
 #include "Light.h"
@@ -51,7 +52,7 @@ int main() {
         float degrees = 360.0f * i / n;
         float radians = 6.28f * i / n;
         float radius = 2;
-        vec3 pos = vec3(cos(radians) * radius, 0.2f, sin(radians) * radius);
+        vec3 pos(cos(radians) * radius, 0.2f, sin(radians) * radius);
         entities.push_back(new Entity(cube, pos, vec3(.3,.2,.3), darkRed));
         entities.back()->rotate(0, -degrees, 0);
     }
@@ -69,7 +70,10 @@ int main() {
     {
         float dt = clock.tick();
         
-        bulb.warp( vec3(cos(clock.time), 0.5f, -2.4f) );
+        float radius = 2;
+        float radians = fmodf(clock.time, (2*M_PI));
+        vec3 pos(cos(radians) * radius, 0.5f, sin(radians) * radius);
+        bulb.warp(pos);
 
         window.control(camera);
         update(entities, dt, shader);
