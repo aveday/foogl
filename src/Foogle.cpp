@@ -33,6 +33,7 @@ int main() {
     // setup clock
     Clock clock;
 
+    // load meshes
     Mesh cube = Mesh::Cube(shader);
     Mesh invisible(shader);
 
@@ -40,12 +41,20 @@ int main() {
     std::list<Entity*> entities;
 
     /*                            MODEL POSITION        SCALE         COLOR */
-    entities.push_back(new Entity(cube, vec3(0, 0,  0), vec3(5,0.2,5),white*.5f));
+    entities.push_back(new Entity(cube, vec3(0, 0,  0), vec3(5,0.2,5),vec4(.5f)));
     entities.push_back(new Entity(cube, vec3(2.6,.6,0), vec3(0.2,1,5),blue));
     entities.push_back(new Entity(cube, vec3(0,.6,-2.6),vec3(5,1,0.2),green));
 
-    for(float i=-2; i<=2; i+=1)
-        entities.push_front(new Entity(cube, vec3(i, 0.5f, -2), vec3(.1,1,.1), darkRed));
+    int n = 16;
+    for(int i=0; i<n; i++)
+    {
+        float degrees = 360.0f * i / n;
+        float radians = 6.28f * i / n;
+        float radius = 2;
+        vec3 pos = vec3(cos(radians) * radius, 0.2f, sin(radians) * radius);
+        entities.push_back(new Entity(cube, pos, vec3(.3,.2,.3), darkRed));
+        entities.back()->rotate(0, -degrees, 0);
+    }
 
     // setup lighting
     Light bulb(cube, vec3(0, 0.5f, -2.4f), white);
@@ -59,9 +68,8 @@ int main() {
     while(window.running())
     {
         float dt = clock.tick();
-        float t = clock.time;
         
-        bulb.warp( vec3(cos(t), 0.5f, -2.4f) );
+        bulb.warp( vec3(cos(clock.time), 0.5f, -2.4f) );
 
         window.control(camera);
         update(entities, dt, shader);
