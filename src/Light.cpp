@@ -2,7 +2,7 @@
 #include "glm.h"
 
 Light::Light(Mesh &mesh, vec3 position, Color color) :
-    Entity(mesh, position, vec3(.1)), color(color)
+    Entity(mesh, position, vec3(.01)), color(color)
 {
 }
 
