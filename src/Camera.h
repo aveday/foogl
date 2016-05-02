@@ -14,5 +14,8 @@ class Camera : public Entity
 
     private:
         float fov, aspect, near, far;
+
+        static const GLuint UNIFORM_MATRIX = 0;
+        static const GLuint UNIFORM_POSITION = 1;
 };
 

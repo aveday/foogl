@@ -1,6 +1,7 @@
 #version 330
+#extension GL_ARB_explicit_uniform_location : require
 
-uniform vec3 cameraPosition;
+layout(location = 3) uniform vec3 cameraPosition;
 
 float materialShininess = 80;
 vec3 materialSpecularColor = vec3(1,1,1);

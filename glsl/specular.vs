@@ -1,8 +1,9 @@
 #version 330
+#extension GL_ARB_explicit_uniform_location : require
 
-uniform mat4 camera;
-uniform mat4 model;
-uniform vec4 colorOverride;
+layout(location = 0) uniform mat4 camera;
+layout(location = 1) uniform mat4 model;
+layout(location = 2) uniform vec4 colorOverride;
 
 in vec3 Position;
 in vec4 Color;
