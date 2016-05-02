@@ -1,7 +1,6 @@
 #version 330
 
 uniform vec3 cameraPosition;
-uniform vec4 colorOverride;
 
 float materialShininess = 80;
 vec3 materialSpecularColor = vec3(1,1,1);
@@ -22,9 +21,6 @@ void main()
     vec3 normal = fragNormal;
     vec3 surfacePos = fragVert;
     vec4 surfaceColor = fragColor;
-    
-    if(colorOverride.a != 0)
-        surfaceColor = colorOverride;
 
     vec3 surfaceToLight = normalize(lightPosition - surfacePos);
     vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
