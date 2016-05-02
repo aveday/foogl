@@ -58,7 +58,7 @@ int main() {
     }
 
     // setup lighting
-    Light bulb(cube, vec3(0, 0.5f, -2.4f), white);
+    Light bulb(shader, cube, vec3(0, 0.5f, -2.4f), white);
 
     Camera camera(invisible, vec3(0, 0.5f, 0));
 
