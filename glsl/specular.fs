@@ -10,7 +10,7 @@ uniform vec3 lightColor;
 float lightAttenuation = 0.2f;
 float lightAmbientCoefficient = 0.005f;
 
-in vec3 fragVert;
+in vec3 fragPosition;
 in vec3 fragNormal;
 in vec4 fragColor;
 
@@ -18,28 +18,24 @@ out vec4 finalColor;
 
 void main()
 {
-    vec3 normal = fragNormal;
-    vec3 surfacePos = fragVert;
-    vec4 surfaceColor = fragColor;
-
-    vec3 surfaceToLight = normalize(lightPosition - surfacePos);
-    vec3 surfaceToCamera = normalize(cameraPosition - surfacePos);
+    vec3 surfaceToLight = normalize(lightPosition - fragPosition);
+    vec3 surfaceToCamera = normalize(cameraPosition - fragPosition);
     
     //ambient
-    vec3 ambient = lightAmbientCoefficient * surfaceColor.rgb * lightColor;
+    vec3 ambient = lightAmbientCoefficient * fragColor.rgb * lightColor;
 
     //diffuse
-    float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
-    vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * lightColor;
+    float diffuseCoefficient = max(0.0, dot(fragNormal, surfaceToLight));
+    vec3 diffuse = diffuseCoefficient * fragColor.rgb * lightColor;
     
     //specular
     float specularCoefficient = 0.0;
     if(diffuseCoefficient > 0.0)
-        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
+        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, fragNormal))), materialShininess);
     vec3 specular = specularCoefficient * materialSpecularColor * lightColor;
     
     //attenuation
-    float distanceToLight = length(lightPosition - surfacePos);
+    float distanceToLight = length(lightPosition - fragPosition);
     float attenuation = 1.0 / (1.0 + lightAttenuation * pow(distanceToLight, 2));
 
     //linear color (color before gamma correction)
@@ -47,5 +43,5 @@ void main()
     
     //final color (after gamma correction)
     vec3 gamma = vec3(1.0/2.2);
-    finalColor = vec4(pow(linearColor, gamma), surfaceColor.a);
+    finalColor = vec4(pow(linearColor, gamma), fragColor.a);
 }
