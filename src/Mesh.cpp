@@ -43,9 +43,8 @@ void Mesh::draw(mat4 &modelMatrix, vec4 color)
 {
     glUseProgram(shaderProgram);
     // update uniform shader inputs
-    glUniformMatrix4fv( UNIFORM_MODEL, 1, 0, glm::value_ptr(modelMatrix));
-
-    glUniform4f( UNIFORM_COLOR, color.r, color.g, color.b, color.a);
+    glUniformMatrix4fv(UNIFORM_MODEL, 1, 0, glm::value_ptr(modelMatrix));
+    glUniform4fv(UNIFORM_COLOR, 1, glm::value_ptr(color));
 
     // bind vertex array and draw vertices
     glBindVertexArray(vao);
