@@ -13,17 +13,17 @@ float lightAttenuation = 0.2f;
 float lightAmbientCoefficient = 0.005f;
 
 in vec3 fragVert;
-in vec4 fragColor;
 in vec3 fragNormal;
+in vec4 fragColor;
 
 out vec4 finalColor;
 
 void main()
 {
-    vec3 normal = normalize(transpose(inverse(mat3(model))) * fragNormal);
-    vec3 surfacePos = vec3(model * vec4(fragVert, 1));
-    
+    vec3 normal = fragNormal;
+    vec3 surfacePos = fragVert;
     vec4 surfaceColor = fragColor;
+    
     if(colorOverride.a != 0)
         surfaceColor = colorOverride;
 
