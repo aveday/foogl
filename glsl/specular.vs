@@ -1,8 +1,7 @@
 #version 330
 
-uniform mat4 projection;
+uniform mat4 camera;
 uniform mat4 model;
-uniform mat4 view;
 
 in vec3 Position;
 in vec4 Color;
@@ -18,5 +17,5 @@ void main()
     fragNormal = normalize(transpose(inverse(mat3(model))) * Normal);
     fragColor = Color;
 
-    gl_Position = projection * view * model * vec4(Position, 1.0);
+    gl_Position = camera * model * vec4(Position, 1.0);
 }

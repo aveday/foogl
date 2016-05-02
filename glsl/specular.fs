@@ -1,6 +1,5 @@
 #version 330
 
-uniform mat4 model;
 uniform vec3 cameraPosition;
 uniform vec4 colorOverride;
 
