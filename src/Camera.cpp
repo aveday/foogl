@@ -30,7 +30,7 @@ void Camera::configure(float fov, float aspect, float near, float far)
 void Camera::updateShader(GLuint shader)
 {
     // update the camera position uniform
-    glUniform3f(UNIFORM_POSITION, position.x, position.y, position.z);
+    glUniform3fv(UNIFORM_POSITION, 1, glm::value_ptr(position));
 
     // calculate and set the camera matrix from the view and projection
     mat4 cameraMatrix = projectionMatrix * glm::inverse( modelMatrix );
