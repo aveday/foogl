@@ -43,13 +43,9 @@ void Mesh::draw(mat4 &modelMatrix, vec4 color)
 {
     glUseProgram(shaderProgram);
     // update uniform shader inputs
-    glUniformMatrix4fv(
-            glGetUniformLocation(shaderProgram, "model"),
-            1, GL_FALSE, glm::value_ptr(modelMatrix));
+    glUniformMatrix4fv( UNIFORM_MODEL, 1, 0, glm::value_ptr(modelMatrix));
 
-    glUniform4f(
-            glGetUniformLocation(shaderProgram, "colorOverride"),
-            color.r, color.g, color.b, color.a);
+    glUniform4f( UNIFORM_COLOR, color.r, color.g, color.b, color.a);
 
     // bind vertex array and draw vertices
     glBindVertexArray(vao);
