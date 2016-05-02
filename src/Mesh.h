@@ -29,5 +29,8 @@ class Mesh {
         void initVertexAttrib(GLuint program, const GLchar* attribName,
                 int size, int stride, int offset);
 
+        static const GLuint UNIFORM_MODEL = 1;
+        static const GLuint UNIFORM_COLOR = 2;
+
 };
 
