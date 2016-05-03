@@ -13,7 +13,7 @@ class Light : public Entity
         void updateShader(GLuint shader);
 
     private:
-        float bufferdata[9];
+        GLint offset[4];
 
         GLuint ubo;
         vec3 color;
