@@ -11,11 +11,6 @@ typedef std::list<Entity*> Entity_pl; // unique pointer list
 
 class Entity
 {
-    private:
-        // matrix transform defining the position/scale/rotation of the entity
-        Entity_pl children;
-        Entity *parent;
-
     protected:
         Mesh &mesh;
         vec3 position, scale;
@@ -35,7 +30,6 @@ class Entity
                 vec4 color = vec4(0)
         );
 
-        void add_child(Entity *child);
         void draw();
         void rotate(float x, float y, float z);
         void translate(float x, float y, float z);
