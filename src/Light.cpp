@@ -1,5 +1,4 @@
 #include <glm/gtc/type_ptr.hpp>
-#include <string.h>
 #include "Light.h"
 #include "glm.h"
 
@@ -35,10 +34,23 @@ Light::Light(GLuint shader, Mesh &mesh, vec3 position, Color color) :
 
 void Light::updateShader(GLuint shader)
 {
-    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    float attenuation = 0.2f;
+    float ambientCoefficient = 0.005f;
 
-    glBufferSubData(GL_UNIFORM_BUFFER, offset[0], 3*sizeof(GLfloat), glm::value_ptr(position));
-    glBufferSubData(GL_UNIFORM_BUFFER, offset[1], 3*sizeof(GLfloat), glm::value_ptr(color));
-    glBufferSubData(GL_UNIFORM_BUFFER, offset[2], 1*sizeof(GLfloat), &attenuation);
-    glBufferSubData(GL_UNIFORM_BUFFER, offset[3], 1*sizeof(GLfloat), &ambientCoefficient);
+    glUseProgram(shader);
+    glUniform3fv(
+            glGetUniformLocation(shader, "light.position"),
+            1, glm::value_ptr(position));
+
+    glUniform3fv(
+            glGetUniformLocation(shader, "light.color"),
+            1, glm::value_ptr(color));
+
+    glUniform1f(
+            glGetUniformLocation(shader, "light.attenuation"),
+            attenuation);
+
+    glUniform1f(
+            glGetUniformLocation(shader, "light.ambientCoefficient"),
+            ambientCoefficient);
 }

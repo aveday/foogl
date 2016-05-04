@@ -6,10 +6,17 @@ layout(location = 3) uniform vec3 cameraPosition;
 float materialShininess = 80;
 vec3 materialSpecularColor = vec3(1,1,1);
 
+<<<<<<< HEAD
 uniform Light
 {
      vec3 position;
      vec3 color;
+=======
+uniform struct Light
+{
+    vec3 position;
+    vec3 color;
+>>>>>>> Put GLSL light uniforms into struct
     float attenuation;
     float ambientCoefficient;
 } light;
