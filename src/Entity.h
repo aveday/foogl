@@ -1,13 +1,7 @@
 #pragma once
 
-#include <list>
-#include <memory>
-
 #include "Mesh.h"
 #include "glm.h"
-
-class Entity;
-typedef std::list<Entity*> Entity_pl; // unique pointer list
 
 class Entity
 {

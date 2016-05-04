@@ -1,8 +1,6 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <stdio.h>
-#include <math.h>
 
 #include "Entity.h"
 #include "glm.h"

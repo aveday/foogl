@@ -1,4 +1,5 @@
 #include <glm/gtc/type_ptr.hpp>
+#include <stdio.h>
 #include "Light.h"
 #include "glm.h"
 
