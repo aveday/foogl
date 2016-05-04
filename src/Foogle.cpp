@@ -58,12 +58,17 @@ int main() {
     }
 
     // setup lighting
-    Light bulb(shader, cube, vec3(0, 0.5f, -2.4f), white);
+    Light bulb1(shader, cube, vec3(0, 0.5f, -2.4f), white*0.1f);
+    Light bulb2(shader, cube, vec3(0, 0.5f, -2.4f), vec4(.4, .1, .1, 1));
+    Light bulb3(shader, cube, vec3(0, 0.5f, -2.4f), vec4(.1, .4, .1, 1));
 
     Camera camera(invisible, vec3(0, 0.5f, 0));
 
     entities.push_back(&camera);
-    entities.push_back(&bulb);
+
+    entities.push_back(&bulb1);
+    entities.push_back(&bulb2);
+    entities.push_back(&bulb3);
 
     /* MAIN EVENT LOOP*/
     while(window.running())
@@ -72,8 +77,14 @@ int main() {
         
         float radius = 2;
         float radians = fmodf(clock.time, (2*M_PI));
-        vec3 pos(cos(radians) * radius, 0.5f, sin(radians) * radius);
-        bulb.warp(pos);
+
+        vec3 pos1(0, .5, 0);
+        vec3 pos2(cos(radians) * radius, 0.5f, sin(radians) * radius);
+        vec3 pos3(-cos(radians) * radius, 0.5f, sin(radians) * radius);
+
+        bulb1.warp(pos1);
+        bulb2.warp(pos2);
+        bulb3.warp(pos3);
 
         window.control(camera);
         update(entities, dt, shader);
