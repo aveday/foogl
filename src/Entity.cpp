@@ -12,7 +12,6 @@ Entity::Entity(
         vec3 pos,
         vec3 size,
         vec4 color) :
-    parent( nullptr ),
     mesh(mesh),
     position(pos),
     scale(size),
@@ -22,34 +21,14 @@ Entity::Entity(
     updateModelMatrix();
 }
 
-mat4 Entity::absModelMatrix()
-{
-    if(parent == nullptr)
-        return modelMatrix;
-    return modelMatrix * glm::inverse(parent->absModelMatrix());
-}
-
-void Entity::add_child(Entity *child)
-{
-    child->parent = this;
-    children.push_back(child);
-}
 void Entity::draw()
 {
     mesh.draw(modelMatrix, color);
-
-    //FIXME
-    // calculate child view matrix and draw children
-    //mat4 childViewMatrix = viewMatrix * modelMatrix;
-    //for(auto it = children.begin(); it != children.end(); it++)
-        //(*it)->draw(childViewMatrix, projectionMatrix);
 }
 
 void Entity::update(float dt)
 {
     position += dt * glm::rotateY(heading, glm::radians(rotation.y));
-    for(auto it = children.begin(); it != children.end(); it++)
-        (*it)->update(dt);
 }
 
 void Entity::updateShader(GLuint shader) { }
