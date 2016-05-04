@@ -6,10 +6,10 @@ layout(location = 3) uniform vec3 cameraPosition;
 float materialShininess = 80;
 vec3 materialSpecularColor = vec3(1,1,1);
 
-uniform Light
+uniform struct Light
 {
-     vec3 position;
-     vec3 color;
+    vec3 position;
+    vec3 color;
     float attenuation;
     float ambientCoefficient;
 } light;
