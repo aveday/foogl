@@ -10,9 +10,13 @@ class Light : public Entity
 {
     public:
         Light(GLuint shader, Mesh &mesh, vec3 position, Color color = white);
+        ~Light() { count--; }
         void updateShader(GLuint shader);
 
     private:
+        static const int MAX_LIGHTS = 10;
+        static int count;
+        static GLint count_offset;
         GLint offset[4];
 
         GLuint ubo;
