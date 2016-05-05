@@ -33,7 +33,7 @@ void Camera::updateShader(GLuint shader)
     glUniform3fv(UNIFORM_POSITION, 1, glm::value_ptr(position));
 
     // calculate and set the camera matrix from the view and projection
-    mat4 cameraMatrix = projectionMatrix * glm::inverse( modelMatrix );
+    mat4 cameraMatrix = projectionMatrix * glm::inverse(transform);
     glUniformMatrix4fv(UNIFORM_MATRIX, 1, 0, glm::value_ptr(cameraMatrix));
 }
 
