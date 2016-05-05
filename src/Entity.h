@@ -15,7 +15,7 @@ class Entity
 
     public:
         vec3 heading;
-        mat4 modelMatrix, orientation;
+        mat4 transform, orientation;
         mat4 absModelMatrix();
         Entity(
                 Mesh &mesh,
