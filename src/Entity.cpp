@@ -21,7 +21,7 @@ Entity::Entity(
 
 void Entity::draw()
 {
-    mesh.draw(modelMatrix, color);
+    mesh.draw(transform, color);
 }
 
 void Entity::update(float dt)
@@ -39,7 +39,7 @@ void Entity::updateModelMatrix()
     orientation = glm::rotate(orientation, glm::radians(rotation.z), vec3(0,0,1));
 
     // calculate entity model matrix
-    modelMatrix = glm::translate<GLfloat>(position)
+    transform = glm::translate<GLfloat>(position)
         * orientation * glm::scale<GLfloat>(scale);
 }
 
