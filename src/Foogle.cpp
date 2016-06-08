@@ -41,11 +41,11 @@ int main() {
     GLFWwindow *gl_window = EM::get_component<WindowC>(game).gl_window;
 
     // create the shader program
-    GLuint shader = loadProgram("glsl/specular.vs", "glsl/specular.fs");
+    GLuint specular = loadProgram("glsl/specular.vs", "glsl/specular.fs");
 
     // load meshes
-    Mesh cube = Mesh::Cube(shader);
-    Mesh invisible(shader);
+    Mesh cube = Mesh::Cube(specular);
+    Mesh invisible(specular);
 
     // create and populate the entity list
     std::list<Entity*> entities;
@@ -67,9 +67,9 @@ int main() {
     }
 
     // setup lighting
-    Light bulb1(shader, cube, vec3(0, 0.5f, -2.4f), white*0.1f);
-    Light bulb2(shader, cube, vec3(0, 0.5f, -2.4f), vec4(.4, .1, .1, 1));
-    Light bulb3(shader, cube, vec3(0, 0.5f, -2.4f), vec4(.1, .4, .1, 1));
+    Light bulb1(specular, cube, vec3(0, 0.5f, -2.4f), white*0.1f);
+    Light bulb2(specular, cube, vec3(0, 0.5f, -2.4f), vec4(.4, .1, .1, 1));
+    Light bulb3(specular, cube, vec3(0, 0.5f, -2.4f), vec4(.1, .4, .1, 1));
 
     Camera camera(invisible, vec3(0, 0.5f, 0));
 
@@ -97,7 +97,7 @@ int main() {
         bulb3.warp(pos3);
 
         //window.control(camera);
-        update(entities, clock.dt, shader);
+        update(entities, clock.dt, specular);
 
         // draw entities
         for(auto entity : entities)
