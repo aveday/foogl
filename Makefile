@@ -1,5 +1,5 @@
 CXX := g++
-CPPFLAGS := -Wall -Wextra -std=c++11
+CPPFLAGS := -Wall -Wextra -std=c++14
 BIN := Foogle
 LDFLAGS := -lm -lglfw -lGL -lGLU -lGLEW
 RM:= rm -rf
