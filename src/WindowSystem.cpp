@@ -1,5 +1,5 @@
 #include <iostream>
-//#include <thread>
+#include <thread>
 #include "WindowSystem.h"
 
 WindowSystem::WindowSystem()
@@ -64,7 +64,6 @@ void WindowSystem::run()
         else
             glfwMakeContextCurrent(window.gl_window);
 
-        /*
         // Manage time
         float excess_seconds = clock.time - glfwGetTime() + clock.min;
         if (excess_seconds > 0) {
@@ -74,7 +73,6 @@ void WindowSystem::run()
         float newTime = glfwGetTime();
         clock.dt = newTime - clock.time;
         clock.time = newTime;
-        */
 
         glfwPollEvents();
         Clear();
