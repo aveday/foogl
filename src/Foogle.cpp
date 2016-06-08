@@ -1,7 +1,13 @@
+#include <cstdio>
 #include <list>
 #include <math.h>
 
-#include "Window.h"
+#define EM_MAX_ENTS 10000
+#include "EntityManager.h"
+
+#include "Component.h"
+#include "WindowSystem.h"
+
 #include "Light.h"
 #include "Clock.h"
 #include "Camera.h"
@@ -25,8 +31,15 @@ void update(std::list<Entity*> entities, float dt, GLuint shader)
 
 /* MAIN FUNCTION */
 int main() {
+    WindowSystem windowing;
 
-    Window window("Foogle", screen_width, screen_height, FULLSCREEN, RESIZABLE);
+    //Window window("Foogle", screen_width, screen_height, FULLSCREEN, RESIZABLE);
+    auto game = EM::new_entity(
+            WindowC{"Foogle", screen_width, screen_height},
+            ClockC{1.0/60});
+
+    windowing.run();
+    GLFWwindow *gl_window = EM::get_component<WindowC>(game).gl_window;
 
     // create the shader program
     GLuint shader = loadProgram("glsl/specular.vs", "glsl/specular.fs");
@@ -71,8 +84,7 @@ int main() {
     entities.push_back(&bulb3);
 
     /* MAIN EVENT LOOP*/
-    while(window.running())
-    {
+    while (EM::has_components<WindowC>(game)) {
         float dt = clock.tick();
         
         float radius = 2;
@@ -86,9 +98,20 @@ int main() {
         bulb2.warp(pos2);
         bulb3.warp(pos3);
 
-        window.control(camera);
+        //window.control(camera);
         update(entities, dt, shader);
-        window.render(camera, entities);
+
+        //window.render(camera, entities) {
+            // clear screen
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            // draw entities
+            for(auto entity : entities)
+                entity->draw();
+
+            glfwSwapBuffers(gl_window);
+        //}
     }
     return 0;
 }
