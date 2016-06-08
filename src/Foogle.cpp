@@ -9,7 +9,6 @@
 #include "WindowSystem.h"
 
 #include "Light.h"
-#include "Clock.h"
 #include "Camera.h"
 #include "Shader.h"
 #include "Entity.h"
@@ -43,9 +42,6 @@ int main() {
 
     // create the shader program
     GLuint shader = loadProgram("glsl/specular.vs", "glsl/specular.fs");
-
-    // setup clock
-    Clock clock;
 
     // load meshes
     Mesh cube = Mesh::Cube(shader);
@@ -85,7 +81,9 @@ int main() {
 
     /* MAIN EVENT LOOP*/
     while (EM::has_components<WindowC>(game)) {
-        float dt = clock.tick();
+        windowing.run();
+
+        ClockC &clock = EM::get_component<ClockC>(game);
         
         float radius = 2;
         float radians = fmodf(clock.time, (2*M_PI));
@@ -99,19 +97,13 @@ int main() {
         bulb3.warp(pos3);
 
         //window.control(camera);
-        update(entities, dt, shader);
+        update(entities, clock.dt, shader);
 
-        //window.render(camera, entities) {
-            // clear screen
-            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // draw entities
+        for(auto entity : entities)
+            entity->draw();
 
-            // draw entities
-            for(auto entity : entities)
-                entity->draw();
-
-            glfwSwapBuffers(gl_window);
-        //}
+        glfwSwapBuffers(gl_window);
     }
     return 0;
 }
