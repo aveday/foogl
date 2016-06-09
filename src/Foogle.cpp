@@ -26,17 +26,15 @@ int main() {
             ClockC{1.0/60});
 
     WindowC &root_window = EM::get_component<WindowC>(game);
-
     WindowSystem windowing(root_window);
 
-    // create the shader program
     GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
-
     LightSystem lighting(specular);
 
+
     // load meshes
-    Mesh cube = Mesh::Cube(specular);
-    Mesh invisible(specular);
+    Mesh cube = Mesh::Cube();
+    Mesh invisible;
 
     // create and populate the entity list
     std::list<Entity*> entities;
@@ -95,6 +93,7 @@ int main() {
         lighting.run();
 
         // draw entities
+        glUseProgram(specular);
         for(auto entity : entities)
             entity->draw();
 
