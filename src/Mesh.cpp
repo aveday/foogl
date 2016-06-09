@@ -20,35 +20,19 @@ void Mesh::draw(mat4 &modelMatrix, vec4 color)
     glBindVertexArray(0);
 }
 
-Mesh Mesh::Cube()
+Mesh::Mesh(const MeshDef &def) : vertices_n(def.vertices_n)
 {
-    Mesh mesh;
-
-    mesh.vertices_n = 36;
-
-    vec3 positions[]{
-        {-0.5, -0.5, -0.5}, {-0.5, -0.5,  0.5},
-        {-0.5,  0.5, -0.5}, {-0.5,  0.5,  0.5},
-        { 0.5, -0.5, -0.5}, { 0.5, -0.5,  0.5},
-        { 0.5,  0.5, -0.5}, { 0.5,  0.5,  0.5}};
-    int indices[]{
-        0,1,2, 1,3,2,  0,2,6, 0,6,4,  2,3,7, 2,7,6,
-        4,6,7, 4,7,5,  1,7,3, 1,5,7,  0,4,1, 1,4,5};
-    vec3 normals[]{
-        {-1, 0, 0},    { 0, 0,-1},    { 0, 1, 0},
-        { 1, 0, 0},    { 0, 0, 1},    { 0,-1, 0}};
-
-    struct { vec3 position, normal; vec4 color; } vertices[mesh.vertices_n];
-    for(int i = 0; i < mesh.vertices_n; i++)
-        vertices[i] = { positions[indices[i]], normals[i/6], vec4(1) };
+    struct { vec3 position, normal; vec4 color; } vertices[vertices_n];
+    for(int i = 0; i < vertices_n; i++)
+        vertices[i] = { def.positions[def.indices[i]], def.normals[i/6], vec4(1) };
 
     // create and bind the vertex buffer
-    glGenBuffers(1, &mesh.vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+    glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     // create and bind the vertex array
-    glGenVertexArrays(1, &mesh.vao);
-    glBindVertexArray(mesh.vao);
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     // setup vertex buffers
     glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 40, (void*)0);
@@ -62,6 +46,5 @@ Mesh Mesh::Cube()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    return mesh;
 }
 
