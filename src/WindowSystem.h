@@ -8,7 +8,7 @@
 
 class WindowSystem {
 public:
-    WindowSystem();
+    WindowSystem(WindowC &root_window);
     void run();
     void Display();
 
