@@ -30,5 +30,5 @@ class Entity
         void warp(vec3 pos);
 
         virtual void update(float dt);
-        virtual void updateShader(GLuint shader);
+        virtual void updateShader(GLuint shader); //FIXME shader ref unnecessary
 };

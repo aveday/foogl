@@ -20,7 +20,7 @@ class Mesh {
         void draw(mat4 &modelMatrix, vec4 color = vec4());
         void begin();
         void end();
-        int vertices_n;
+        int vertices_n = 0;
 
     private:
         GLuint vao, vbo;
