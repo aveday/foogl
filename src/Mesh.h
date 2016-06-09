@@ -1,7 +1,5 @@
 #pragma once
-
 #include <GL/glew.h>
-
 #include "glm.h"
 
 struct Vertex {
@@ -15,22 +13,21 @@ struct Vertex {
 
 class Mesh {
     public:
-        Mesh(GLuint program);
-        static Mesh Cube(GLuint shader);
+        static Mesh Cube();
         void draw(mat4 &modelMatrix, vec4 color = vec4());
-        void begin();
-        void end();
         int vertices_n = 0;
 
     private:
         GLuint vao, vbo;
-        GLuint shaderProgram;
 
-        void initVertexAttrib(GLuint program, const GLchar* attribName,
+        void initVertexAttrib(const GLchar* attribName,
                 int size, int stride, int offset);
 
         static const GLuint UNIFORM_MODEL = 1;
         static const GLuint UNIFORM_COLOR = 2;
 
+        static const GLuint INPUT_POSITION = 0;
+        static const GLuint INPUT_NORMAL = 1;
+        static const GLuint INPUT_COLOR = 2;
 };
 
