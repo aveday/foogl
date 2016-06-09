@@ -9,7 +9,7 @@
 class Light : public Entity
 {
     public:
-        Light(GLuint shader, Mesh &mesh, vec3 position, Color color = white);
+        Light(GLuint shader, Mesh &mesh, vec3 position, vec3 intensity);
         ~Light() { count--; }
         void updateShader(GLuint shader);
 
@@ -17,11 +17,10 @@ class Light : public Entity
         static const int MAX_LIGHTS = 10;
         static int count;
         static GLint count_offset;
+        static GLuint ubo;
         GLint offset[4];
 
-        GLuint ubo;
-        vec3 color;
+        vec3 intensity;
         float attenuation = 0.2f;
         float ambientCoefficient = 0.005f;
 };
-

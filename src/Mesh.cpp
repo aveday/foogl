@@ -41,6 +41,9 @@ void Mesh::initVertexAttrib(GLuint program, const GLchar* attribName,
 
 void Mesh::draw(mat4 &modelMatrix, vec4 color)
 {
+    if (vertices_n == 0)
+        return;
+
     glUseProgram(shaderProgram);
     // update uniform shader inputs
     glUniformMatrix4fv(UNIFORM_MODEL, 1, 0, glm::value_ptr(modelMatrix));
@@ -56,53 +59,29 @@ Mesh Mesh::Cube(GLuint shader)
 {
     Mesh mesh(shader);
 
-    // vertex positions
-    vec3 position[8];
+    mesh.vertices_n = 36;
 
-    int n = 0;
-    for(float x = -0.5f; x <= 0.5f; x += 1)
-    for(float y = -0.5f; y <= 0.5f; y += 1)
-    for(float z = -0.5f; z <= 0.5f; z += 1)
-        position[n++] = vec3(x, y, z);
+    vec3 positions[]{
+        {-0.5, -0.5, -0.5}, {-0.5, -0.5,  0.5},
+        {-0.5,  0.5, -0.5}, {-0.5,  0.5,  0.5},
+        { 0.5, -0.5, -0.5}, { 0.5, -0.5,  0.5},
+        { 0.5,  0.5, -0.5}, { 0.5,  0.5,  0.5}};
+    int indices[]{
+        0,1,2, 1,3,2,  0,2,6, 0,6,4,  2,3,7, 2,7,6,
+        4,6,7, 4,7,5,  1,7,3, 1,5,7,  0,4,1, 1,4,5};
+    vec3 normals[]{
+        {-1, 0, 0},    { 0, 0,-1},    { 0, 1, 0},
+        { 1, 0, 0},    { 0, 0, 1},    { 0,-1, 0}};
 
-    Vertex Vertices[36];
+    struct { vec3 position, normal; vec4 color; } vertices[mesh.vertices_n];
+    for(int i = 0; i < mesh.vertices_n; i++)
+        vertices[i] = { positions[indices[i]], normals[i/6], vec4(1) };
 
-    int indices[] = {
-        0,1,2, //left
-        1,3,2,
-        0,2,6, //front
-        0,6,4,
-        2,3,7, //top
-        2,7,6,
-        0,4,1, //bottom
-        1,4,5,
-        1,7,3, //back
-        1,5,7,
-        4,6,7, //right
-        4,7,5
-    };
-    vec3 normals[] = {
-        vec3(-1, 0, 0),
-        vec3( 0, 0,-1),
-        vec3( 0, 1, 0),
-        vec3( 0,-1, 0),
-        vec3( 0, 0, 1),
-        vec3( 1, 0, 0),
-    };
-
-    int vs = 0;
-    for(int i = 0; i < 36; i++)
-    {
-        Vertices[vs].position = position[indices[i]];
-        Vertices[vs].normal = normals[i/6];
-        Vertices[vs].color = vec4(1);
-        vs++;
-   }
-
+    // creat and fill array and buffers
     mesh.begin();
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices), Vertices, GL_STATIC_DRAW);
-    mesh.vertices_n = vs;
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     mesh.end();
+
     return mesh;
 }
 

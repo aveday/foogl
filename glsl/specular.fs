@@ -9,8 +9,8 @@ vec3 materialSpecularColor = vec3(1,1,1);
 #define MAX_LIGHTS 10
 struct Light
 {
-    vec3 position;
-    vec3 color;
+     vec3 position;
+     vec3 intensity;
     float attenuation;
     float ambientCoefficient;
 };
@@ -35,17 +35,17 @@ vec3 ApplyLight(Light light, vec3 surfaceColor, vec3 normal, vec3 surfacePos, ve
     float attenuation = 1.0 / (1.0 + light.attenuation * pow(distanceToLight, 2));
 
     //ambient
-    vec3 ambient = light.ambientCoefficient * surfaceColor.rgb * light.color;
+    vec3 ambient = light.ambientCoefficient * surfaceColor.rgb * light.intensity;
 
     //diffuse
     float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
-    vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * light.color;
+    vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * light.intensity;
     
     //specular
     float specularCoefficient = 0.0;
     if(diffuseCoefficient > 0.0)
         specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
-    vec3 specular = specularCoefficient * materialSpecularColor * light.color;
+    vec3 specular = specularCoefficient * materialSpecularColor * light.intensity;
 
     //linear color (color before gamma correction)
     return ambient + attenuation*(diffuse + specular);
