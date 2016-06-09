@@ -5,12 +5,13 @@
 #define EM_MAX_ENTS 10000
 #include "EntityManager.h"
 
+#include "AssetLoader.h"
+
 #include "Component.h"
 #include "WindowSystem.h"
 
 #include "Light.h"
 #include "Camera.h"
-#include "Shader.h"
 #include "Entity.h"
 #include "config.h"
 #include "colors.h"
@@ -41,7 +42,7 @@ int main() {
     GLFWwindow *gl_window = EM::get_component<WindowC>(game).gl_window;
 
     // create the shader program
-    GLuint specular = loadProgram("glsl/specular.vs", "glsl/specular.fs");
+    GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
 
     // load meshes
     Mesh cube = Mesh::Cube(specular);
@@ -67,9 +68,9 @@ int main() {
     }
 
     // setup lighting
-    Light bulb1(specular, cube, vec3(0, 0.5f, -2.4f), white*0.1f);
-    Light bulb2(specular, cube, vec3(0, 0.5f, -2.4f), vec4(.4, .1, .1, 1));
-    Light bulb3(specular, cube, vec3(0, 0.5f, -2.4f), vec4(.1, .4, .1, 1));
+    Light bulb1(specular, cube, vec3( 0, 0.5f, -2.4f), vec3(0.1f));
+    Light bulb2(specular, cube, vec3( 2, 0.5f, -2.4f), vec3(.4, .1, .1));
+    Light bulb3(specular, cube, vec3(-2, 0.5f, -2.4f), vec3(.1, .4, .1));
 
     Camera camera(invisible, vec3(0, 0.5f, 0));
 
