@@ -9,16 +9,16 @@ vec3 materialSpecularColor = vec3(1,1,1);
 #define MAX_LIGHTS 10
 struct Light
 {
-     vec3 position;
-     vec3 intensity;
+    vec3 position;
     float attenuation;
+    vec3 intensity;
     float ambientCoefficient;
 };
 
-uniform UBO
+layout (std140) uniform LIGHTS
 {
-    Light lights[MAX_LIGHTS];
     int num_lights;
+    Light lights[MAX_LIGHTS];
 };
 
 in vec3 fragPosition;

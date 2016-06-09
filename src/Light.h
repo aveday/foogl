@@ -11,14 +11,12 @@ class Light : public Entity
     public:
         Light(GLuint shader, Mesh &mesh, vec3 position, vec3 intensity);
         ~Light() { count--; }
-        void updateShader(GLuint shader);
+        void updateLighting(int light_num);
 
     private:
         static const int MAX_LIGHTS = 10;
         static int count;
-        static GLint count_offset;
         static GLuint ubo;
-        GLint offset[4];
 
         vec3 intensity;
         float attenuation = 0.2f;
