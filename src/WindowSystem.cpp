@@ -78,7 +78,6 @@ void WindowSystem::run()
 
         if(glfwWindowShouldClose(window.gl_window))
         {
-            printf("closing\n");
             glfwDestroyWindow(window.gl_window);
             glfwTerminate();
             EM::remove_component<WindowC>(e);
