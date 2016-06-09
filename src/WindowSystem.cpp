@@ -2,7 +2,7 @@
 #include <thread>
 #include "WindowSystem.h"
 
-WindowSystem::WindowSystem()
+WindowSystem::WindowSystem(WindowC &root_window)
 {
     // initialize GLFW and set window options
     glfwInit();
@@ -10,6 +10,15 @@ WindowSystem::WindowSystem()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+    MakeWindow(root_window);
+
+    // setup GLEW (must be done after creating GL context)
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (err != GLEW_OK) std::cerr << glewGetErrorString(err);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 }
 
 void WindowSystem::KeyPress(GLFWwindow* gl_window,
@@ -34,16 +43,6 @@ void WindowSystem::MakeWindow(WindowC &window)
     glfwMakeContextCurrent(window.gl_window);
     glfwSetKeyCallback(window.gl_window, KeyPress);
     glfwSetInputMode(window.gl_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
-    // setup GLEW (must be done after creating GL context)
-    glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
-    if (err != GLEW_OK)
-	    fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
-
-    // enable depth tests
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
 }
 
 void WindowSystem::run()
@@ -84,6 +83,8 @@ void WindowSystem::run()
             glfwTerminate();
             EM::remove_component<WindowC>(e);
         }
+
+        break;//FIXME when adding multi-window support
     }
 }
 

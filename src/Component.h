@@ -22,6 +22,12 @@ struct ClockC {
     float dt = 0;
 };
 
+struct LightC {
+    vec3 intensity;
+    vec3 position;
+    //TODO add attenuation and ambient coefficient
+};
+
 struct CameraC {
     float fov = 45;
     float aspect = 4.0/3.0f; //FIXME
