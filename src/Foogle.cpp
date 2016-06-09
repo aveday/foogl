@@ -9,8 +9,8 @@
 
 #include "Component.h"
 #include "WindowSystem.h"
+#include "LightSystem.h"
 
-#include "Light.h"
 #include "Camera.h"
 #include "Entity.h"
 #include "config.h"
@@ -19,20 +19,20 @@
 
 /* MAIN FUNCTION */
 int main() {
-    WindowSystem windowing;
 
     //Window window("Foogle", screen_width, screen_height, FULLSCREEN, RESIZABLE);
     auto game = EM::new_entity(
             WindowC{"Foogle", screen_width, screen_height},
             ClockC{1.0/60});
 
-    //bulb2(specular, cube, vec3( 2, 0.5f, -2.4f), vec3(.4, .1, .1));
+    WindowC &root_window = EM::get_component<WindowC>(game);
 
-    windowing.run();//FIXME remove when ECS is fully integrated
-    GLFWwindow *gl_window = EM::get_component<WindowC>(game).gl_window;
+    WindowSystem windowing(root_window);
 
     // create the shader program
     GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
+
+    LightSystem lighting(specular);
 
     // load meshes
     Mesh cube = Mesh::Cube(specular);
@@ -40,7 +40,6 @@ int main() {
 
     // create and populate the entity list
     std::list<Entity*> entities;
-    std::list<Light*> lights;
 
     /*                            MODEL POSITION        SCALE         COLOR */
     entities.push_back(new Entity(cube, vec3(0, 0,  0), vec3(5,0.2,5),vec4(.5f)));
@@ -59,20 +58,13 @@ int main() {
     }
 
     // setup lighting
-    Light bulb1(specular, cube, vec3( 0, 0.5f, -2.4f), vec3(0.1f));
-    Light bulb2(specular, cube, vec3( 2, 0.5f, -2.4f), vec3(.4, .1, .1));
-    Light bulb3(specular, cube, vec3(-2, 0.5f, -2.4f), vec3(.1, .4, .1));
+    auto bulb1 = EM::new_entity( LightC{{.1, .1, .1}, { 0, .5, -2.4f}} );
+    auto bulb2 = EM::new_entity( LightC{{.4, .1, .1}, { 2, .5, -2.4f}} );
+    auto bulb3 = EM::new_entity( LightC{{.1, .4, .1}, {-2, .5, -2.4f}} );
 
     Camera camera(invisible, vec3(0, 0.5f, 0));
 
     entities.push_back(&camera);
-
-    lights.push_back(&bulb1);
-    lights.push_back(&bulb2);
-    lights.push_back(&bulb3);
-    entities.push_back(&bulb1);
-    entities.push_back(&bulb2);
-    entities.push_back(&bulb3);
 
     /* MAIN EVENT LOOP*/
     while (EM::has_components<WindowC>(game)) {
@@ -87,28 +79,26 @@ int main() {
         vec3 pos2(cos(radians) * radius, 0.5f, sin(radians) * radius);
         vec3 pos3(-cos(radians) * radius, 0.5f, sin(radians) * radius);
 
-        bulb1.warp(pos1);
-        bulb2.warp(pos2);
-        bulb3.warp(pos3);
+        EM::get_component<LightC>(bulb1).position = pos1;
+        EM::get_component<LightC>(bulb2).position = pos2;
+        EM::get_component<LightC>(bulb3).position = pos3;
 
         //window.control(camera);
 
         // simulate world
         for(auto entity : entities)
             entity->update(clock.dt);
+
         for(auto entity : entities)
             entity->updateShader(specular); //just for camera at this point
 
-        // update shader with new uniforms for lights/camera etc.
-        int n = 0;
-        for(auto light : lights)
-            light->updateLighting(n++);
+        lighting.run();
 
         // draw entities
         for(auto entity : entities)
             entity->draw();
 
-        glfwSwapBuffers(gl_window);
+        glfwSwapBuffers(root_window.gl_window);
     }
     return 0;
 }
