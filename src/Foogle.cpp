@@ -17,18 +17,6 @@
 #include "colors.h"
 #include "glm.h"
 
-/* UPDATE FUNCTION */
-void update(std::list<Entity*> entities, float dt, GLuint shader)
-{
-    // simulate world
-    for(auto entity : entities)
-        entity->update(dt);
-
-    // update shader with new uniforms for lights/camera etc.
-    for(auto entity : entities)
-        entity->updateShader(shader);
-}
-
 /* MAIN FUNCTION */
 int main() {
     WindowSystem windowing;
@@ -38,7 +26,9 @@ int main() {
             WindowC{"Foogle", screen_width, screen_height},
             ClockC{1.0/60});
 
-    windowing.run();
+    //bulb2(specular, cube, vec3( 2, 0.5f, -2.4f), vec3(.4, .1, .1));
+
+    windowing.run();//FIXME remove when ECS is fully integrated
     GLFWwindow *gl_window = EM::get_component<WindowC>(game).gl_window;
 
     // create the shader program
@@ -50,6 +40,7 @@ int main() {
 
     // create and populate the entity list
     std::list<Entity*> entities;
+    std::list<Light*> lights;
 
     /*                            MODEL POSITION        SCALE         COLOR */
     entities.push_back(new Entity(cube, vec3(0, 0,  0), vec3(5,0.2,5),vec4(.5f)));
@@ -76,6 +67,9 @@ int main() {
 
     entities.push_back(&camera);
 
+    lights.push_back(&bulb1);
+    lights.push_back(&bulb2);
+    lights.push_back(&bulb3);
     entities.push_back(&bulb1);
     entities.push_back(&bulb2);
     entities.push_back(&bulb3);
@@ -98,7 +92,17 @@ int main() {
         bulb3.warp(pos3);
 
         //window.control(camera);
-        update(entities, clock.dt, specular);
+
+        // simulate world
+        for(auto entity : entities)
+            entity->update(clock.dt);
+        for(auto entity : entities)
+            entity->updateShader(specular); //just for camera at this point
+
+        // update shader with new uniforms for lights/camera etc.
+        int n = 0;
+        for(auto light : lights)
+            light->updateLighting(n++);
 
         // draw entities
         for(auto entity : entities)
