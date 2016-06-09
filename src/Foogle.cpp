@@ -31,10 +31,8 @@ int main() {
     GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
     LightSystem lighting(specular);
 
-
     // load meshes
-    Mesh cube = Mesh::Cube();
-    Mesh invisible;
+    Mesh cube(cube_def), invisible;
 
     // create and populate the entity list
     std::list<Entity*> entities;
