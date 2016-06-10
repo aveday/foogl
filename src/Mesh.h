@@ -28,7 +28,6 @@ class Mesh {
 
         static const GLuint INPUT_POSITION = 0;
         static const GLuint INPUT_NORMAL = 1;
-        static const GLuint INPUT_COLOR = 2;
 };
 
 const vec3 cube_positions[]{
