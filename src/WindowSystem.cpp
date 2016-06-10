@@ -1,6 +1,8 @@
 #include <iostream>
 #include <thread>
+#include <GL/glew.h>
 #include "WindowSystem.h"
+#include "EntityManager.h"
 
 WindowSystem::WindowSystem(Window &root_window)
 {
