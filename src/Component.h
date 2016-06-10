@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "glm.h"
-#include "Mesh.h"
+#include "Asset.h"
 
 typedef glm::mat4 Transform;
 
