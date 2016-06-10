@@ -6,6 +6,7 @@
 #include "AssetLoader.h"
 
 std::unordered_map<std::string, GLuint> AssetLoader::program_cache;
+std::unordered_map<MeshDef*, Mesh> AssetLoader::mesh_cache;
 
 template <typename C> std::vector<C> AssetLoader::asset_vector;
 
@@ -86,3 +87,13 @@ GLuint AssetLoader::LoadProgram(const char* vs, const char* fs)
 
     return program;
 }
+
+Mesh& AssetLoader::LoadMesh(MeshDef &def)
+{
+    if (!mesh_cache.count(&def))
+        mesh_cache[&def] = Mesh(def);
+
+    return mesh_cache[&def];
+}
+
+

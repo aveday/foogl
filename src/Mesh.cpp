@@ -20,7 +20,7 @@ void Mesh::draw(mat4 &modelMatrix, vec4 color)
     glBindVertexArray(0);
 }
 
-Mesh::Mesh(const MeshDef &def) : vertices_n(def.vertices_n)
+Mesh::Mesh(MeshDef &def) : vertices_n(def.vertices_n)
 {
     struct { vec3 position, normal; } vertices[vertices_n];
     for(int i = 0; i < vertices_n; i++)
