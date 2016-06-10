@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <stdint.h>
 #include <stdlib.h>
 #include <vector>
@@ -34,8 +35,10 @@ public:
 
     template <typename C>
     static inline C& get_component(int e) {
-        if(!has_components<C>(e))
+        if(!has_components<C>(e)) {
+            std::cerr << "Failed to get component from entity " << e;
             exit(EXIT_FAILURE);
+        }
         return component_vector<C>[e];
     }
 
