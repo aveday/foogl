@@ -1,5 +1,4 @@
 #pragma once
-
 #include "glm.h"
 
 typedef vec4 Color;
