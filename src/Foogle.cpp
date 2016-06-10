@@ -6,6 +6,7 @@
 #include "EntityManager.h"
 
 #include "AssetLoader.h"
+#include "cube.h"
 
 #include "Component.h"
 #include "WindowSystem.h"
@@ -32,7 +33,8 @@ int main() {
     LightSystem lighting(specular);
 
     // load meshes
-    Mesh cube(cube_def), invisible;
+    Mesh invisible;
+    Mesh &cube = AL::LoadMesh(cube_def);
 
     // create and populate the entity list
     std::list<Entity*> entities;
