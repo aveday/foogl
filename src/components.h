@@ -2,7 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "glm.h"
-#include "Asset.h"
+#include "assets.h"
 
 typedef glm::mat4 Transform;
 

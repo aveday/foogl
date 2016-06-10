@@ -2,7 +2,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "EntityManager.h"
 #include "RenderSystem.h"
-#include "Component.h"
+#include "components.h"
 
 void RenderSystem::run(int viewer)
 {
