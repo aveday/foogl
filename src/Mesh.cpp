@@ -22,9 +22,9 @@ void Mesh::draw(mat4 &modelMatrix, vec4 color)
 
 Mesh::Mesh(const MeshDef &def) : vertices_n(def.vertices_n)
 {
-    struct { vec3 position, normal; vec4 color; } vertices[vertices_n];
+    struct { vec3 position, normal; } vertices[vertices_n];
     for(int i = 0; i < vertices_n; i++)
-        vertices[i] = { def.positions[def.indices[i]], def.normals[i/6], vec4(1) };
+        vertices[i] = { def.positions[def.indices[i]], def.normals[i/6] };
 
     // create and bind the vertex buffer
     glGenBuffers(1, &vbo);
@@ -35,13 +35,11 @@ Mesh::Mesh(const MeshDef &def) : vertices_n(def.vertices_n)
     glBindVertexArray(vao);
 
     // setup vertex buffers
-    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 40, (void*)0);
-    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 40, (void*)12);
-    glVertexAttribPointer(INPUT_COLOR,    4, GL_FLOAT, 0, 40, (void*)24);
+    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 24, (void*)0);
+    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 24, (void*)12);
 
     glEnableVertexAttribArray(INPUT_POSITION);
     glEnableVertexAttribArray(INPUT_NORMAL);
-    glEnableVertexAttribArray(INPUT_COLOR);
 
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
