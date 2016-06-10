@@ -1,6 +1,6 @@
 #pragma once
 #include <GLFW/glfw3.h>
-#include "Component.h"
+#include "components.h"
 
 class WindowSystem {
 public:

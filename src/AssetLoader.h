@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include "glm.h"
-#include "Asset.h"
+#include "assets.h"
 
 
 typedef class AssetLoader {
