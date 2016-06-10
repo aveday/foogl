@@ -9,15 +9,15 @@ struct MeshDef {
     const vec3 *normals;
 };
 
-class Mesh {
+class Mesh { //TODO refactor into asset struct
     public:
         Mesh(MeshDef&);
         Mesh() : vertices_n(0) {}
         void draw(mat4 &modelMatrix, vec4 color = vec4());
         int vertices_n = 0;
 
-    private:
         GLuint vao, vbo;
+    private:
 
         void initVertexAttrib(const GLchar* attribName,
                 int size, int stride, int offset);
