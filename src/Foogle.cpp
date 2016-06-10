@@ -13,8 +13,6 @@
 #include "LightSystem.h"
 #include "RenderSystem.h"
 
-#include "Camera.h"
-#include "Entity.h"
 #include "config.h"
 #include "colors.h"
 #include "glm.h"
@@ -24,6 +22,10 @@ int main() {
     auto game = EM::new_entity(
             WindowC{"Foogle", screen_width, screen_height},
             ClockC{1.0/60});
+
+    auto player = EM::new_entity( CameraC{} );
+    CameraC &cam = EM::get_component<CameraC>(player);
+    cam.transform = translate(0, .5, 0);
 
     WindowC &root_window = EM::get_component<WindowC>(game);
     WindowSystem windowing(root_window);
@@ -57,11 +59,6 @@ int main() {
         EM::new_entity( LightC{{.4, .1, .1}, { 2, .5, -2.4f}} ),
         EM::new_entity( LightC{{.1, .4, .1}, {-2, .5, -2.4f}} )};
 
-    // setup camera
-    std::list<Entity*> entities;
-    Camera camera(invisible, vec3(0, 0.5f, 0));
-    entities.push_back(&camera);
-
     while (EM::has_components<WindowC>(game)) {
         windowing.run();
 
@@ -79,19 +76,8 @@ int main() {
         EM::get_component<LightC>(bulb[2]).position = pos3;
 
         //window.control(camera);
-
-        for(auto entity : entities)
-            entity->updateShader(specular); //just for camera at this point
-
         lighting.run();
-
-        // draw entities
-        glUseProgram(specular);
-
-        for(auto entity : entities)
-            entity->draw();
-
-        rendering.run();
+        rendering.run(cam, specular);
 
         glfwSwapBuffers(root_window.gl_window);
     }
