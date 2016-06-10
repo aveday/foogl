@@ -1,28 +1,24 @@
-#include <cstdio>
-#include <list>
+#include <iostream>
 #include <math.h>
 
 #define EM_MAX_ENTS 10000
 #include "EntityManager.h"
-
 #include "AssetLoader.h"
-#include "cube.h"
 
 #include "Component.h"
 #include "WindowSystem.h"
 #include "LightSystem.h"
 #include "RenderSystem.h"
 
-#include "config.h"
 #include "colors.h"
 #include "glm.h"
+#include "cube.h"
 
 int main() {
 
     auto game = EM::new_entity( Window{"Foogle"}, Clock{1.0/60});
     auto player = EM::new_entity( Camera{}, Transform(translate(0, .5, 0)));
 
-    Camera &cam = EM::get_component<Camera>(player);
     Window &root_window = EM::get_component<Window>(game);
 
     WindowSystem windowing(root_window);

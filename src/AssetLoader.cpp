@@ -1,9 +1,7 @@
-#include <cstdio>
 #include <iostream>
 #include <GL/glew.h>
-#include <glm/gtc/type_ptr.hpp>
-#include "glm.h"
 #include "AssetLoader.h"
+#include "glm.h"
 
 std::unordered_map<std::string, GLuint> AssetLoader::program_cache;
 std::unordered_map<MeshDef*, Mesh> AssetLoader::mesh_cache;
