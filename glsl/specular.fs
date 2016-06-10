@@ -1,6 +1,7 @@
 #version 330
 #extension GL_ARB_explicit_uniform_location : require
 
+layout(location = 2) uniform vec4 fragColor;
 layout(location = 3) uniform vec3 cameraPosition;
 
 float materialShininess = 80;
@@ -23,7 +24,6 @@ layout (std140) uniform LIGHTS
 
 in vec3 fragPosition;
 in vec3 fragNormal;
-in vec4 fragColor;
 
 out vec4 finalColor;
 
