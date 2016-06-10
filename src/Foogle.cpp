@@ -26,8 +26,7 @@ int main() {
     LightSystem lighting;
     RenderSystem rendering;
 
-    GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
-    glUseProgram(specular);
+    glUseProgram( AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs") );
 
     // load meshes
     Mesh cube = AL::LoadMesh(cube_def);
