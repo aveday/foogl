@@ -1,5 +1,6 @@
 #version 330
 #extension GL_ARB_explicit_uniform_location : require
+#extension GL_ARB_shading_language_420pack : require
 
 layout(location = 2) uniform vec4 fragColor;
 layout(location = 3) uniform vec3 cameraPosition;
@@ -16,7 +17,7 @@ struct Light
     float ambientCoefficient;
 };
 
-layout (std140) uniform LIGHTS
+layout (binding = 0, std140) uniform LIGHTS
 {
     int num_lights;
     Light lights[MAX_LIGHTS];

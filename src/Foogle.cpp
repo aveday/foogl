@@ -19,38 +19,37 @@
 
 int main() {
 
-    auto game = EM::new_entity(
-            Window{"Foogle", screen_width, screen_height},
-            Clock{1.0/60});
+    auto game = EM::new_entity( Window{"Foogle"}, Clock{1.0/60});
+    auto player = EM::new_entity( Camera{}, Transform(translate(0, .5, 0)));
 
-    auto player = EM::new_entity( Camera{} );
     Camera &cam = EM::get_component<Camera>(player);
-    cam.transform = translate(0, .5, 0);
-
     Window &root_window = EM::get_component<Window>(game);
+
     WindowSystem windowing(root_window);
-
-    GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
-    LightSystem lighting(specular); //FIXME for multiple shader support
-
+    LightSystem lighting;
     RenderSystem rendering;
 
+    GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
+    glUseProgram(specular);
+
     // load meshes
-    Mesh invisible;
     Mesh cube = AL::LoadMesh(cube_def);
 
     // create walls
-    EM::new_entity(Model{&cube, white, translate(0,0,0)    * scale(5,.2,5)});
-    EM::new_entity(Model{&cube, blue,  translate(2.6,.6,0) * scale(.2,1,5)});
-    EM::new_entity(Model{&cube, green, translate(0,.6,-2.6)* scale(5,1,.2)});
+    EM::new_entity( Model{&cube, white},
+                    Transform{translate(0.0, 0.0, 0.0)*scale(5.0, 0.2, 5.0)});
+    EM::new_entity( Model{&cube, blue},
+                    Transform{translate(2.6, 0.6, 0.0)*scale(0.2, 1.0, 5.0)});
+    EM::new_entity( Model{&cube, green},
+                    Transform{translate(0.0, 0.6,-2.6)*scale(5.0, 1.0, 0.2)});
 
     // create ring of red blocks
-    int blocks = 16;
+    int blocks = 20;
     float radius = 2;
     mat4 transform = translate(0, .2, radius) * scale(.3, .2, .3);
     for(int i = 0; i < blocks; ++i) {
         transform = rotate(0, 2*M_PI/blocks, 0) * transform;
-        EM::new_entity( Model{&cube, darkRed, transform} );
+        EM::new_entity( Model{&cube, darkRed}, Transform{transform} );
     }
 
     // create lights
@@ -77,7 +76,7 @@ int main() {
 
         //window.control(camera);
         lighting.run();
-        rendering.run(cam, specular);
+        rendering.run(player);
 
         glfwSwapBuffers(root_window.gl_window);
     }

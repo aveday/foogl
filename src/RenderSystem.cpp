@@ -1,29 +1,37 @@
+#include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 #include "EntityManager.h"
 #include "RenderSystem.h"
 
-void RenderSystem::run(Camera &camera, GLuint shader)
+void RenderSystem::run(int viewer)
 {
-    glUseProgram(shader);
-    // update the camera position uniform
-    vec3 position(camera.transform[3]);//XXX not sure about this
-    glUniform3fv(UNIFORM_CAMERA_POSITION, 1, glm::value_ptr(position));
+    if (!EM::has_components<Camera>(viewer)) {
+        std::cerr << "RenderSystem viewer needs Camera component\n";
+        exit(EXIT_FAILURE);
+    }
+    Camera &camera = EM::get_component<Camera>(viewer);
+    Transform &transform = EM::get_component<Transform>(viewer);
 
-    // calculate and set the camera matrix
-    mat4 camera_matrix = camera.projection * glm::inverse(camera.transform);
-    glUniformMatrix4fv(UNIFORM_CAMERA_MATRIX, 1, 0, glm::value_ptr(camera_matrix));
+    // update the camera position uniform
+    vec3 position(transform[3]);//XXX not sure about this
+    glUniform3fv(UNIFORM_VIEW_POSITION, 1, glm::value_ptr(position));
+
+    // calculate and set the view matrix
+    mat4 view_matrix = camera.projection * glm::inverse(transform);
+    glUniformMatrix4fv(UNIFORM_VIEW_MATRIX, 1, 0, glm::value_ptr(view_matrix));
 
     for(int e = 0; e < EM::end(); e++) {
         if (!EM::has_components<Model>(e))
             continue;
 
         Model &model = EM::get_component<Model>(e);
+        Transform &transform = EM::get_component<Transform>(e);
 
         if (model.mesh->vertices_n == 0)
             continue;
 
         // update uniform shader inputs
-        glUniformMatrix4fv(UNIFORM_MODEL, 1, 0, glm::value_ptr(model.transform));
+        glUniformMatrix4fv(UNIFORM_MODEL, 1, 0, glm::value_ptr(transform));
         glUniform4fv(UNIFORM_COLOR, 1, glm::value_ptr(model.color));
 
         // bind vertex array and draw vertices
