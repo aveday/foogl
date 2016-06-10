@@ -34,10 +34,8 @@ struct CameraC {
     float aspect = 4.0/3.0f; //FIXME
     float near = 0.1f;
     float far = 1000.0f;
-    mat4 projection = mat4();
-    mat4 modelMatrix = mat4();
-    mat4 cameraMatrix = mat4();
-    vec3 position = vec3();
+    mat4 projection = glm::perspective<GLfloat>(fov, aspect, near, far);
+    mat4 transform = mat4();
 };
 
 struct ModelC {
