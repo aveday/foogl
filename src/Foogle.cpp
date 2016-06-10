@@ -80,10 +80,6 @@ int main() {
 
         //window.control(camera);
 
-        // simulate world
-        for(auto entity : entities)
-            entity->update(clock.dt);
-
         for(auto entity : entities)
             entity->updateShader(specular); //just for camera at this point
 
