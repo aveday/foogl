@@ -2,15 +2,6 @@
 #include <GL/glew.h>
 #include "glm.h"
 
-struct Vertex {
-    vec3 position;
-    vec3 normal;
-    vec4 color;
-    Vertex() { }
-    Vertex(vec3 p, vec3 n, vec4 c):
-        position(p), normal(n), color(c) {}
-};
-
 struct MeshDef {
     const int vertices_n;
     const vec3 *positions;
