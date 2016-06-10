@@ -9,8 +9,8 @@ typedef glm::mat4 Transform;
 
 struct Window {
     const char* title;
-    int width = 640;
-    int height = 480;
+    int width = 1024;
+    int height = 768;
     bool fullscreen = false;
     bool resizable = false;
     GLFWwindow* gl_window = nullptr;
@@ -35,12 +35,10 @@ struct Camera {
     float near = 0.1f;
     float far = 1000.0f;
     mat4 projection = glm::perspective<GLfloat>(fov, aspect, near, far);
-    mat4 transform = mat4();
 };
 
 struct Model {
     Mesh *mesh;
     vec4 color = vec4(1);
-    mat4 transform = mat4();
 };
 
