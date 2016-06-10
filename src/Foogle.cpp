@@ -5,7 +5,7 @@
 #include "EntityManager.h"
 #include "AssetLoader.h"
 
-#include "Component.h"
+#include "components.h"
 #include "WindowSystem.h"
 #include "LightSystem.h"
 #include "RenderSystem.h"
