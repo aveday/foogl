@@ -20,6 +20,7 @@ int main() {
     auto player = EM::new_entity( Camera{}, Transform(translate(0, .5, 0)));
 
     Window &root_window = EM::get_component<Window>(game);
+    Clock &clock = EM::get_component<Clock>(game);
 
     WindowSystem windowing(root_window);
     LightSystem lighting;
@@ -54,14 +55,9 @@ int main() {
         EM::new_entity( Light{{.4, .1, .1}, { 2, .5, -2.4f}} ),
         EM::new_entity( Light{{.1, .4, .1}, {-2, .5, -2.4f}} )};
 
-    while (EM::has_components<Window>(game)) {
-        windowing.run();
-
-        Clock &clock = EM::get_component<Clock>(game);
-        
+    while (root_window.gl_window) {
         float radius = 2;
         float radians = fmodf(clock.time, (2*M_PI));
-
         vec3 pos1(0, .5, 0);
         vec3 pos2(cos(radians) * radius, 0.5f, sin(radians) * radius);
         vec3 pos3(-cos(radians) * radius, 0.5f, sin(radians) * radius);
@@ -73,8 +69,7 @@ int main() {
         //window.control(camera);
         lighting.run();
         rendering.run(player);
-
-        glfwSwapBuffers(root_window.gl_window);
+        windowing.run(root_window, clock);
     }
     return 0;
 }

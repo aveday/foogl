@@ -47,45 +47,35 @@ void WindowSystem::MakeWindow(Window &window)
     glfwSetInputMode(window.gl_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
-void WindowSystem::run()
+void WindowSystem::run(Window &window, Clock &clock)
 {
-    // process each entity which fits the system mask
-    for(int e = 0; e < EM::end(); e++) {
-        if ( !EM::has_components<Window, Clock>(e) )
-            continue;
+    glfwSwapBuffers(window.gl_window);
 
-        auto &window = EM::get_component<Window>(e);
-        auto &clock = EM::get_component<Clock>(e);
+    //TODO check resize
 
-        //TODO check resize
+    if (!window.gl_window)
+        MakeWindow(window);
+    else
+        glfwMakeContextCurrent(window.gl_window);
 
-        //FIXME this might not belong here
-        if (!window.gl_window)
-            MakeWindow(window);
-        else
-            glfwMakeContextCurrent(window.gl_window);
+    // Manage time
+    float excess_seconds = clock.time - glfwGetTime() + clock.min;
+    if (excess_seconds > 0) {
+        int ms = 1000 * excess_seconds;
+        std::this_thread::sleep_for( std::chrono::milliseconds(ms) );
+    }
+    float newTime = glfwGetTime();
+    clock.dt = newTime - clock.time;
+    clock.time = newTime;
 
-        // Manage time
-        float excess_seconds = clock.time - glfwGetTime() + clock.min;
-        if (excess_seconds > 0) {
-            int ms = 1000 * excess_seconds;
-            std::this_thread::sleep_for( std::chrono::milliseconds(ms) );
-        }
-        float newTime = glfwGetTime();
-        clock.dt = newTime - clock.time;
-        clock.time = newTime;
+    glfwPollEvents();
+    Clear();
 
-        glfwPollEvents();
-        Clear();
-
-        if(glfwWindowShouldClose(window.gl_window))
-        {
-            glfwDestroyWindow(window.gl_window);
-            glfwTerminate();
-            EM::remove_component<Window>(e);
-        }
-
-        break;//FIXME when adding multi-window support
+    if(glfwWindowShouldClose(window.gl_window))
+    {
+        glfwDestroyWindow(window.gl_window);
+        glfwTerminate();
+        window.gl_window = nullptr;
     }
 }
 

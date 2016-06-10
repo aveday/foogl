@@ -5,7 +5,7 @@
 class WindowSystem {
 public:
     WindowSystem(Window &root_window);
-    void run();
+    void run(Window &window, Clock &clock);
     void Display();
 
     void MakeWindow(Window &window);
