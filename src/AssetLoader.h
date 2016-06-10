@@ -6,12 +6,14 @@
 #include <string>
 #include <unordered_map>
 #include "glm.h"
+#include "Mesh.h"
 
 
 typedef class AssetLoader {
 public:
     template <typename A> static inline int add_asset(A asset);
     static GLuint LoadProgram(const char* vs, const char* fs);
+    static Mesh& LoadMesh(MeshDef &def);
 
 private:
     //static const int max_assets;
@@ -20,8 +22,8 @@ private:
     template <typename A>
     static std::vector<A> asset_vector; 
 
-    static std::unordered_map<std::string, GLuint>
-        program_cache;
+    static std::unordered_map<std::string, GLuint> program_cache;
+    static std::unordered_map<MeshDef*, Mesh> mesh_cache;
 
 } AL;
 
