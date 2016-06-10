@@ -2,7 +2,7 @@
 #include <thread>
 #include "WindowSystem.h"
 
-WindowSystem::WindowSystem(WindowC &root_window)
+WindowSystem::WindowSystem(Window &root_window)
 {
     // initialize GLFW and set window options
     glfwInit();
@@ -31,7 +31,7 @@ void WindowSystem::KeyPress(GLFWwindow* gl_window,
     else if(action == GLFW_RELEASE) { switch(key) { } }
 }
 
-void WindowSystem::MakeWindow(WindowC &window)
+void WindowSystem::MakeWindow(Window &window)
 {
     glfwWindowHint(GLFW_RESIZABLE, window.resizable);
 
@@ -49,11 +49,11 @@ void WindowSystem::run()
 {
     // process each entity which fits the system mask
     for(int e = 0; e < EM::end(); e++) {
-        if ( !EM::has_components<WindowC, ClockC>(e) )
+        if ( !EM::has_components<Window, Clock>(e) )
             continue;
 
-        auto &window = EM::get_component<WindowC>(e);
-        auto &clock = EM::get_component<ClockC>(e);
+        auto &window = EM::get_component<Window>(e);
+        auto &clock = EM::get_component<Clock>(e);
 
         //TODO check resize
 
@@ -80,14 +80,14 @@ void WindowSystem::run()
         {
             glfwDestroyWindow(window.gl_window);
             glfwTerminate();
-            EM::remove_component<WindowC>(e);
+            EM::remove_component<Window>(e);
         }
 
         break;//FIXME when adding multi-window support
     }
 }
 
-bool WindowSystem::HasResized(WindowC &window)
+bool WindowSystem::HasResized(Window &window)
 {
     // get size of OpenGL window
     int new_width, new_height;
@@ -114,10 +114,10 @@ void WindowSystem::Clear()
 void WindowSystem::Display()
 {
     for(int e = 0; e < EM::end(); e++) {
-        if ( !EM::has_components<WindowC, ClockC>(e) )
+        if ( !EM::has_components<Window, Clock>(e) )
             continue;
 
-        auto &window = EM::get_component<WindowC>(e);
+        auto &window = EM::get_component<Window>(e);
 
         // swap buffers
         glfwSwapBuffers(window.gl_window);

@@ -20,10 +20,10 @@ void LightSystem::run()
 {
     int count = 0;
     for(int e = 0; e < EM::end(); e++) {
-        if ( !EM::has_components<LightC>(e) )
+        if ( !EM::has_components<Light>(e) )
             continue;
 
-        auto &light = EM::get_component<LightC>(e);
+        auto &light = EM::get_component<Light>(e);
         // std140 offsets need some tlc
         glBindBuffer(GL_UNIFORM_BUFFER, ubo);
         glBufferSubData(GL_UNIFORM_BUFFER, 16+count*32,    12, glm::value_ptr(light.position));

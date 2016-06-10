@@ -20,14 +20,14 @@
 int main() {
 
     auto game = EM::new_entity(
-            WindowC{"Foogle", screen_width, screen_height},
-            ClockC{1.0/60});
+            Window{"Foogle", screen_width, screen_height},
+            Clock{1.0/60});
 
-    auto player = EM::new_entity( CameraC{} );
-    CameraC &cam = EM::get_component<CameraC>(player);
+    auto player = EM::new_entity( Camera{} );
+    Camera &cam = EM::get_component<Camera>(player);
     cam.transform = translate(0, .5, 0);
 
-    WindowC &root_window = EM::get_component<WindowC>(game);
+    Window &root_window = EM::get_component<Window>(game);
     WindowSystem windowing(root_window);
 
     GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
@@ -40,9 +40,9 @@ int main() {
     Mesh &cube = AL::LoadMesh(cube_def);
 
     // create walls
-    EM::new_entity(ModelC{&cube, white, translate(0,0,0)    * scale(5,.2,5)});
-    EM::new_entity(ModelC{&cube, blue,  translate(2.6,.6,0) * scale(.2,1,5)});
-    EM::new_entity(ModelC{&cube, green, translate(0,.6,-2.6)* scale(5,1,.2)});
+    EM::new_entity(Model{&cube, white, translate(0,0,0)    * scale(5,.2,5)});
+    EM::new_entity(Model{&cube, blue,  translate(2.6,.6,0) * scale(.2,1,5)});
+    EM::new_entity(Model{&cube, green, translate(0,.6,-2.6)* scale(5,1,.2)});
 
     // create ring of red blocks
     int blocks = 16;
@@ -50,19 +50,19 @@ int main() {
     mat4 transform = translate(0, .2, radius) * scale(.3, .2, .3);
     for(int i = 0; i < blocks; ++i) {
         transform = rotate(0, 2*M_PI/blocks, 0) * transform;
-        EM::new_entity( ModelC{&cube, darkRed, transform} );
+        EM::new_entity( Model{&cube, darkRed, transform} );
     }
 
     // create lights
     int bulb[] = {
-        EM::new_entity( LightC{{.1, .1, .1}, { 0, .5, -2.4f}} ),
-        EM::new_entity( LightC{{.4, .1, .1}, { 2, .5, -2.4f}} ),
-        EM::new_entity( LightC{{.1, .4, .1}, {-2, .5, -2.4f}} )};
+        EM::new_entity( Light{{.1, .1, .1}, { 0, .5, -2.4f}} ),
+        EM::new_entity( Light{{.4, .1, .1}, { 2, .5, -2.4f}} ),
+        EM::new_entity( Light{{.1, .4, .1}, {-2, .5, -2.4f}} )};
 
-    while (EM::has_components<WindowC>(game)) {
+    while (EM::has_components<Window>(game)) {
         windowing.run();
 
-        ClockC &clock = EM::get_component<ClockC>(game);
+        Clock &clock = EM::get_component<Clock>(game);
         
         float radius = 2;
         float radians = fmodf(clock.time, (2*M_PI));
@@ -71,9 +71,9 @@ int main() {
         vec3 pos2(cos(radians) * radius, 0.5f, sin(radians) * radius);
         vec3 pos3(-cos(radians) * radius, 0.5f, sin(radians) * radius);
 
-        EM::get_component<LightC>(bulb[0]).position = pos1;
-        EM::get_component<LightC>(bulb[1]).position = pos2;
-        EM::get_component<LightC>(bulb[2]).position = pos3;
+        EM::get_component<Light>(bulb[0]).position = pos1;
+        EM::get_component<Light>(bulb[1]).position = pos2;
+        EM::get_component<Light>(bulb[2]).position = pos3;
 
         //window.control(camera);
         lighting.run();
