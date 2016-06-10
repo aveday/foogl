@@ -3,6 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "glm.h"
+#include "Mesh.h"
 
 typedef glm::mat4 Transform;
 
@@ -40,15 +41,8 @@ struct CameraC {
 };
 
 struct ModelC {
-    const char* vs;
-    const char* fs;
-    void (*gen)(ModelC&);
+    Mesh *mesh;
+    vec4 color = vec4(1);
     mat4 transform = mat4();
-
-    vec3 color = vec3(1);
-    GLuint program = 0;
-    GLuint vao = 0;
-    GLuint vbo = 0;
-    int num_vertices = 0;
 };
 

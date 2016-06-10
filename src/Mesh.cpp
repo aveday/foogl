@@ -3,7 +3,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "Mesh.h"
-#include "glm.h"
 
 void Mesh::draw(mat4 &modelMatrix, vec4 color)
 {
