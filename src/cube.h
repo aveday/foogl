@@ -1,4 +1,4 @@
-#include "Asset.h"
+#include "assets.h"
 
 vec3 cube_positions[]{
     {-0.5, -0.5, -0.5}, {-0.5, -0.5,  0.5},
