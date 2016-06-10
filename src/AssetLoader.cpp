@@ -8,15 +8,12 @@
 std::unordered_map<std::string, GLuint> AssetLoader::program_cache;
 std::unordered_map<MeshDef*, Mesh> AssetLoader::mesh_cache;
 
-template <typename C> std::vector<C> AssetLoader::asset_vector;
-
 /* Load and compile a shader given a shader type and filename */
 GLuint AssetLoader::LoadShader(GLenum type, const char *filename)
 {
     // open the shader source
     FILE *f = fopen(filename, "r");
-    if (!f)
-    {
+    if (!f) {
         std::cerr << "Unable to open " << filename << " for reading";
         return 0;
     }
@@ -39,8 +36,7 @@ GLuint AssetLoader::LoadShader(GLenum type, const char *filename)
     // check the shader
     GLint shader_ok;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &shader_ok);
-    if (!shader_ok)
-    {
+    if (!shader_ok) {
         GLint log_length;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &log_length);
         char *log = (char*)malloc(log_length);
@@ -88,12 +84,38 @@ GLuint AssetLoader::LoadProgram(const char* vs, const char* fs)
     return program;
 }
 
-Mesh& AssetLoader::LoadMesh(MeshDef &def)
+Mesh AssetLoader::LoadMesh(MeshDef &def)
 {
-    if (!mesh_cache.count(&def))
-        mesh_cache[&def] = Mesh(def);
+    if (mesh_cache.count(&def))
+        return mesh_cache[&def];
 
-    return mesh_cache[&def];
+    mesh_cache[&def] = Mesh{def.vertices_n};
+    Mesh &mesh = mesh_cache[&def];
+
+    struct { vec3 position, normal; } vertices[mesh.vertices_n];
+    for(int i = 0; i < mesh.vertices_n; i++)
+        vertices[i] = { def.positions[def.indices[i]], def.normals[i/6] };
+
+    // create and bind the vertex buffer
+    glGenBuffers(1, &mesh.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+
+    // create and bind the vertex array
+    glGenVertexArrays(1, &mesh.vao);
+    glBindVertexArray(mesh.vao);
+
+    // setup vertex buffers
+    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 24, (void*)0);
+    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 24, (void*)12);
+
+    glEnableVertexAttribArray(INPUT_POSITION);
+    glEnableVertexAttribArray(INPUT_NORMAL);
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    return mesh;
 }
 
 
