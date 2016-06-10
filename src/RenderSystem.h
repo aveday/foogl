@@ -4,7 +4,7 @@
 
 class RenderSystem {
 public:
-    void run(CameraC&, GLuint shader);
+    void run(Camera&, GLuint shader);
 
 private:
     static const GLuint UNIFORM_MODEL = 1;

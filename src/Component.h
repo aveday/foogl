@@ -7,7 +7,7 @@
 
 typedef glm::mat4 Transform;
 
-struct WindowC {
+struct Window {
     const char* title;
     int width = 640;
     int height = 480;
@@ -16,20 +16,20 @@ struct WindowC {
     GLFWwindow* gl_window = nullptr;
 };
 
-struct ClockC {
+struct Clock {
     float min;
     float start_time = (float)glfwGetTime(); //FIXME
     float time = 0;
     float dt = 0;
 };
 
-struct LightC {
+struct Light {
     vec3 intensity;
     vec3 position;
     //TODO add attenuation and ambient coefficient
 };
 
-struct CameraC {
+struct Camera {
     float fov = 45;
     float aspect = 4.0/3.0f; //FIXME
     float near = 0.1f;
@@ -38,7 +38,7 @@ struct CameraC {
     mat4 transform = mat4();
 };
 
-struct ModelC {
+struct Model {
     Mesh *mesh;
     vec4 color = vec4(1);
     mat4 transform = mat4();

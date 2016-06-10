@@ -8,14 +8,14 @@
 
 class WindowSystem {
 public:
-    WindowSystem(WindowC &root_window);
+    WindowSystem(Window &root_window);
     void run();
     void Display();
 
-    void MakeWindow(WindowC &window);
+    void MakeWindow(Window &window);
 private:
     void Clear();
-    bool HasResized(WindowC &window);
+    bool HasResized(Window &window);
     static void KeyPress(
             GLFWwindow* gl_window,
             int key, int scancode, int action, int mods);
