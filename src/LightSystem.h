@@ -1,7 +1,5 @@
 #pragma once
-
-#include "EntityManager.h"
-#include "Component.h"
+#include <GL/glew.h>
 
 class LightSystem {
 public:

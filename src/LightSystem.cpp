@@ -1,5 +1,7 @@
 #include <glm/gtc/type_ptr.hpp>
+#include "EntityManager.h"
 #include "LightSystem.h"
+#include "Component.h"
 
 LightSystem::LightSystem()
 {
