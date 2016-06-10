@@ -2,7 +2,7 @@
 #include "EntityManager.h"
 #include "RenderSystem.h"
 
-void RenderSystem::run(CameraC &camera, GLuint shader)
+void RenderSystem::run(Camera &camera, GLuint shader)
 {
     glUseProgram(shader);
     // update the camera position uniform
@@ -14,10 +14,10 @@ void RenderSystem::run(CameraC &camera, GLuint shader)
     glUniformMatrix4fv(UNIFORM_CAMERA_MATRIX, 1, 0, glm::value_ptr(camera_matrix));
 
     for(int e = 0; e < EM::end(); e++) {
-        if (!EM::has_components<ModelC>(e))
+        if (!EM::has_components<Model>(e))
             continue;
 
-        ModelC &model = EM::get_component<ModelC>(e);
+        Model &model = EM::get_component<Model>(e);
 
         if (model.mesh->vertices_n == 0)
             continue;
