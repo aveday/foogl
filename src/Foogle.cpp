@@ -11,6 +11,7 @@
 #include "Component.h"
 #include "WindowSystem.h"
 #include "LightSystem.h"
+#include "RenderSystem.h"
 
 #include "Camera.h"
 #include "Entity.h"
@@ -18,10 +19,8 @@
 #include "colors.h"
 #include "glm.h"
 
-/* MAIN FUNCTION */
 int main() {
 
-    //Window window("Foogle", screen_width, screen_height, FULLSCREEN, RESIZABLE);
     auto game = EM::new_entity(
             WindowC{"Foogle", screen_width, screen_height},
             ClockC{1.0/60});
@@ -30,41 +29,39 @@ int main() {
     WindowSystem windowing(root_window);
 
     GLuint specular = AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs");
-    LightSystem lighting(specular);
+    LightSystem lighting(specular); //FIXME for multiple shader support
+
+    RenderSystem rendering;
 
     // load meshes
     Mesh invisible;
     Mesh &cube = AL::LoadMesh(cube_def);
 
-    // create and populate the entity list
-    std::list<Entity*> entities;
+    // create walls
+    EM::new_entity(ModelC{&cube, white, translate(0,0,0)    * scale(5,.2,5)});
+    EM::new_entity(ModelC{&cube, blue,  translate(2.6,.6,0) * scale(.2,1,5)});
+    EM::new_entity(ModelC{&cube, green, translate(0,.6,-2.6)* scale(5,1,.2)});
 
-    /*                            MODEL POSITION        SCALE         COLOR */
-    entities.push_back(new Entity(cube, vec3(0, 0,  0), vec3(5,0.2,5),vec4(.5f)));
-    entities.push_back(new Entity(cube, vec3(2.6,.6,0), vec3(0.2,1,5),blue));
-    entities.push_back(new Entity(cube, vec3(0,.6,-2.6),vec3(5,1,0.2),green));
-
-    int n = 16;
-    for(int i=0; i<n; i++)
-    {
-        float degrees = 360.0f * i / n;
-        float radians = 6.28f * i / n;
-        float radius = 2;
-        vec3 pos(cos(radians) * radius, 0.2f, sin(radians) * radius);
-        entities.push_back(new Entity(cube, pos, vec3(.3,.2,.3), darkRed));
-        entities.back()->rotate(0, -degrees, 0);
+    // create ring of red blocks
+    int blocks = 16;
+    float radius = 2;
+    mat4 transform = translate(0, .2, radius) * scale(.3, .2, .3);
+    for(int i = 0; i < blocks; ++i) {
+        transform = rotate(0, 2*M_PI/blocks, 0) * transform;
+        EM::new_entity( ModelC{&cube, darkRed, transform} );
     }
 
-    // setup lighting
-    auto bulb1 = EM::new_entity( LightC{{.1, .1, .1}, { 0, .5, -2.4f}} );
-    auto bulb2 = EM::new_entity( LightC{{.4, .1, .1}, { 2, .5, -2.4f}} );
-    auto bulb3 = EM::new_entity( LightC{{.1, .4, .1}, {-2, .5, -2.4f}} );
+    // create lights
+    int bulb[] = {
+        EM::new_entity( LightC{{.1, .1, .1}, { 0, .5, -2.4f}} ),
+        EM::new_entity( LightC{{.4, .1, .1}, { 2, .5, -2.4f}} ),
+        EM::new_entity( LightC{{.1, .4, .1}, {-2, .5, -2.4f}} )};
 
+    // setup camera
+    std::list<Entity*> entities;
     Camera camera(invisible, vec3(0, 0.5f, 0));
-
     entities.push_back(&camera);
 
-    /* MAIN EVENT LOOP*/
     while (EM::has_components<WindowC>(game)) {
         windowing.run();
 
@@ -77,9 +74,9 @@ int main() {
         vec3 pos2(cos(radians) * radius, 0.5f, sin(radians) * radius);
         vec3 pos3(-cos(radians) * radius, 0.5f, sin(radians) * radius);
 
-        EM::get_component<LightC>(bulb1).position = pos1;
-        EM::get_component<LightC>(bulb2).position = pos2;
-        EM::get_component<LightC>(bulb3).position = pos3;
+        EM::get_component<LightC>(bulb[0]).position = pos1;
+        EM::get_component<LightC>(bulb[1]).position = pos2;
+        EM::get_component<LightC>(bulb[2]).position = pos3;
 
         //window.control(camera);
 
@@ -94,8 +91,11 @@ int main() {
 
         // draw entities
         glUseProgram(specular);
+
         for(auto entity : entities)
             entity->draw();
+
+        rendering.run();
 
         glfwSwapBuffers(root_window.gl_window);
     }
