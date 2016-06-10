@@ -5,7 +5,7 @@
 
 class LightSystem {
 public:
-    LightSystem(GLuint shader);
+    LightSystem();
     void run();
 
 private:
@@ -15,5 +15,7 @@ private:
 
     float attenuation = 0.2f;
     float ambientCoefficient = 0.005f;
+
+    static const GLuint UNIFORM_BINDING = 0;
 };
 
