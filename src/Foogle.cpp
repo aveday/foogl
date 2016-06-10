@@ -37,7 +37,7 @@ int main() {
 
     // load meshes
     Mesh invisible;
-    Mesh &cube = AL::LoadMesh(cube_def);
+    Mesh cube = AL::LoadMesh(cube_def);
 
     // create walls
     EM::new_entity(Model{&cube, white, translate(0,0,0)    * scale(5,.2,5)});
