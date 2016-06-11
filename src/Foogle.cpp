@@ -10,6 +10,7 @@
 #include "RenderSystem.h"
 #include "WindowSystem.h"
 #include "ControlSystem.h"
+#include "MovementSystem.h"
 
 #include "colors.h"
 #include "glm.h"
@@ -30,6 +31,7 @@ int main() {
     ControlSystem control(root_window);
     LightSystem lighting;
     RenderSystem rendering;
+    MovementSystem movement;
 
     glUseProgram( AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs") );
 
@@ -75,6 +77,7 @@ int main() {
         rendering.run(player);
         windowing.run(root_window, clock);
         control.run(player);
+        movement.run(clock.dt);
     }
     return 0;
 }
