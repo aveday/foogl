@@ -60,11 +60,12 @@ int main() {
     int bulb[] = {
         EM::new_entity( Light{{.1, .1, .1}}, Body{.position={0, .5, 0}} ),
         EM::new_entity( Light{{.4, .1, .1}}, Body{} ),
-        EM::new_entity( Light{{.1, .4, .1}}, Body{} )};
+        EM::new_entity( Light{{.1, .1, .4}}, Body{} )};
 
     while (root_window.gl_window) {
         vec3 pos{0, .5, 2};
         float angle = fmodf(clock.time, (2*M_PI));
+        EM::get_component<Body>(bulb[0]).position.y = .5*sin(4*clock.time)+1;
         EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
         EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
 
