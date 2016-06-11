@@ -6,14 +6,11 @@
 void MovementSystem::run(float dt)
 {
     for(int e = 0; e < EM::end(); e++) {
-        if (!EM::has_components<Velocity>(e))
+        if (!EM::has_components<Body>(e))
             continue;
 
-        Velocity &velocity = EM::get_component<Velocity>(e);
-        Transform &transform = EM::get_component<Transform>(e);
-
-        vec3 position(transform[3]);
-
-        transform = glm::translate(dt * velocity) * transform;
+        Body &body = EM::get_component<Body>(e);
+        body.position += dt * glm::rotateY(body.velocity, body.rotation.y);
+        body.transform = get_transform(body.position,body.scale,body.rotation);
     }
 }
