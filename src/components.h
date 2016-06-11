@@ -5,6 +5,7 @@
 #include "assets.h"
 
 typedef glm::mat4 Transform;
+typedef glm::vec3 Velocity;
 
 struct Window {
     const char* title;
@@ -39,5 +40,10 @@ struct Camera {
 struct Model {
     Mesh *mesh;
     vec4 color = vec4(1);
+};
+
+struct Controller {
+    float speed = 1.0f;
+    float mouse_sensitivity = 0.05f;
 };
 

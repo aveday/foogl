@@ -68,7 +68,6 @@ void WindowSystem::run(Window &window, Clock &clock)
     clock.dt = newTime - clock.time;
     clock.time = newTime;
 
-    glfwPollEvents();
     Clear();
 
     if(glfwWindowShouldClose(window.gl_window))
