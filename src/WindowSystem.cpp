@@ -19,8 +19,6 @@ WindowSystem::WindowSystem(Window &root_window)
     glewExperimental = GL_TRUE;
     GLenum err = glewInit();
     if (err != GLEW_OK) std::cerr << glewGetErrorString(err);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
 }
 
 void WindowSystem::MakeWindow(Window &window)

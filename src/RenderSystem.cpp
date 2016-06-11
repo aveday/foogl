@@ -4,6 +4,13 @@
 #include "RenderSystem.h"
 #include "components.h"
 
+RenderSystem::RenderSystem()
+{
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+    glEnable(GL_CULL_FACE);
+}
+
 void RenderSystem::run(int viewer)
 {
     if (!EM::has_components<Camera>(viewer)) {
