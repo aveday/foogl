@@ -23,16 +23,6 @@ WindowSystem::WindowSystem(Window &root_window)
     glDepthFunc(GL_LEQUAL);
 }
 
-void WindowSystem::KeyPress(GLFWwindow* gl_window,
-        int key, int scancode, int action, int mods)
-{
-    if(key == GLFW_KEY_ESCAPE)
-        glfwSetWindowShouldClose(gl_window, GL_TRUE);
-
-    if(action == GLFW_PRESS) { switch(key) { } }
-    else if(action == GLFW_RELEASE) { switch(key) { } }
-}
-
 void WindowSystem::MakeWindow(Window &window)
 {
     glfwWindowHint(GLFW_RESIZABLE, window.resizable);
@@ -43,8 +33,6 @@ void WindowSystem::MakeWindow(Window &window)
             window.fullscreen ? glfwGetPrimaryMonitor() : NULL, NULL);
 
     glfwMakeContextCurrent(window.gl_window);
-    glfwSetKeyCallback(window.gl_window, KeyPress);
-    glfwSetInputMode(window.gl_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 void WindowSystem::run(Window &window, Clock &clock)

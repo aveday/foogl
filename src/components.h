@@ -6,6 +6,9 @@
 
 typedef glm::mat4 Transform;
 typedef glm::vec3 Velocity;
+typedef glm::vec3 Position;
+typedef glm::vec3 Rotation;
+typedef glm::vec3 Scale;
 
 struct Window {
     const char* title;
@@ -44,6 +47,6 @@ struct Model {
 
 struct Controller {
     float speed = 1.0f;
-    float mouse_sensitivity = 0.05f;
+    float mouse_sensitivity = 0.002f;
 };
 
