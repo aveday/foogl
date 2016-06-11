@@ -5,8 +5,8 @@ class ControlSystem {
 public:
     ControlSystem(Window &window);
     void run(int target);
-    static void KeyPress(GLFWwindow* gl_window,
-            int key, int scancode, int action, int mods);
+    static void KeyPress(GLFWwindow* gl_window, int key, int, int action, int);
+    static void MouseMove(GLFWwindow* gl_window, double xpos, double ypos);
 
 private:
     static int target;
