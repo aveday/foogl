@@ -9,9 +9,7 @@ struct Body {
     vec3 scale = vec3(1);
     vec3 velocity = vec3(0);
     vec3 rotation = vec3(0);
-    mat4 transform = glm::translate(position)
-                   * glm::yawPitchRoll(rotation.y, rotation.x, rotation.z)
-                   * glm::scale(scale);
+    mat4 transform = get_transform(position, scale, rotation);
 };
 
 struct Window {
