@@ -1,6 +1,9 @@
 #pragma once
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 using glm::vec2;
 using glm::vec3;
@@ -26,7 +29,7 @@ inline mat4 rotate(float x, float y, float z)
     return transform;
 }
 
-inline vec3 getNormal(vec3 v[3])
+inline vec3 get_normal(vec3 v[3])
 {
     vec3 j = v[1] - v[0];
     vec3 k = v[2] - v[0];
@@ -36,3 +39,9 @@ inline vec3 getNormal(vec3 v[3])
         k.x * j.y - k.y * j.x) );
 }
 
+inline mat4 get_transform(vec3 position, vec3 scale, vec3 rotation)
+{
+    return glm::translate(position)
+         * glm::yawPitchRoll(rotation.y, rotation.x, rotation.z)
+         * glm::scale(scale);
+}
