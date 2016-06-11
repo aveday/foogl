@@ -6,9 +6,10 @@
 #include "AssetLoader.h"
 
 #include "components.h"
-#include "WindowSystem.h"
 #include "LightSystem.h"
 #include "RenderSystem.h"
+#include "WindowSystem.h"
+#include "ControlSystem.h"
 
 #include "colors.h"
 #include "glm.h"
@@ -17,12 +18,16 @@
 int main() {
 
     auto game = EM::new_entity( Window{"Foogle"}, Clock{1.0/60});
-    auto player = EM::new_entity( Camera{}, Transform(translate(0, .5, 0)));
+
+    auto player = EM::new_entity(
+            Velocity{}, Controller{}, Camera{},
+            Transform(translate(0, .5, 0)));
 
     Window &root_window = EM::get_component<Window>(game);
     Clock &clock = EM::get_component<Clock>(game);
 
     WindowSystem windowing(root_window);
+    ControlSystem control(root_window);
     LightSystem lighting;
     RenderSystem rendering;
 
@@ -69,6 +74,7 @@ int main() {
         lighting.run();
         rendering.run(player);
         windowing.run(root_window, clock);
+        control.run(player);
     }
     return 0;
 }
