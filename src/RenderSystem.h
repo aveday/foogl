@@ -3,6 +3,7 @@
 
 class RenderSystem {
 public:
+    RenderSystem();
     void run(int viewer);
 
 private:
