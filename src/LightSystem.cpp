@@ -20,15 +20,16 @@ void LightSystem::run()
 {
     int count = 0;
     for(int e = 0; e < EM::end(); e++) {
-        if ( !EM::has_components<Light>(e) )
+        if ( !EM::has_components<Light, Body>(e) )
             continue;
 
-        auto &light = EM::get_component<Light>(e);
+        auto &position = EM::get_component<Body>(e).position;
+        auto &intensity = EM::get_component<Light>(e).intensity;
         int offset = 16 + (count++) * 32;
         glBindBuffer(GL_UNIFORM_BUFFER, ubo); // FIXME std140 offsets need some tlc
-        glBufferSubData(GL_UNIFORM_BUFFER, offset,    12, glm::value_ptr(light.position));
+        glBufferSubData(GL_UNIFORM_BUFFER, offset,    12, glm::value_ptr(position));
         glBufferSubData(GL_UNIFORM_BUFFER, offset+12, 4,  &attenuation);
-        glBufferSubData(GL_UNIFORM_BUFFER, offset+16, 12, glm::value_ptr(light.intensity));
+        glBufferSubData(GL_UNIFORM_BUFFER, offset+16, 12, glm::value_ptr(intensity));
         glBufferSubData(GL_UNIFORM_BUFFER, offset+28, 4,  &ambientCoefficient);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
