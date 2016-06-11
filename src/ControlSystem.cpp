@@ -16,7 +16,7 @@ ControlSystem::ControlSystem(Window &window)
 
 void ControlSystem::run(int target)
 {
-    if (!EM::has_components<Controller>(target)) {
+    if (!EM::has_components<Body, Controller>(target)) {
         std::cerr << "ControlSystem target needs Controller component\n";
         exit(EXIT_FAILURE);
     }
@@ -28,26 +28,25 @@ void ControlSystem::KeyPress(GLFWwindow* gl_window,
         int key, int scancode, int action, int mods)
 {
     Controller &controller = EM::get_component<Controller>(target);
-    Velocity &velocity = EM::get_component<Velocity>(target);
-    Transform &transform = EM::get_component<Transform>(target);
+    Body &body = EM::get_component<Body>(target);
 
     if (key == GLFW_KEY_ESCAPE)
         glfwSetWindowShouldClose(gl_window, GL_TRUE);
 
     if (action == GLFW_PRESS) {
         switch(key) {
-        case GLFW_KEY_W: velocity.z += controller.speed; break;
-        case GLFW_KEY_A: velocity.x -= controller.speed; break;
-        case GLFW_KEY_S: velocity.z -= controller.speed; break;
-        case GLFW_KEY_D: velocity.x += controller.speed; break;
+            case GLFW_KEY_W: body.velocity.z -= controller.speed; break;
+            case GLFW_KEY_A: body.velocity.x -= controller.speed; break;
+            case GLFW_KEY_S: body.velocity.z += controller.speed; break;
+            case GLFW_KEY_D: body.velocity.x += controller.speed; break;
         default: break;
         }
     } else if (action == GLFW_RELEASE) {
         switch(key) {
-        case GLFW_KEY_W: velocity.z -= controller.speed; break;
-        case GLFW_KEY_A: velocity.x += controller.speed; break;
-        case GLFW_KEY_S: velocity.z += controller.speed; break;
-        case GLFW_KEY_D: velocity.x -= controller.speed; break;
+            case GLFW_KEY_W: body.velocity.z += controller.speed; break;
+            case GLFW_KEY_A: body.velocity.x += controller.speed; break;
+            case GLFW_KEY_S: body.velocity.z -= controller.speed; break;
+            case GLFW_KEY_D: body.velocity.x -= controller.speed; break;
         default: break;
         }
     }
@@ -56,11 +55,17 @@ void ControlSystem::KeyPress(GLFWwindow* gl_window,
 void ControlSystem::MouseMove(GLFWwindow* gl_window, double xpos, double ypos)
 {
     Controller &controller = EM::get_component<Controller>(target);
-    Transform &transform = EM::get_component<Transform>(target);
+    Body &body = EM::get_component<Body>(target);
 
-    double xcenter= 1024/2, ycenter= 768/2; //FIXME
-    double dx = xpos - xcenter;
-    double dy = ypos - ycenter;
+    double xcenter = 1024/2, ycenter = 768/2; //FIXME
+    float x_rotation = controller.mouse_sensitivity * (ycenter - ypos);
+    float y_rotation = controller.mouse_sensitivity * (xcenter - xpos);
+
+    body.rotation.y = fmodf(body.rotation.y + y_rotation, 2*M_PI);
+    body.rotation.x = glm::clamp(body.rotation.x + x_rotation,
+            -(float)M_PI_2, (float)M_PI_2);
+
+    body.transform = get_transform(body.position, body.scale, body.rotation);
 
     glfwSetCursorPos(gl_window, xcenter, ycenter);
 }

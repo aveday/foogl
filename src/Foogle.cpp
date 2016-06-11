@@ -21,8 +21,8 @@ int main() {
     auto game = EM::new_entity( Window{"Foogle"}, Clock{1.0/60});
 
     auto player = EM::new_entity(
-            Velocity{}, Controller{}, Camera{},
-            Transform(translate(0, .5, 0)));
+            Controller{}, Camera{},
+            Body{.position={0, .5, 0}});
 
     Window &root_window = EM::get_component<Window>(game);
     Clock &clock = EM::get_component<Clock>(game);
@@ -40,19 +40,20 @@ int main() {
 
     // create walls
     EM::new_entity( Model{&cube, white},
-                    Transform{translate(0.0, 0.0, 0.0)*scale(5.0, 0.2, 5.0)});
+                    Body{.position={0.0, 0.0, 0.0}, .scale={5.0, 0.2, 5.0}});
     EM::new_entity( Model{&cube, blue},
-                    Transform{translate(2.6, 0.6, 0.0)*scale(0.2, 1.0, 5.0)});
+                    Body{.position={2.6, 0.6, 0.0}, .scale={0.2, 1.0, 5.0}});
     EM::new_entity( Model{&cube, green},
-                    Transform{translate(0.0, 0.6,-2.6)*scale(5.0, 1.0, 0.2)});
+                    Body{.position={0.0, 0.6,-2.6}, .scale={5.0, 1.0, 0.2}});
 
     // create ring of red blocks
     int blocks = 20;
     float radius = 2;
-    mat4 transform = translate(0, .2, radius) * scale(.3, .2, .3);
+    Body body{.position={0, .2, radius}, .scale={.3, .2, .3}};
     for(int i = 0; i < blocks; ++i) {
-        transform = rotate(0, 2*M_PI/blocks, 0) * transform;
-        EM::new_entity( Model{&cube, darkRed}, Transform{transform} );
+        body.position = glm::rotateY(body.position, 2*(float)M_PI/blocks);
+        body.rotation.y += 2*(float)M_PI/blocks;
+        EM::new_entity( Model{&cube, darkRed}, body);
     }
 
     // create lights
