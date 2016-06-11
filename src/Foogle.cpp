@@ -58,22 +58,16 @@ int main() {
 
     // create lights
     int bulb[] = {
-        EM::new_entity( Light{{.1, .1, .1}, { 0, .5, -2.4f}} ),
-        EM::new_entity( Light{{.4, .1, .1}, { 2, .5, -2.4f}} ),
-        EM::new_entity( Light{{.1, .4, .1}, {-2, .5, -2.4f}} )};
+        EM::new_entity( Light{{.1, .1, .1}}, Body{.position={0, .5, 0}} ),
+        EM::new_entity( Light{{.4, .1, .1}}, Body{} ),
+        EM::new_entity( Light{{.1, .4, .1}}, Body{} )};
 
     while (root_window.gl_window) {
-        float radius = 2;
-        float radians = fmodf(clock.time, (2*M_PI));
-        vec3 pos1(0, .5, 0);
-        vec3 pos2(cos(radians) * radius, 0.5f, sin(radians) * radius);
-        vec3 pos3(-cos(radians) * radius, 0.5f, sin(radians) * radius);
+        vec3 pos{0, .5, 2};
+        float angle = fmodf(clock.time, (2*M_PI));
+        EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
+        EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
 
-        EM::get_component<Light>(bulb[0]).position = pos1;
-        EM::get_component<Light>(bulb[1]).position = pos2;
-        EM::get_component<Light>(bulb[2]).position = pos3;
-
-        //window.control(camera);
         lighting.run();
         rendering.run(player);
         windowing.run(root_window, clock);
