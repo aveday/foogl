@@ -30,7 +30,6 @@ struct Clock {
 
 struct Light {
     vec3 intensity;
-    vec3 position;
     //TODO add attenuation and ambient coefficient
 };
 
