@@ -23,7 +23,7 @@ struct Window {
 
 struct Clock {
     float min;
-    float start_time = (float)glfwGetTime(); //FIXME
+    float start_time = glfwGetTime();
     float time = 0;
     float dt = 0;
 };
