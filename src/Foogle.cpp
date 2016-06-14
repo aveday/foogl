@@ -1,6 +1,3 @@
-#include <iostream>
-#include <math.h>
-
 #define EM_MAX_ENTS 10000
 #include "EntityManager.h"
 #include "AssetLoader.h"
@@ -22,7 +19,7 @@ int main() {
 
     auto player = EM::new_entity(
             Controller{}, Camera{},
-            Body{.position={0, .5, 0}});
+            Body{{-3, .5, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
     Window &root_window = EM::get_component<Window>(game);
     Clock &clock = EM::get_component<Clock>(game);
@@ -39,35 +36,43 @@ int main() {
     Mesh cube = AL::LoadMesh(cube_def);
 
     // create walls
-    EM::new_entity( Model{&cube, white},
-                    Body{.position={0.0, 0.0, 0.0}, .scale={5.0, 0.2, 5.0}});
-    EM::new_entity( Model{&cube, blue},
-                    Body{.position={2.6, 0.6, 0.0}, .scale={0.2, 1.0, 5.0}});
-    EM::new_entity( Model{&cube, green},
-                    Body{.position={0.0, 0.6,-2.6}, .scale={5.0, 1.0, 0.2}});
+    EM::new_entity( Model{&cube, white}, Body{{0,-1, 0}, { 6, 2, 6}});
+    EM::new_entity( Model{&cube, blue},  Body{{3, 2, 0}, {.1, 4, 6}});
+    EM::new_entity( Model{&cube, green}, Body{{0, 2, 3}, { 6, 4,.1}});
 
-    // create ring of red blocks
-    int blocks = 20;
+    // create ring of n_blocks
+    int n_blocks = 16, blocks[n_blocks];
     float radius = 2;
-    Body body{.position={0, .2, radius}, .scale={.3, .2, .3}};
-    for(int i = 0; i < blocks; ++i) {
-        body.position = glm::rotateY(body.position, 2*(float)M_PI/blocks);
-        body.rotation.y += 2*(float)M_PI/blocks;
-        EM::new_entity( Model{&cube, darkRed}, body);
+    Body body{{0, .2, radius}, {.3, .6, .1}};
+    for(int i = 0; i < n_blocks; ++i) {
+        body.position = glm::rotateY(body.position, 2*(float)M_PI/n_blocks);
+        body.rotation.y += 2*(float)M_PI/n_blocks;
+        blocks[i] = EM::new_entity( Model{&cube, {.1,0,.1,1}}, body);
     }
 
     // create lights
+    Body light_body{vec3(), vec3(.02)};
     int bulb[] = {
-        EM::new_entity( Light{{.1, .1, .1}}, Body{.position={0, .5, 0}} ),
-        EM::new_entity( Light{{.4, .1, .1}}, Body{} ),
-        EM::new_entity( Light{{.1, .1, .4}}, Body{} )};
+        EM::new_entity( Model{&cube, white}, Light{{.1, .1, .1}}, light_body),
+        EM::new_entity( Model{&cube, red},   Light{{.8, .1, .1}}, light_body),
+        EM::new_entity( Model{&cube, blue},  Light{{.1, .1, .8}}, light_body),
+    };
 
     while (root_window.gl_window) {
-        vec3 pos{0, .5, 2};
+        vec3 pos{0, .5, 1};
         float angle = fmodf(clock.time, (2*M_PI));
         EM::get_component<Body>(bulb[0]).position.y = .5*sin(4*clock.time)+1;
         EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
         EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
+
+        vec3 ppos = EM::get_component<Body>(player).position;
+        for(int i = 0; i < n_blocks; ++i) {
+            Body &b = EM::get_component<Body>(blocks[i]);
+            b.position = glm::rotateY(b.position, clock.dt*0.05f);
+            b.position.y = 1+.3 * sin(8*M_PI*i/n_blocks + clock.time);
+            b.rotation.y = fmodf(clock.time/4 + i, 2*M_PI);
+            b.rotation.z = 4*atan((ppos.z-b.position.z)/(ppos.x-b.position.x));
+        }
 
         lighting.run();
         rendering.run(player);
