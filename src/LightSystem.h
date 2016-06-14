@@ -7,6 +7,8 @@ public:
     void run();
 
 private:
+    inline void update_count(int n);
+
     const int MAX_LIGHTS = 10;
     int num_lights = 0;
     GLuint ubo;
