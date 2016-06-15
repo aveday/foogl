@@ -34,8 +34,8 @@ struct Light {
 };
 
 struct Camera {
+    float aspect;
     float fov = 45;
-    float aspect = 4.0/3.0f; //FIXME
     float near = 0.1f;
     float far = 1000.0f;
     mat4 projection = glm::perspective<GLfloat>(fov, aspect, near, far);

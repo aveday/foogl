@@ -5,6 +5,7 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
@@ -44,4 +45,18 @@ inline mat4 get_transform(vec3 position, vec3 scale, vec3 rotation)
     return glm::translate(position)
          * glm::yawPitchRoll(rotation.y, rotation.x, rotation.z)
          * glm::scale(scale);
+}
+
+inline void set_transform(mat4 &transform,
+        const vec3 &position, const vec3 &scale, const vec3 &rotation)
+{
+    transform = glm::translate(position)
+         * glm::yawPitchRoll(rotation.y, rotation.x, rotation.z)
+         * glm::scale(scale);
+}
+
+inline void euler_normalise(vec3 &rotation)
+{
+    rotation.y = glm::mod(rotation.y, 2*(float)M_PI);
+    rotation.x = glm::clamp(rotation.x, -(float)M_PI, (float)M_PI);
 }

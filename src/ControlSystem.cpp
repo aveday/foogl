@@ -4,14 +4,20 @@
 #include "glm.h"
 
 int ControlSystem::target;
+int ControlSystem::center_x;
+int ControlSystem::center_y;
 
 ControlSystem::ControlSystem(Window &window)
 {
     glfwSetInputMode(window.gl_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-
     glfwSetKeyCallback(window.gl_window, KeyPress);
     glfwSetCursorPosCallback(window.gl_window, MouseMove);
     //glfwSetMouseButtonCallback(window.gl_window, MousePress);
+
+    int width, height;
+    glfwGetWindowSize(window.gl_window, &width, &height);
+    center_x = width/2;
+    center_y = height/2;
 }
 
 void ControlSystem::run(int target)
@@ -57,16 +63,12 @@ void ControlSystem::MouseMove(GLFWwindow* gl_window, double xpos, double ypos)
     Controller &controller = EM::get_component<Controller>(target);
     Body &body = EM::get_component<Body>(target);
 
-    double xcenter = 1024/2, ycenter = 768/2; //FIXME
-    float x_rotation = controller.mouse_sensitivity * (ycenter - ypos);
-    float y_rotation = controller.mouse_sensitivity * (xcenter - xpos);
+    body.rotation += vec3{center_y - ypos, center_x - xpos, 0}
+                   * controller.mouse_sensitivity;
+        
+    euler_normalise(body.rotation);
+    set_transform(body.transform, body.position, body.scale, body.rotation);
 
-    body.rotation.y = fmodf(body.rotation.y + y_rotation, 2*M_PI);
-    body.rotation.x = glm::clamp(body.rotation.x + x_rotation,
-            -(float)M_PI_2, (float)M_PI_2);
-
-    body.transform = get_transform(body.position, body.scale, body.rotation);
-
-    glfwSetCursorPos(gl_window, xcenter, ycenter);
+    glfwSetCursorPos(gl_window, center_x, center_y);
 }
 
