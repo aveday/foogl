@@ -13,12 +13,18 @@
 #include "glm.h"
 #include "cube.h"
 
+static const int window_width = 1280;
+static const int window_height = 800;
+
 int main() {
 
-    auto game = EM::new_entity( Window{"Foogle"}, Clock{1.0/60});
+    auto game = EM::new_entity(
+            Window{"Foogle", window_width, window_height},
+            Clock{1.0/60});
 
     auto player = EM::new_entity(
-            Controller{}, Camera{},
+            Controller{},
+            Camera{(float)window_width/window_height},
             Body{{-3, .5, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
     Window &root_window = EM::get_component<Window>(game);
