@@ -3,8 +3,7 @@
 
 class ControlSystem {
 public:
-    ControlSystem(Window &window);
-    void run(int target);
+    void run();
 
 private:
     static void KeyPress(GLFWwindow* gl_window, int key, int, int action, int);

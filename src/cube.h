@@ -13,4 +13,5 @@ vec3 cube_normals[]{
     { 1, 0, 0},    { 0, 0, 1},    { 0,-1, 0}};
 
 MeshDef cube_def = { 36, cube_positions, cube_indices, cube_normals };
+MeshDef *CUBE = &cube_def;
 

@@ -3,8 +3,9 @@
 #include "components.h"
 #include "glm.h"
 
-void MovementSystem::run(float dt)
+void MovementSystem::run()
 {
+    float dt = EM::first_component<Clock>().dt;
     for(int e = 0; e < EM::end(); e++) {
         if (!EM::has_components<Body>(e))
             continue;

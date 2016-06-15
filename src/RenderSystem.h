@@ -3,8 +3,7 @@
 
 class RenderSystem {
 public:
-    RenderSystem();
-    void run(int viewer);
+    void run();
 
 private:
     static const GLuint UNIFORM_MODEL = 1;
