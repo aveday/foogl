@@ -14,18 +14,19 @@ struct Body {
 
 struct Window {
     const char* title;
-    int width = 1024;
-    int height = 768;
+    int width = 1280;
+    int height = 800;
     bool fullscreen = false;
     bool resizable = false;
     GLFWwindow* gl_window = nullptr;
 };
 
 struct Clock {
-    float min;
+    float min = 0.016;
     float start_time = glfwGetTime();
     float time = 0;
     float dt = 0;
+    bool running = true;
 };
 
 struct Light {
@@ -34,7 +35,7 @@ struct Light {
 };
 
 struct Camera {
-    float aspect;
+    float aspect = 16.0f/10.0f;
     float fov = 45;
     float near = 0.1f;
     float far = 1000.0f;
@@ -42,8 +43,9 @@ struct Camera {
 };
 
 struct Model {
-    Mesh *mesh;
+    MeshDef *def;
     vec4 color = vec4(1);
+    Mesh mesh = {0,0,0};
 };
 
 struct Controller {

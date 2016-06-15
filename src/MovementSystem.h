@@ -2,7 +2,6 @@
 
 class MovementSystem {
 public:
-    void run(float dt);
-private:
+    void run();
 };
 
