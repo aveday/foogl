@@ -34,6 +34,23 @@ public:
     static inline void add_component(int entity, C c, Cs... cs);
 
     template <typename C>
+    static inline C& first_component() {
+        for(int e = 0; e < end_id; e++)
+            if (has_components<C>(e))
+                return component_vector<C>[e];
+        std::cerr << "Failed to get first component";
+        exit(EXIT_FAILURE);
+    }
+
+    template <typename... Cs>
+    static inline int first_entity() {
+        for(int e = 0; e < end_id; e++)
+            if (has_components<Cs...>(e))
+                return e;
+        return -1;
+    }
+
+    template <typename C>
     static inline C& get_component(int e) {
         if(!has_components<C>(e)) {
             std::cerr << "Failed to get component from entity " << e;

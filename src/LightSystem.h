@@ -3,7 +3,6 @@
 
 class LightSystem {
 public:
-    LightSystem();
     void run();
 
 private:

@@ -13,78 +13,61 @@
 #include "glm.h"
 #include "cube.h"
 
-static const int window_width = 1280;
-static const int window_height = 800;
+WindowSystem    windowing;
+ControlSystem   control;
+LightSystem     lighting;
+RenderSystem    rendering;
+MovementSystem  movement;
 
 int main() {
-
-    auto game = EM::new_entity(
-            Window{"Foogle", window_width, window_height},
-            Clock{1.0/60});
-
-    auto player = EM::new_entity(
-            Controller{},
-            Camera{(float)window_width/window_height},
+    EM::new_entity( Window{"Foogle"}, Clock{});
+    EM::new_entity( Controller{}, Camera{},
             Body{{-3, .5, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
-    Window &root_window = EM::get_component<Window>(game);
-    Clock &clock = EM::get_component<Clock>(game);
-
-    WindowSystem windowing(root_window);
-    ControlSystem control(root_window);
-    LightSystem lighting;
-    RenderSystem rendering;
-    MovementSystem movement;
-
-    glUseProgram( AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs") );
-
-    // load meshes
-    Mesh cube = AL::LoadMesh(cube_def);
-
     // create walls
-    EM::new_entity( Model{&cube, white}, Body{{0,-1, 0}, { 6, 2, 6}});
-    EM::new_entity( Model{&cube, blue},  Body{{3, 2, 0}, {.1, 4, 6}});
-    EM::new_entity( Model{&cube, green}, Body{{0, 2, 3}, { 6, 4,.1}});
+    EM::new_entity( Model{CUBE, white}, Body{{0,-1, 0}, { 6, 2, 6}} );
+    EM::new_entity( Model{CUBE, blue},  Body{{3, 2, 0}, {.1, 4, 6}} );
+    EM::new_entity( Model{CUBE, green}, Body{{0, 2, 3}, { 6, 4,.1}} );
 
     // create ring of n_blocks
     int n_blocks = 16, blocks[n_blocks];
-    float radius = 2;
+    float radius = 2, div = 2 * (float)M_PI / n_blocks;
     Body body{{0, .2, radius}, {.3, .6, .1}};
     for(int i = 0; i < n_blocks; ++i) {
-        body.position = glm::rotateY(body.position, 2*(float)M_PI/n_blocks);
-        body.rotation.y += 2*(float)M_PI/n_blocks;
-        blocks[i] = EM::new_entity( Model{&cube, {.1,0,.1,1}}, body);
+        body.position = glm::rotateY(body.position, div);
+        body.rotation.y += div;
+        blocks[i] = EM::new_entity( Model{CUBE, {.1,0,.1,1}}, body);
     }
 
     // create lights
     Body light_body{vec3(), vec3(.02)};
     int bulb[] = {
-        EM::new_entity( Model{&cube, white}, Light{{.1, .1, .1}}, light_body),
-        EM::new_entity( Model{&cube, red},   Light{{.8, .1, .1}}, light_body),
-        EM::new_entity( Model{&cube, blue},  Light{{.1, .1, .8}}, light_body),
+        EM::new_entity( Model{CUBE, white}, Light{{.1, .1, .1}}, light_body),
+        EM::new_entity( Model{CUBE, red},   Light{{.8, .1, .1}}, light_body),
+        EM::new_entity( Model{CUBE, blue},  Light{{.1, .1, .8}}, light_body),
     };
 
-    while (root_window.gl_window) {
+    Clock &clock = EM::first_component<Clock>();
+
+    while (clock.running) {
         vec3 pos{0, .5, 1};
-        float angle = fmodf(clock.time, (2*M_PI));
+        float angle = fmodf(clock.time, 2*M_PI);
         EM::get_component<Body>(bulb[0]).position.y = .5*sin(4*clock.time)+1;
         EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
         EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
 
-        vec3 ppos = EM::get_component<Body>(player).position;
         for(int i = 0; i < n_blocks; ++i) {
             Body &b = EM::get_component<Body>(blocks[i]);
-            b.position = glm::rotateY(b.position, clock.dt*0.05f);
-            b.position.y = 1+.3 * sin(8*M_PI*i/n_blocks + clock.time);
+            b.position = glm::rotateY(b.position, clock.dt/20);
+            b.position.y = 1 + 0.2f * sin(8*M_PI*i/n_blocks + clock.time);
             b.rotation.y = fmodf(clock.time/4 + i, 2*M_PI);
-            b.rotation.z = 4*atan((ppos.z-b.position.z)/(ppos.x-b.position.x));
         }
 
+        windowing.run();
+        control.run();
+        movement.run();
         lighting.run();
-        rendering.run(player);
-        windowing.run(root_window, clock);
-        control.run(player);
-        movement.run(clock.dt);
+        rendering.run();
     }
     return 0;
 }
