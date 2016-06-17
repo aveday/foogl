@@ -90,10 +90,6 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     mesh_cache[&def] = Mesh{def.vertices_n};
     Mesh &mesh = mesh_cache[&def];
 
-    struct { vec3 position, normal; } vertices[mesh.vertices_n];
-    for(int i = 0; i < mesh.vertices_n; i++)
-        vertices[i] = { def.positions[def.indices[i]], def.normals[i/6] };
-
     // create and bind the vertex buffer
     glGenBuffers(1, &mesh.vbo);
     glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
@@ -102,14 +98,21 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     glGenVertexArrays(1, &mesh.vao);
     glBindVertexArray(mesh.vao);
 
-    // setup vertex buffers
+    // define vertex buffer layout
     glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 24, (void*)0);
-    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 24, (void*)12);
-
     glEnableVertexAttribArray(INPUT_POSITION);
+    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 24, (void*)12);
     glEnableVertexAttribArray(INPUT_NORMAL);
 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    // buffer vertices
+    vec3* vertices = new vec3[2*mesh.vertices_n];
+    for(int i = 0; i < mesh.vertices_n; i++) {
+        vertices[2*i] = def.positions[def.indices[i]];
+        vertices[2*i+1] = def.normals[i/6];
+    }
+    int size = 2*mesh.vertices_n*sizeof(vec3);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+    delete [] vertices;
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
