@@ -1,9 +1,14 @@
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #include <iostream>
 #include <GL/glew.h>
 #include "AssetLoader.h"
 #include "glm.h"
 
 std::unordered_map<std::string, GLuint> AssetLoader::program_cache;
+std::unordered_map<std::string, Texture> AssetLoader::texture_cache;
 std::unordered_map<MeshDef*, Mesh> AssetLoader::mesh_cache;
 
 /* Load and compile a shader given a shader type and filename */
@@ -119,4 +124,19 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     return mesh;
 }
 
+Texture AssetLoader::LoadTexture(std::string file)
+{
+    // check if texture has been cached
+    if (texture_cache.count(file))
+        return texture_cache[file];
 
+    // load and check the image file with stb_image
+    int width, height, channels;
+    uint8_t* pixels = stbi_load(file.c_str(), &width, &height, &channels, 0);
+    if(!pixels) throw std::runtime_error(stbi_failure_reason());
+
+    // cache and return the new texture
+    Texture texture{width, height, channels, pixels};
+    texture_cache[file] = texture;
+    return texture;
+}
