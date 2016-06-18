@@ -20,3 +20,9 @@ struct ShaderDef {
     std::string fs_filename;
 };
 
+struct Texture {
+    int width;
+    int height;
+    int channels;
+    uint8_t* pixels;
+};
