@@ -13,6 +13,7 @@ void RenderSystem::run()
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_CULL_FACE);
+        glEnable(GL_TEXTURE_2D);
         glUseProgram(AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs"));
     }
 
@@ -38,12 +39,18 @@ void RenderSystem::run()
         Model &model = EM::get_component<Model>(e);
         Body &body = EM::get_component<Body>(e);
 
-        if (model.mesh.vertices_n == 0)
+        if (!model.mesh.vertices_n)
             model.mesh = AL::LoadMesh(*model.def);
+        if (!model.texture)
+            model.texture = AL::LoadTexture(model.texture_file);
+
+        // bind the texture and set uniform
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, model.texture);
+        glUniform1i(UNIFORM_TEXTURE, 0);
 
         // update uniform shader inputs
         glUniformMatrix4fv(UNIFORM_MODEL,1,0,glm::value_ptr(body.transform));
-        glUniform4fv(UNIFORM_COLOR, 1, glm::value_ptr(model.color));
 
         // bind vertex array and draw vertices
         glBindVertexArray(model.mesh.vao);
