@@ -13,15 +13,17 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
+Model crate = {CUBE, "crate.jpg"};
+
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
     EM::new_entity( Controller{}, Camera{},
             Body{{-3, .5, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
     // create walls
-    EM::new_entity( Model{CUBE, white}, Body{{0,-1, 0}, { 6, 2, 6}} );
-    EM::new_entity( Model{CUBE, blue},  Body{{3, 2, 0}, {.1, 4, 6}} );
-    EM::new_entity( Model{CUBE, green}, Body{{0, 2, 3}, { 6, 4,.1}} );
+    EM::new_entity( crate, Body{{0,-1, 0}, { 6, 2, 6}} );
+    EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
+    EM::new_entity( crate, Body{{0, 2, 3}, { 6, 4,.1}} );
 
     // create ring of n_blocks
     int n_blocks = 16, blocks[n_blocks];
@@ -30,15 +32,15 @@ int main() {
     for(int i = 0; i < n_blocks; ++i) {
         body.position = glm::rotateY(body.position, div);
         body.rotation.y += div;
-        blocks[i] = EM::new_entity( Model{CUBE, {.1,0,.1,1}}, body);
+        blocks[i] = EM::new_entity(crate, body);
     }
 
     // create lights
     Body light_body{vec3(), vec3(.02)};
     int bulb[] = {
-        EM::new_entity( Model{CUBE, white}, Light{{.1, .1, .1}}, light_body),
-        EM::new_entity( Model{CUBE, red},   Light{{.8, .1, .1}}, light_body),
-        EM::new_entity( Model{CUBE, blue},  Light{{.1, .1, .8}}, light_body),
+        EM::new_entity( crate, Light{{.1, .1, .1}}, light_body ),
+        EM::new_entity( crate, Light{{.8, .1, .1}}, light_body ),
+        EM::new_entity( crate, Light{{.1, .1, .8}}, light_body ),
     };
 
     Clock &clock = EM::first_component<Clock>();
