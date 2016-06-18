@@ -8,7 +8,7 @@
 #include "glm.h"
 
 std::unordered_map<std::string, GLuint> AssetLoader::program_cache;
-std::unordered_map<std::string, Texture> AssetLoader::texture_cache;
+std::unordered_map<std::string, GLuint> AssetLoader::texture_cache;
 std::unordered_map<MeshDef*, Mesh> AssetLoader::mesh_cache;
 
 /* Load and compile a shader given a shader type and filename */
@@ -104,18 +104,35 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     glBindVertexArray(mesh.vao);
 
     // define vertex buffer layout
-    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 24, (void*)0);
+    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 32, (void*)0);
+    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 32, (void*)12);
+    glVertexAttribPointer(INPUT_TEXCOORD, 2, GL_FLOAT, 0, 32, (void*)24);
     glEnableVertexAttribArray(INPUT_POSITION);
-    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 24, (void*)12);
     glEnableVertexAttribArray(INPUT_NORMAL);
+    glEnableVertexAttribArray(INPUT_TEXCOORD);
 
-    // buffer vertices
-    vec3* vertices = new vec3[2*mesh.vertices_n];
+    struct Vertex { vec3 position, normal; vec2 tex_coord; };
+    Vertex *vertices = new Vertex[mesh.vertices_n];
+
+    // set vertex positions and normals
     for(int i = 0; i < mesh.vertices_n; i++) {
-        vertices[2*i] = def.positions[def.indices[i]];
-        vertices[2*i+1] = def.normals[i/6];
+        vertices[i].position = def.positions[def.indices[i]];
+        vertices[i].normal = def.normals[i/6];
     }
-    int size = 2*mesh.vertices_n*sizeof(vec3);
+
+    // calculate texture coordinate by rotating to z-plane
+    for(int i = 0; i < mesh.vertices_n; i+=3) {
+        float angle = glm::angle(vertices[i].normal, {0,0,1});
+        vec3 normal = glm::cross(vertices[i].normal, {0,0,1});
+        if(normal == vec3(0)) normal = {1,0,0};
+        for (int n = 0; n < 3; n++) {
+            vec3 tpos = glm::rotate(vertices[i+n].position, angle, normal);
+            vertices[i+n].tex_coord = { tpos.x + 0.5, tpos.y + 0.5 };
+        }
+    }
+
+    // buffer vertex data
+    int size = sizeof(Vertex) * mesh.vertices_n;
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     delete [] vertices;
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -124,8 +141,10 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     return mesh;
 }
 
-Texture AssetLoader::LoadTexture(std::string file)
+GLuint AssetLoader::LoadTexture(std::string filename)
 {
+    std::string file = ASSET_DIR + filename;
+
     // check if texture has been cached
     if (texture_cache.count(file))
         return texture_cache[file];
@@ -135,8 +154,22 @@ Texture AssetLoader::LoadTexture(std::string file)
     uint8_t* pixels = stbi_load(file.c_str(), &width, &height, &channels, 0);
     if(!pixels) throw std::runtime_error(stbi_failure_reason());
 
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+                 GL_UNSIGNED_BYTE, pixels);
+
+    stbi_image_free(pixels);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     // cache and return the new texture
-    Texture texture{width, height, channels, pixels};
     texture_cache[file] = texture;
     return texture;
 }
+

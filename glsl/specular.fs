@@ -2,7 +2,7 @@
 #extension GL_ARB_explicit_uniform_location : require
 #extension GL_ARB_shading_language_420pack : require
 
-layout(location = 2) uniform vec4 fragColor;
+layout(location = 2) uniform sampler2D tex;
 layout(location = 3) uniform vec3 cameraPosition;
 
 float materialShininess = 80;
@@ -23,8 +23,10 @@ layout (binding = 0, std140) uniform LIGHTS
     Light lights[MAX_LIGHTS];
 };
 
+
 in vec3 fragPosition;
 in vec3 fragNormal;
+in vec2 fragTexCoord;
 
 out vec4 finalColor;
 
@@ -58,11 +60,12 @@ void main()
 
     //combine color from all the lights
     vec3 linearColor = vec3(0);
+    vec3 texColor = texture(tex, fragTexCoord).rgb;
     for(int i = 0; i < num_lights; ++i){
-        linearColor += ApplyLight(lights[i], fragColor.rgb, fragNormal, fragPosition, surfaceToCamera);
+        linearColor += ApplyLight(lights[i], texColor, fragNormal, fragPosition, surfaceToCamera);
     }
     
     //final color (after gamma correction)
     vec3 gamma = vec3(1.0/2.2);
-    finalColor = vec4(pow(linearColor, gamma),fragColor.a);
+    finalColor = vec4(pow(linearColor, gamma), 1);
 }

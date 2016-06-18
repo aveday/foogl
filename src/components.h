@@ -44,8 +44,9 @@ struct Camera {
 
 struct Model {
     MeshDef *def;
-    vec4 color = vec4(1);
+    std::string texture_file;
     Mesh mesh = {0,0,0};
+    GLuint texture = 0;
 };
 
 struct Controller {
