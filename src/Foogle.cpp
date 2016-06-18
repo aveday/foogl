@@ -1,14 +1,8 @@
 #define EM_MAX_ENTS 10000
 #include "EntityManager.h"
 #include "AssetLoader.h"
-
 #include "components.h"
-#include "LightSystem.h"
-#include "RenderSystem.h"
-#include "WindowSystem.h"
-#include "ControlSystem.h"
-#include "MovementSystem.h"
-
+#include "core_systems.h"
 #include "colors.h"
 #include "glm.h"
 #include "cube.h"

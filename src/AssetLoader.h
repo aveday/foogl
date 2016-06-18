@@ -1,4 +1,5 @@
 #pragma once
+
 #include <GL/glew.h>
 #include <vector>
 #include <string>
@@ -12,11 +13,13 @@ public:
     template <typename A> static inline int add_asset(A asset);
     static GLuint LoadProgram(const char* vs, const char* fs);
     static Mesh LoadMesh(MeshDef &def);
+    static Texture LoadTexture(std::string filename);
 
 private:
     static GLuint LoadShader(GLenum type, const char *filename);
 
     static std::unordered_map<std::string, GLuint> program_cache;
+    static std::unordered_map<std::string, Texture> texture_cache;
     static std::unordered_map<MeshDef*, Mesh> mesh_cache;
 
     static const GLuint INPUT_POSITION = 0;
