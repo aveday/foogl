@@ -1,3 +1,4 @@
+#pragma once
 #include "assets.h"
 
 vec3 cube_positions[]{
