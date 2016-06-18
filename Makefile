@@ -2,6 +2,7 @@ CXX := g++
 CPPFLAGS := -Wall -Wextra -std=c++14 -DGLM_ENABLE_EXPERIMENTAL
 BIN := Foogle
 LDFLAGS := -lm -lglfw -lGL -lGLU -lGLEW
+IFLAGS := -isystem deps -I. -Isrc 
 RM:= rm -rf
 
 SRCS := $(wildcard src/*.cpp)
@@ -20,7 +21,7 @@ $(BIN): $(OBJS)
 obj/%.o: src/%.cpp
 	@echo Compiling $<
 	@mkdir -p dep/$(*D) obj/$(*D)
-	@$(CXX) $(CPPFLAGS) -I. -Isrc -MMD -MP -MF dep/$*.d -c -o $@ $<
+	@$(CXX) $(CPPFLAGS) $(IFLAGS) -MMD -MP -MF dep/$*.d -c -o $@ $<
 
 -include $(OBJS:obj/%.o=dep/%.d)
 
