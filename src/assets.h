@@ -1,12 +1,12 @@
 #pragma once
+#include <vector>
 #include <string>
 #include "glm.h"
 
 struct MeshDef {
-    const int vertices_n;
-    const vec3 *positions;
-    const int *indices = nullptr;
-    const vec3 *normals = nullptr;
+    const std::vector<vec3> positions;
+    const std::vector<int> indices;
+    const std::vector<vec3> normals;
 };
 
 struct Mesh {

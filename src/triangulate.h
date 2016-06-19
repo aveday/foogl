@@ -6,6 +6,6 @@
 #include <algorithm>
 #include <glm/glm.hpp>
 
-void triangulate(glm::vec3 *vertices, int &nv);
+std::vector<int> triangulate(const std::vector<glm::vec3> &vertices);
 
 #endif

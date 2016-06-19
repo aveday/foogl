@@ -38,60 +38,55 @@ bool Triangle::containsVertex(const glm::vec3 &v)
 
 bool Triangle::circumCircleContains(const glm::vec3 &v)
 {
-	float ab = (p1.x * p1.x) + (p1.z * p1.z);
-	float cd = (p2.x * p2.x) + (p2.z * p2.z);
-	float ef = (p3.x * p3.x) + (p3.z * p3.z);
+	float ab = (p1.x * p1.x) + (p1.y * p1.y);
+	float cd = (p2.x * p2.x) + (p2.y * p2.y);
+	float ef = (p3.x * p3.x) + (p3.y * p3.y);
 
-	float circum_x = (ab * (p3.z - p2.z) + cd * (p1.z - p3.z) + ef * (p2.z - p1.z))
-        / (p1.x * (p3.z - p2.z) + p2.x * (p1.z - p3.z) + p3.x * (p2.z - p1.z)) / 2.f;
-	float curcum_z = (ab * (p3.x - p2.x) + cd * (p1.x - p3.x) + ef * (p2.x - p1.x))
-        / (p1.z * (p3.x - p2.x) + p2.z * (p1.x - p3.x) + p3.z * (p2.x - p1.x)) / 2.f;
+	float circum_x = (ab * (p3.y - p2.y) + cd * (p1.y - p3.y) + ef * (p2.y - p1.y))
+        / (p1.x * (p3.y - p2.y) + p2.x * (p1.y - p3.y) + p3.x * (p2.y - p1.y)) / 2.f;
+	float curcum_y = (ab * (p3.x - p2.x) + cd * (p1.x - p3.x) + ef * (p2.x - p1.x))
+        / (p1.y * (p3.x - p2.x) + p2.y * (p1.x - p3.x) + p3.y * (p2.x - p1.x)) / 2.f;
 	float circum_radius_sq = ((p1.x - circum_x) * (p1.x - circum_x))
-            + ((p1.z - curcum_z) * (p1.z - curcum_z));
+            + ((p1.y - curcum_y) * (p1.y - curcum_y));
 
-	float dist_sq = ((v.x - circum_x) * (v.x - circum_x)) + ((v.z - curcum_z) * (v.z - curcum_z));
+	float dist_sq = ((v.x - circum_x) * (v.x - circum_x)) + ((v.y - curcum_y) * (v.y - curcum_y));
 	return dist_sq <= circum_radius_sq;
 }
 
-void triangulate(glm::vec3 *vertices, int &nv)
+std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
 {
     std::vector<Triangle> triangles;
     std::vector<Edge> edges;
 
 	// Determinate the super triangle
-	float minX = vertices[0].x;
-	float minY = vertices[0].y;
-	float minZ = vertices[0].z;
+	float minX = positions[0].x;
+	float minY = positions[0].z;
 	float maxX = minX;
 	float maxY = minY;
-	float maxZ = minZ;
 
-	for(int i = 0; i < nv; ++i) 
+	for(int i = 0; i < (int)positions.size(); ++i) 
 	{
-		if (vertices[i].x < minX) minX = vertices[i].x;
-		if (vertices[i].y < minY) minY = vertices[i].y;
-    	if (vertices[i].z < minZ) minZ = vertices[i].z;
-    	if (vertices[i].x > maxX) maxX = vertices[i].x;
-    	if (vertices[i].y > maxY) maxY = vertices[i].y;
-    	if (vertices[i].z > maxZ) maxZ = vertices[i].z;
+		if (positions[i].x < minX) minX = positions[i].x;
+		if (positions[i].z < minY) minY = positions[i].z;
+    	if (positions[i].x > maxX) maxX = positions[i].x;
+    	if (positions[i].z > maxY) maxY = positions[i].z;
 	}
 	
 	float dx = maxX - minX;
-	float dz = maxZ - minZ;
-	float deltaMax = std::max(dx, dz);
+	float dy = maxY - minY;
+	float deltaMax = std::max(dx, dy);
 	float midx = (minX + maxX) / 2.f;
 	float midy = (minY + maxY) / 2.f;
-	float midz = (minZ + maxZ) / 2.f;
 
-	glm::vec3 p1(midx - 20 * deltaMax, midy, midz - deltaMax);
-	glm::vec3 p2(midx, midy, midz + 20 * deltaMax);
-	glm::vec3 p3(midx + 20 * deltaMax, midy, midz - deltaMax);	
+	glm::vec3 p1(midx - 20 * deltaMax, midy - deltaMax, -1);
+	glm::vec3 p2(midx, midy + 20 * deltaMax, -1);
+	glm::vec3 p3(midx + 20 * deltaMax, midy - deltaMax, -1);
 	
 	// Create a list of triangles, and add the supertriangle in it
 	triangles.push_back(Triangle{p1, p2, p3});
 
-    for (int i = 0; i < nv; i++) {
-        glm::vec3 point = vertices[i];
+    for (int i = 0; i < (int)positions.size(); i++) {
+        glm::vec3 point = {positions[i].x, positions[i].z, i};
 
 		std::vector<Triangle> badTriangles;
 		std::vector<Edge> polygon;
@@ -119,8 +114,7 @@ void triangulate(glm::vec3 *vertices, int &nv)
 				if(e1 == e2)
 					continue;
 				
-				if(*e1 == *e2)
-				{
+				if(*e1 == *e2) {
 					badEdges.push_back(*e1);	
 					badEdges.push_back(*e2);	
 				}
@@ -144,14 +138,14 @@ void triangulate(glm::vec3 *vertices, int &nv)
 		return t.containsVertex(p1) || t.containsVertex(p2) || t.containsVertex(p3);
 	}), end(triangles));
 
-    nv = 3 * triangles.size();
-    vertices = (glm::vec3*)realloc(vertices, nv * sizeof(glm::vec3));
+    std::vector<int> indices(3 * triangles.size());
 
     int i = 0;
 	for(auto triangle : triangles) {
-        vertices[i++] = triangle.p1;
-        vertices[i++] = triangle.p2;
-        vertices[i++] = triangle.p3;
+        indices[i++] = (int)triangle.p1.z;
+        indices[i++] = (int)triangle.p2.z;
+        indices[i++] = (int)triangle.p3.z;
     }
+    return indices;
 }
 
