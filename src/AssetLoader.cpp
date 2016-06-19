@@ -92,7 +92,7 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     if (mesh_cache.count(&def))
         return mesh_cache[&def];
 
-    mesh_cache[&def] = Mesh{def.vertices_n};
+    mesh_cache[&def] = Mesh{(int)def.indices.size()};
     Mesh &mesh = mesh_cache[&def];
 
     // create and bind the vertex buffer
@@ -116,16 +116,11 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
 
     // set vertex positions and normals
     for (int i = 0; i < mesh.vertices_n; i++)
-        vertices[i].position = def.positions[def.indices?def.indices[i]:i];
+        vertices[i].position = def.positions[def.indices[i]];
 
     for (int i = 0; i < mesh.vertices_n; i+=3) {
-        vec3 normal = def.normals ? def.normals[i/3] :
-            get_normal(vertices[i].position,
-                       vertices[i+2].position,
-                       vertices[i+1].position);
-
         for (int n = 0; n < 3; n++)
-            vertices[i+n].normal = normal;
+            vertices[i+n].normal = def.normals[i/3];
     }
 
     // calculate texture coordinate by rotating to z-plane

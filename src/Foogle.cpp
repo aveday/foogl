@@ -6,12 +6,7 @@
 #include "colors.h"
 #include "glm.h"
 #include "cube.h"
-
 #include "triangulate.h"
-
-#include <stdlib.h>
-#include <glm/gtc/random.hpp>
-#include <glm/gtx/io.hpp>
 
 WindowSystem    windowing;
 ControlSystem   control;
@@ -21,22 +16,22 @@ MovementSystem  movement;
 
 Model crate = {CUBE, "crate.jpg"};
 
-
 int main() {
 
     int nv = 1000;
-    vec3 *tri_positions = new vec3[nv];
+    std::vector<vec3> tri_positions(nv);
 
     for (int i = 0; i < nv; i++) {
         vec2 p = glm::diskRand(3.0f);
-        tri_positions[i] = {p.x, glm::linearRand(.0,.3), p.y};
+        tri_positions.push_back({p.x, glm::linearRand(.0,.3), p.y});
     }
 
-    triangulate(tri_positions, nv);
+    std::vector<int> tri_indices = triangulate(tri_positions);
+    std::vector<vec3> tri_normals = get_normals(tri_positions, tri_indices);
 
-    MeshDef d_mesh{nv, tri_positions, nullptr, nullptr};
+    MeshDef d_mesh{tri_positions, tri_indices, tri_normals};
     Model ground{&d_mesh, "gravel.jpg"};
-    
+
 
     EM::new_entity( Window{"Foogle"}, Clock{});
     EM::new_entity( Controller{}, Camera{},
