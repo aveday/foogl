@@ -5,7 +5,6 @@
 #include "core_systems.h"
 #include "colors.h"
 #include "glm.h"
-#include "cube.h"
 #include "MeshGen.h"
 
 WindowSystem    windowing;
@@ -15,8 +14,9 @@ RenderSystem    rendering;
 MovementSystem  movement;
 
 static auto ground_mesh = MeshGen::PdpDisk(1000, 3, .2, 4);
+static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
-Model crate = {CUBE, "crate.jpg"};
+Model crate{&cube_mesh, "crate.jpg"};
 Model ground{&ground_mesh, "gravel.jpg"};
 
 int main() {
