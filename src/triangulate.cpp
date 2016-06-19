@@ -141,7 +141,6 @@ std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
 
     std::vector<int> indices;
 
-    int i = 0;
 	for(auto triangle : triangles) {
         indices.push_back( (int)triangle.p1.z );
         indices.push_back( (int)triangle.p2.z );

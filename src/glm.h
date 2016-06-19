@@ -6,8 +6,6 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/euler_angles.hpp>
-#include <glm/gtc/random.hpp>
-
 
 using glm::vec2;
 using glm::vec3;
