@@ -1,3 +1,4 @@
+#include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtx/io.hpp>
 #include "triangulate.h"
@@ -71,7 +72,7 @@ std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
     	if (positions[i].x > maxX) maxX = positions[i].x;
     	if (positions[i].z > maxY) maxY = positions[i].z;
 	}
-	
+
 	float dx = maxX - minX;
 	float dy = maxY - minY;
 	float deltaMax = std::max(dx, dy);
@@ -138,13 +139,13 @@ std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
 		return t.containsVertex(p1) || t.containsVertex(p2) || t.containsVertex(p3);
 	}), end(triangles));
 
-    std::vector<int> indices(3 * triangles.size());
+    std::vector<int> indices;
 
     int i = 0;
 	for(auto triangle : triangles) {
-        indices[i++] = (int)triangle.p1.z;
-        indices[i++] = (int)triangle.p2.z;
-        indices[i++] = (int)triangle.p3.z;
+        indices.push_back( (int)triangle.p1.z );
+        indices.push_back( (int)triangle.p2.z );
+        indices.push_back( (int)triangle.p3.z );
     }
     return indices;
 }

@@ -8,6 +8,9 @@
 #include "cube.h"
 #include "triangulate.h"
 
+#define STB_PERLIN_IMPLEMENTATION
+#include "stb_perlin.h"
+
 WindowSystem    windowing;
 ControlSystem   control;
 LightSystem     lighting;
@@ -19,13 +22,14 @@ Model crate = {CUBE, "crate.jpg"};
 int main() {
 
     int nv = 1000;
-    std::vector<vec3> tri_positions(nv);
+    std::vector<vec3> tri_positions;
 
     for (int i = 0; i < nv; i++) {
         vec2 p = glm::diskRand(3.0f);
-        tri_positions.push_back({p.x, glm::linearRand(.0,.3), p.y});
-    }
+        float h = stb_perlin_noise3(p.x, 0, p.y) * 0.4f;
+        tri_positions.push_back({p.x, h, p.y});
 
+    }
     std::vector<int> tri_indices = triangulate(tri_positions);
     std::vector<vec3> tri_normals = get_normals(tri_positions, tri_indices);
 
