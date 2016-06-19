@@ -26,3 +26,18 @@ MeshDef MeshGen::PdpDisk( int corners = 1000,
     return MeshDef{positions, indices, normals};
 }
 
+MeshDef MeshGen::Box(float w, float h, float d)
+{
+    w /= 2, h /= 2, d /= 2;
+    std::vector<vec3> positions{
+        {-w, -h, -d}, {-w, -h,  d}, {-w,  h, -d}, {-w,  h,  d},
+        { w, -h, -d}, { w, -h,  d}, { w,  h, -d}, { w,  h,  d}};
+    std::vector<int> indices{
+        0,1,2, 1,3,2,  0,2,6, 0,6,4,  2,3,7, 2,7,6,
+        4,6,7, 4,7,5,  1,7,3, 1,5,7,  0,4,1, 1,4,5};
+    std::vector<vec3> normals{
+        {-1, 0, 0}, {-1, 0, 0}, { 0, 0,-1}, { 0, 0,-1}, { 0, 1, 0}, { 0, 1, 0},
+        { 1, 0, 0}, { 1, 0, 0}, { 0, 0, 1}, { 0, 0, 1}, { 0,-1, 0}, { 0,-1, 0}};
+
+    return MeshDef{positions, indices, normals};
+}
