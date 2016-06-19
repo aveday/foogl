@@ -31,6 +31,16 @@ inline mat4 rotate(float x, float y, float z)
     return transform;
 }
 
+inline vec3 get_normal(const vec3& v0, const vec3& v1, const vec3& v2)
+{
+    vec3 j = v1 - v0;
+    vec3 k = v2 - v0;
+    return normalize( vec3(
+        k.y * j.z - k.z * j.y,
+        k.z * j.x - k.x * j.z,
+        k.x * j.y - k.y * j.x) );
+}
+
 inline vec3 get_normal(vec3 v[3])
 {
     vec3 j = v[1] - v[0];
