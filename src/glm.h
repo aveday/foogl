@@ -1,10 +1,12 @@
 #pragma once
 #define GLM_FORCE_RADIANS
+#include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/euler_angles.hpp>
+#include <glm/gtc/random.hpp>
 
 
 using glm::vec2;
@@ -49,6 +51,17 @@ inline vec3 get_normal(vec3 v[3])
         k.y * j.z - k.z * j.y,
         k.z * j.x - k.x * j.z,
         k.x * j.y - k.y * j.x) );
+}
+
+inline std::vector<vec3> get_normals(const std::vector<vec3> &positions,
+                                     const std::vector<int> &indices)
+{
+    std::vector<vec3> normals;
+    for (int i = 0; i < (int)indices.size(); i+=3)
+        normals.push_back(get_normal( positions[indices[i]],
+                                      positions[indices[i+2]],
+                                      positions[indices[i+1]]));
+    return normals;
 }
 
 inline mat4 get_transform(vec3 position, vec3 scale, vec3 rotation)
