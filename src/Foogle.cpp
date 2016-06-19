@@ -7,6 +7,7 @@
 #include "glm.h"
 #include "cube.h"
 #include "triangulate.h"
+#include "poisson.h"
 
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
@@ -21,15 +22,19 @@ Model crate = {CUBE, "crate.jpg"};
 
 int main() {
 
-    int nv = 1000;
+    float amplitude = 0.2f;
+    float period = 4;
+    float radius = 3.0f;
+    int corners = 1000;
     std::vector<vec3> tri_positions;
 
-    for (int i = 0; i < nv; i++) {
-        vec2 p = glm::diskRand(3.0f);
-        float h = stb_perlin_noise3(p.x, 0, p.y) * 0.4f;
-        tri_positions.push_back({p.x, h, p.y});
-
+    for (auto p : GeneratePoissonPoints(corners)) {
+        float x = radius * (p.x - .5f);
+        float z = radius * (p.y - .5f);
+        float y = stb_perlin_noise3(x*period, 0, z*period) * amplitude;
+        tri_positions.push_back({x, y, z});
     }
+
     std::vector<int> tri_indices = triangulate(tri_positions);
     std::vector<vec3> tri_normals = get_normals(tri_positions, tri_indices);
 
@@ -48,8 +53,8 @@ int main() {
 
     // create ring of n_blocks
     int n_blocks = 16, blocks[n_blocks];
-    float radius = 2, div = 2 * (float)M_PI / n_blocks;
-    Body body{{0, .2, radius}, {.3, .6, .1}};
+    float block_radius = 2, div = 2 * (float)M_PI / n_blocks;
+    Body body{{0, .2, block_radius}, {.3, .6, .1}};
     for(int i = 0; i < n_blocks; ++i) {
         body.position = glm::rotateY(body.position, div);
         body.rotation.y += div;
