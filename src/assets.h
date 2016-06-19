@@ -5,8 +5,8 @@
 struct MeshDef {
     const int vertices_n;
     const vec3 *positions;
-    const int *indices;
-    const vec3 *normals;
+    const int *indices = nullptr;
+    const vec3 *normals = nullptr;
 };
 
 struct Mesh {
