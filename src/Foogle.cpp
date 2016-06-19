@@ -6,11 +6,7 @@
 #include "colors.h"
 #include "glm.h"
 #include "cube.h"
-#include "triangulate.h"
-#include "poisson.h"
-
-#define STB_PERLIN_IMPLEMENTATION
-#include "stb_perlin.h"
+#include "MeshGen.h"
 
 WindowSystem    windowing;
 ControlSystem   control;
@@ -18,30 +14,12 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
+static auto ground_mesh = MeshGen::PdpDisk(1000, 3, .2, 4);
+
 Model crate = {CUBE, "crate.jpg"};
+Model ground{&ground_mesh, "gravel.jpg"};
 
 int main() {
-
-    float amplitude = 0.2f;
-    float period = 4;
-    float radius = 3.0f;
-    int corners = 1000;
-    std::vector<vec3> tri_positions;
-
-    for (auto p : GeneratePoissonPoints(corners)) {
-        float x = radius * (p.x - .5f);
-        float z = radius * (p.y - .5f);
-        float y = stb_perlin_noise3(x*period, 0, z*period) * amplitude;
-        tri_positions.push_back({x, y, z});
-    }
-
-    std::vector<int> tri_indices = triangulate(tri_positions);
-    std::vector<vec3> tri_normals = get_normals(tri_positions, tri_indices);
-
-    MeshDef d_mesh{tri_positions, tri_indices, tri_normals};
-    Model ground{&d_mesh, "gravel.jpg"};
-
-
     EM::new_entity( Window{"Foogle"}, Clock{});
     EM::new_entity( Controller{}, Camera{},
             Body{{-3, .8, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
