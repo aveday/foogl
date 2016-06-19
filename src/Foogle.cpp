@@ -7,6 +7,12 @@
 #include "glm.h"
 #include "cube.h"
 
+#include "triangulate.h"
+
+#include <stdlib.h>
+#include <glm/gtc/random.hpp>
+#include <glm/gtx/io.hpp>
+
 WindowSystem    windowing;
 ControlSystem   control;
 LightSystem     lighting;
@@ -15,13 +21,29 @@ MovementSystem  movement;
 
 Model crate = {CUBE, "crate.jpg"};
 
+
 int main() {
+
+    int nv = 1000;
+    vec3 *tri_positions = new vec3[nv];
+
+    for (int i = 0; i < nv; i++) {
+        vec2 p = glm::diskRand(3.0f);
+        tri_positions[i] = {p.x, glm::linearRand(.0,.3), p.y};
+    }
+
+    triangulate(tri_positions, nv);
+
+    MeshDef d_mesh{nv, tri_positions, nullptr, nullptr};
+    Model ground{&d_mesh, "gravel.jpg"};
+    
+
     EM::new_entity( Window{"Foogle"}, Clock{});
     EM::new_entity( Controller{}, Camera{},
-            Body{{-3, .5, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
+            Body{{-3, .8, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
     // create walls
-    EM::new_entity( crate, Body{{0,-1, 0}, { 6, 2, 6}} );
+    EM::new_entity(ground, Body{{0, 0, 0}, { 6, 2, 6}} );
     EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
     EM::new_entity( crate, Body{{0, 2, 3}, { 6, 4,.1}} );
 

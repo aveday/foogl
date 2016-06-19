@@ -50,7 +50,7 @@ struct Model {
 };
 
 struct Controller {
-    float speed = 1.0f;
+    float speed = 2.0f;
     float mouse_sensitivity = 0.002f;
 };
 
