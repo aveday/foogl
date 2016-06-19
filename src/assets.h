@@ -4,10 +4,17 @@
 #include <string>
 #include "glm.h"
 
+enum NormalLayout {
+    POSITION_NORMAL,
+    SURFACE_NORMAL,
+    VERTEX_NORMAL
+};
+
 struct MeshDef {
     const std::vector<vec3> positions;
     const std::vector<int> indices;
     const std::vector<vec3> normals;
+    const NormalLayout normal_layout = SURFACE_NORMAL;
 };
 
 struct Mesh {
