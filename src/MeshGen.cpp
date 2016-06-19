@@ -11,19 +11,23 @@ MeshDef MeshGen::PdpDisk( int corners = 1000,
                           float amplitude = 0.2f,
                           float period = 4 )
 {
-    std::vector<vec3> positions;
+    std::vector<vec3> positions, normals;
 
+    float d = 0.001f;
     for (auto p : GeneratePoissonPoints(corners)) {
         float x = radius * (p.x - .5f);
         float z = radius * (p.y - .5f);
         float y = stb_perlin_noise3(x*period, 0, z*period) * amplitude;
+        float yx = stb_perlin_noise3(x*period, 0, (z+d)*period) * amplitude;
+        float yz = stb_perlin_noise3((x+d)*period, 0, z*period) * amplitude;
+
         positions.push_back({ x, y, z});
+        normals.push_back( get_normal({x,y,z}, {(x+d),yx,z}, {x,yz,(z+d)}) );
     }
 
     std::vector<int> indices = triangulate(positions);
-    std::vector<vec3> normals = get_normals(positions, indices);
 
-    return MeshDef{positions, indices, normals};
+    return MeshDef{positions, indices, normals, POSITION_NORMAL};
 }
 
 MeshDef MeshGen::Box(float w, float h, float d)
