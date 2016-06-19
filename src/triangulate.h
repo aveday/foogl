@@ -1,6 +1,4 @@
-#ifndef H_TRIANGULATE
-#define H_TRIANGULATE
-
+#pragma once
 #include <vector>
 #include <memory>
 #include <algorithm>
@@ -8,4 +6,3 @@
 
 std::vector<int> triangulate(const std::vector<glm::vec3> &vertices);
 
-#endif
