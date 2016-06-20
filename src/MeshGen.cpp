@@ -37,12 +37,11 @@ MeshDef MeshGen::Box(float w, float h, float d)
         {-w, -h, -d}, {-w, -h,  d}, {-w,  h, -d}, {-w,  h,  d},
         { w, -h, -d}, { w, -h,  d}, { w,  h, -d}, { w,  h,  d}};
     static std::vector<int> indices{
-        0,1,2, 1,3,2,  0,2,6, 0,6,4,  2,3,7, 2,7,6,
-        4,6,7, 4,7,5,  1,7,3, 1,5,7,  0,4,1, 1,4,5};
+        0,1,2, 1,3,2,  0,2,6, 0,6,4,  0,4,1, 1,4,5,
+        4,6,7, 4,7,5,  1,7,3, 1,5,7,  2,3,7, 2,7,6};
     static std::vector<vec3> normals{
-        {-1, 0, 0}, {-1, 0, 0}, { 0, 0,-1}, { 0, 0,-1},
-        { 0, 1, 0}, { 0, 1, 0}, { 1, 0, 0}, { 1, 0, 0},
-        { 0, 0, 1}, { 0, 0, 1}, { 0,-1, 0}, { 0,-1, 0}};
+        -unitX, -unitX, -unitZ, -unitZ, -unitY, -unitY,
+         unitX,  unitX,  unitZ,  unitZ,  unitY,  unitY};
 
     return MeshDef{positions, indices, normals};
 }
