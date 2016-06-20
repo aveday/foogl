@@ -13,19 +13,25 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
-static auto ground_mesh = MeshGen::PdpDisk(2000, 5, .4, 2);
+static auto ground_mesh = MeshGen::PdpDisk(2000, 50, 1, .2);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
+
+static auto skybox_mesh = MeshGen::Sphere(100, 2, 3 /*FIXME*/);
 
 Model crate{&cube_mesh, "crate.jpg"};
 Model ground{&ground_mesh, "gravel.jpg"};
+Model skybox{&skybox_mesh, "night.jpg"};
 
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
+
     EM::new_entity( Controller{}, Camera{},
             Body{{-3, .8, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
+    EM::new_entity(skybox, Body{} );
+    EM::new_entity(ground, Body{} );
+
     // create walls
-    EM::new_entity(ground, Body{{0, 0, 0}, { 6, 2, 6}} );
     EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
     EM::new_entity( crate, Body{{0, 2, 3}, { 6, 4,.1}} );
 
