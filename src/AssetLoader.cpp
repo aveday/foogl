@@ -139,7 +139,7 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
         if(axis == vec3(0)) axis = {1,0,0};
 
         for (int n = 0; n < 3; n++) {
-            vec3 tpos = glm::rotate(vertices[i+n].position, angle, axis);
+            vec3 tpos = glm::rotate(vertices[i+n].position, angle, axis) * def.texture_scale;
             vertices[i+n].tex_coord = { tpos.x + 0.5, tpos.y + 0.5 };
         }
     }

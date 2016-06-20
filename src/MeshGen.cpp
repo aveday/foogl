@@ -1,6 +1,8 @@
 #include "MeshGen.h"
 #include "assets.h"
 
+#define PAR_SHAPES_IMPLEMENTATION
+#include "par_shapes.h"
 #define STB_PERLIN_IMPLEMENTATION
 #include "stb_perlin.h"
 #include "triangulate.h"
@@ -45,3 +47,28 @@ MeshDef MeshGen::Box(float w, float h, float d)
 
     return MeshDef{positions, indices, normals};
 }
+
+MeshDef MeshGen::Sphere(float radius, int n, uint16_t flags)
+{
+    par_shapes_mesh *p_mesh = par_shapes_create_subdivided_sphere(n);
+
+    std::vector<vec3> positions, normals;
+    bool inv = flags & INVERTED;
+    for (int i = 0; i < p_mesh->npoints; i++) {
+        vec3 point = radius * vec3{ p_mesh->points[3*i],
+                                    p_mesh->points[3*i+(inv?2:1)],
+                                    p_mesh->points[3*i+(inv?1:2)]};
+        positions.push_back(point);
+        normals.push_back( flags & NULL_NORMALS ? vec3{0,0,0}
+                : glm::normalize(point * (inv?-1.f:1.f)));
+    }
+
+    std::vector<int> indices;
+    for (int i = 0; i < p_mesh->ntriangles*3; i++)
+        indices.push_back( (int)(p_mesh->triangles[i]) );
+
+    par_shapes_free_mesh(p_mesh);
+    return MeshDef{positions, indices, normals, POSITION_NORMAL, .02f};
+}
+
+
