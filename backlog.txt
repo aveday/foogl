@@ -2,6 +2,9 @@
     1.2. Bump Mapping (1.1)
     1.3. Normal Mapping (1.1)
     1.4. Shadow Mapping
+    1.5.2 Transparency
+    1.6. Advanced Shaders
+        1.6.1 Portal
 
 2. Procedural Generation
     2.1. Shader Maps
@@ -11,6 +14,7 @@
             - Pdp/S Normals
     2.2. Models
         2.2.2. Better Perlin/Simplex Terrain
+        2.2.3. Spiral Mesh Wrapper
 
 3. Serialization
     3.1. Save

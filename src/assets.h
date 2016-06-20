@@ -15,6 +15,7 @@ struct MeshDef {
     const std::vector<int> indices;
     const std::vector<vec3> normals;
     const NormalLayout normal_layout = SURFACE_NORMAL;
+    const float texture_scale = 1.f;
 };
 
 struct Mesh {
