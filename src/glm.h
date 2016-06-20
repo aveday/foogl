@@ -12,6 +12,8 @@ using glm::vec3;
 using glm::vec4;
 using glm::mat4;
 
+const vec3 unitX{1, 0, 0}, unitY{0, 1, 0}, unitZ{0, 0, 1};
+
 inline mat4 scale(float x, float y, float z)
 {
     return glm::scale(vec3(x, y, z));
