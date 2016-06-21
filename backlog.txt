@@ -1,3 +1,10 @@
+Current Goal:
+    Generate normal map from PdpMesh
+    Regen PDP normal map with slider values
+    Live edit MeshGen functions
+    Switchable display modes (shaded/flat/normals/wireframe)
+
+
 1. Shaders
     1.2. Bump Mapping (1.1)
     1.3. Normal Mapping (1.1)
