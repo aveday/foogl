@@ -118,28 +118,29 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     for (int i = 0; i < mesh.vertices_n; i++)
         vertices[i].position = def.positions[def.indices[i]];
 
-    for (int i = 0; i < mesh.vertices_n; i++) {
+    for (int i = 0; i < mesh.vertices_n; i++)
         vertices[i].normal = 
-            def.normal_layout==VERTEX_NORMAL   ? def.normals[i] :
-            def.normal_layout==SURFACE_NORMAL  ? def.normals[i/3] :
-            def.normal_layout==POSITION_NORMAL ? def.normals[def.indices[i]] :
-            vec3{0,1,0};
-    }
+            def.normal_type == SURFACE_NORMALS  ? def.normals[i/3] :
+            def.normal_type == POSITION_NORMALS ? def.normals[def.indices[i]] :
+            def.normal_type == VERTEX_NORMALS   ? def.normals[i] :
+            def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,1,0};
 
     // calculate texture coordinate by rotating to z-plane
     for(int i = 0; i < mesh.vertices_n; i+=3) {
-        vec3 surface_normal = def.normals[i/3];
-        if (def.normal_layout!=SURFACE_NORMAL)
-            surface_normal = get_normal( vertices[i  ].position,
-                                         vertices[i+1].position,
-                                         vertices[i+2].position );
+        // get the surface normal if it isn't already set
+        vec3 surface_normal = (def.normal_type == SURFACE_NORMALS)
+            ? def.normals[i/3]
+            : get_normal( vertices[i  ].position,
+                          vertices[i+1].position,
+                          vertices[i+2].position );
 
         float angle = glm::angle(surface_normal, {0,0,1});
         vec3 axis = glm::cross(surface_normal, {0,0,1});
         if(axis == vec3(0)) axis = {1,0,0};
 
         for (int n = 0; n < 3; n++) {
-            vec3 tpos = glm::rotate(vertices[i+n].position, angle, axis) * def.texture_scale;
+            vec3 tpos = glm::rotate(vertices[i+n].position, angle, axis)
+                * def.texture_scale;
             vertices[i+n].tex_coord = { tpos.x + 0.5, tpos.y + 0.5 };
         }
     }
