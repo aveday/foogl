@@ -4,18 +4,29 @@
 #include <string>
 #include "glm.h"
 
-enum NormalLayout {
-    POSITION_NORMAL,
-    SURFACE_NORMAL,
-    VERTEX_NORMAL
+
+typedef uint8_t MeshFlags;
+enum {
+    INVERTED       = 1<<0,
+    CIRCULAR       = 1<<1,
+    FLAT           = 1<<2,
+    REMOVE_NORMALS = 1<<3,
+};
+
+enum NormalType {
+    NO_NORMALS,
+    POSITION_NORMALS,
+    SURFACE_NORMALS,
+    VERTEX_NORMALS
 };
 
 struct MeshDef {
     const std::vector<vec3> positions;
     const std::vector<int> indices;
     const std::vector<vec3> normals;
-    const NormalLayout normal_layout = SURFACE_NORMAL;
+    const NormalType normal_type;
     const float texture_scale = 1.f;
+    const MeshFlags flags = 0;
 };
 
 struct Mesh {
