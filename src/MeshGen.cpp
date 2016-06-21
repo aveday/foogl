@@ -8,31 +8,38 @@
 #include "triangulate.h"
 #include "poisson.h"
 
-MeshDef MeshGen::PdpDisk( int corners = 1000,
-                          float radius = 3.0f,
-                          float amplitude = 0.2f,
-                          float period = 4 )
+MeshDef MeshGen::PdpMesh( const int vertices = 1000,
+                          const float size = 3.0f,
+                          const float amplitude = 0.2f,
+                          const float period = 4,
+                          const MeshFlags flags )
 {
     std::vector<vec3> positions, normals;
+    NormalType ntype = flags & FLAT ? SURFACE_NORMALS : POSITION_NORMALS;
 
     float d = 0.001f;
-    for (auto p : GeneratePoissonPoints(corners)) {
-        float x = radius * (p.x - .5f);
-        float z = radius * (p.y - .5f);
+    for (auto p : GeneratePoissonPoints(vertices, 30, flags & CIRCULAR)) {
+
+        float x = size * (p.x - .5f);
+        float z = size * (p.y - .5f);
         float y = stb_perlin_noise3(x*period, 0, z*period) * amplitude;
-        float yx = stb_perlin_noise3(x*period, 0, (z+d)*period) * amplitude;
-        float yz = stb_perlin_noise3((x+d)*period, 0, z*period) * amplitude;
-
         positions.push_back({ x, y, z});
-        normals.push_back( get_normal({x,y,z}, {(x+d),yx,z}, {x,yz,(z+d)}) );
-    }
 
+        if (ntype == POSITION_NORMALS) {
+            float yx = stb_perlin_noise3(x*period,0,(z+d)*period) * amplitude;
+            float yz = stb_perlin_noise3((x+d)*period,0,z*period) * amplitude;
+            normals.push_back( get_normal( {x,y,z}, {x+d,yx,z}, {x,yz,z+d}) );
+        }
+    }
     std::vector<int> indices = triangulate(positions);
 
-    return MeshDef{positions, indices, normals, POSITION_NORMAL};
+    if (ntype == SURFACE_NORMALS)
+        normals = get_normals(positions, indices);
+
+    return MeshDef{positions, indices, normals, ntype, 1, flags};
 }
 
-MeshDef MeshGen::Box(float w, float h, float d)
+MeshDef MeshGen::Box(float w, float h, float d, MeshFlags flags)
 {
     w /= 2, h /= 2, d /= 2;
     std::vector<vec3> positions{
@@ -45,22 +52,23 @@ MeshDef MeshGen::Box(float w, float h, float d)
         -unitX, -unitX, -unitZ, -unitZ, -unitY, -unitY,
          unitX,  unitX,  unitZ,  unitZ,  unitY,  unitY};
 
-    return MeshDef{positions, indices, normals};
+    return MeshDef{positions, indices, normals, SURFACE_NORMALS, 1, flags};
 }
 
-MeshDef MeshGen::Sphere(float radius, int n, uint16_t flags)
+MeshDef MeshGen::Sphere(float radius, int n, MeshFlags flags)
 {
-    par_shapes_mesh *p_mesh = par_shapes_create_subdivided_sphere(n);
+    NormalType ntype = flags & REMOVE_NORMALS ? NO_NORMALS : POSITION_NORMALS;
+    bool inverted = flags & INVERTED;
 
+    auto p_mesh = par_shapes_create_subdivided_sphere(n);
     std::vector<vec3> positions, normals;
-    bool inv = flags & INVERTED;
     for (int i = 0; i < p_mesh->npoints; i++) {
         vec3 point = radius * vec3{ p_mesh->points[3*i],
-                                    p_mesh->points[3*i+(inv?2:1)],
-                                    p_mesh->points[3*i+(inv?1:2)]};
+                                    p_mesh->points[3*i+(inverted?2:1)],
+                                    p_mesh->points[3*i+(inverted?1:2)]};
         positions.push_back(point);
-        normals.push_back( flags & NULL_NORMALS ? vec3{0,0,0}
-                : glm::normalize(point * (inv?-1.f:1.f)));
+        if (ntype == POSITION_NORMALS)
+            normals.push_back( glm::normalize(point * (inverted?-1.f:1.f)) );
     }
 
     std::vector<int> indices;
@@ -68,7 +76,7 @@ MeshDef MeshGen::Sphere(float radius, int n, uint16_t flags)
         indices.push_back( (int)(p_mesh->triangles[i]) );
 
     par_shapes_free_mesh(p_mesh);
-    return MeshDef{positions, indices, normals, POSITION_NORMAL, .02f};
+    return MeshDef{positions, indices, normals, ntype, .02f, flags};
 }
 
 

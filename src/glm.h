@@ -7,6 +7,7 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
+using glm::ivec2;
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
