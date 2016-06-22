@@ -61,16 +61,16 @@ std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
 
 	// Determinate the super triangle
 	float minX = positions[0].x;
-	float minY = positions[0].z;
+	float minY = positions[0].y;
 	float maxX = minX;
 	float maxY = minY;
 
 	for(int i = 0; i < (int)positions.size(); ++i) 
 	{
 		if (positions[i].x < minX) minX = positions[i].x;
-		if (positions[i].z < minY) minY = positions[i].z;
+		if (positions[i].y < minY) minY = positions[i].y;
     	if (positions[i].x > maxX) maxX = positions[i].x;
-    	if (positions[i].z > maxY) maxY = positions[i].z;
+    	if (positions[i].y > maxY) maxY = positions[i].y;
 	}
 
 	float dx = maxX - minX;
@@ -87,7 +87,7 @@ std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
 	triangles.push_back(Triangle{p1, p2, p3});
 
     for (int i = 0; i < (int)positions.size(); i++) {
-        glm::vec3 point = {positions[i].x, positions[i].z, i};
+        glm::vec3 point = {positions[i].x, positions[i].y, i};
 
 		std::vector<Triangle> badTriangles;
 		std::vector<Edge> polygon;

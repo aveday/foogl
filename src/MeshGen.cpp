@@ -16,16 +16,16 @@ MeshDef MeshGen::PdpMesh( const int vertices = 1000,
     std::vector<vec3> positions, normals;
 
     float d = 0.001f;
-    for (auto p : GeneratePoissonPoints(vertices, 30)) {
+    for (auto p : GeneratePoissonPoints(vertices)) {
 
         float x = size * (p.x - .5f);
-        float z = size * (p.y - .5f);
-        float y = stb_perlin_noise3(x*period, 0, z*period) * amplitude;
-        positions.push_back({ x, y, z});
+        float y = size * (p.y - .5f);
+        float z = stb_perlin_noise3(x*period, y*period, 0) * amplitude;
+        positions.push_back({x, y, z});
 
-        float yx = stb_perlin_noise3(x*period,0,(z+d)*period) * amplitude;
-        float yz = stb_perlin_noise3((x+d)*period,0,z*period) * amplitude;
-        normals.push_back( get_normal( {x,y,z}, {x+d,yx,z}, {x,yz,z+d}) );
+        float z1 = stb_perlin_noise3((x+d)*period, y*period, 0) * amplitude;
+        float z2 = stb_perlin_noise3(x*period, (y+d)*period, 0) * amplitude;
+        normals.push_back( get_normal({x,y,z}, {x+d,y,z1}, {x,y+d,z2}) );
     }
     std::vector<int> indices = triangulate(positions);
 
