@@ -13,6 +13,12 @@ enum {
     REMOVE_NORMALS = 1<<3,
 };
 
+enum TextureType {
+    PROJECTED,
+    STRETCHED,
+    FRAGMENTED,
+};
+
 enum NormalType {
     NO_NORMALS,
     POSITION_NORMALS,
@@ -25,6 +31,7 @@ struct MeshDef {
     const std::vector<int> indices;
     const std::vector<vec3> normals;
     const NormalType normal_type;
+    const TextureType texture_type;
     const float texture_scale = 1.f;
     const MeshFlags flags = 0;
 };
