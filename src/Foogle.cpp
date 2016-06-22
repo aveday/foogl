@@ -16,7 +16,7 @@ MovementSystem  movement;
 
 static auto skybox_mesh = MeshGen::Sphere(100, 2, INVERTED|REMOVE_NORMALS);
 static auto ground_mesh = MeshGen::PdpMesh(2000, 50, 1, .2, CIRCULAR);
-static auto brick_mesh  = MeshGen::PdpMesh(80, 2, .1f, 4, FLAT);
+static auto brick_mesh  = MeshGen::PdpMesh(80, 2, .2f, 4);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
 Model crate{&cube_mesh, "crate.jpg"};
@@ -49,20 +49,20 @@ int main() {
     }
 
     // create lights
-    Body light_body{{0, 10, -10}, vec3(2)};
+    Body light_body{{0, 10, -5}, vec3(.05)};
     int bulb[] = {
         EM::new_entity( crate, Light{{1, 1, 1}}, light_body ),
-        //EM::new_entity( crate, Light{{.8, .1, .1}}, light_body ),
+        EM::new_entity( crate, Light{{.5, .5, .5}}, light_body ),
         //EM::new_entity( crate, Light{{.1, .1, .8}}, light_body ),
     };
 
     Clock &clock = EM::first_component<Clock>();
 
     while (clock.running) {
-        vec3 pos{0, .5, 1};
+        vec3 pos{0, 1, 3};
         float angle = fmodf(clock.time, 2*M_PI);
-        //EM::get_component<Body>(bulb[0]).position.y = .5*sin(4*clock.time)+1;
-        //EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
+        EM::get_component<Body>(bulb[0]).position.y = .5*sin(clock.time)+1;
+        EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
         //EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
 
         /*
