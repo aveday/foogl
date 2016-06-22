@@ -124,42 +124,40 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
             def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,1,0};
     }
 
+    // calculate texture coordinates
     vec3 tex_normal, axis;
+    vec2 tpos;
     float angle;
     for(int i = 0; i < mesh.vertices_n; i++) {
-
+        // set tpos by position for projected textures
         if (def.texture_type == PROJECTED) {
-            vec3 tpos = vertices[i].position;
-            tpos *= def.texture_scale;
-            //FIXME reorient meshgen and use XY coords instead of XZ
-            //  then integrate with code below
-            vertices[i].tex_coord = { tpos.x + 0.5, tpos.z + 0.5 };
-            continue;
-        }
+            tpos = vec2( vertices[i].position );
 
-        // calculate texture coordinate by rotating to z-plane
-        if (def.texture_type==STRETCHED && def.normal_type!=POSITION_NORMALS)
-            std::cerr << "STRETCHED texturing requires POSITION_NORMALS";
-
-        if (def.texture_type == FRAGMENTED && i%3 == 0)
+        // otherwise find tpos by rotating point to XY plane
+        } else {
+            // first get the normal of the point
+            if (def.texture_type == STRETCHED) {
+                if (def.normal_type != POSITION_NORMALS)
+                    std::cerr << "STRETCHED requires POSITION_NORMALS\n";
+                tex_normal = vertices[i].normal;
+            } else if (i%3 == 0) {
                 tex_normal = (def.normal_type == SURFACE_NORMALS)
                     ? vertices[i].normal
                     : get_normal( vertices[i  ].position,
                                   vertices[i+1].position,
                                   vertices[i+2].position );
-
-        else if (def.texture_type == STRETCHED)
-            tex_normal = vertices[i].normal;
-
-        if (def.texture_type != FRAGMENTED || i%3 == 0) {
-            angle = glm::angle(tex_normal, {0,0,1});
-            axis = glm::cross(tex_normal, {0,0,1});//XXX
-            if(axis == vec3(0)) axis = {1,0,0};
+            }
+            // define the rotation axis depenging on the normal
+            if (def.texture_type == STRETCHED || i%3 == 0) {
+                angle = glm::angle(tex_normal, {0,0,1});
+                axis = glm::cross(tex_normal, {0,0,1});
+                if(axis == vec3(0)) axis = {1,0,0};
+            }
+            // rotate the point position to find the texture position
+            tpos = vec2( glm::rotate(vertices[i].position, angle, axis) );
         }
-
-        vec3 tpos = glm::rotate(vertices[i].position, angle, axis)
-                  * def.texture_scale;
-        vertices[i].tex_coord = { tpos.x + 0.5, tpos.y + 0.5 };
+        // scale and center the final texture coordinates
+        vertices[i].tex_coord = def.texture_scale * tpos + vec2(.5);
     }
 
     // buffer vertex data
