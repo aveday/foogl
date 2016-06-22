@@ -36,7 +36,8 @@ MeshDef MeshGen::PdpMesh( const int vertices = 1000,
     if (ntype == SURFACE_NORMALS)
         normals = get_normals(positions, indices);
 
-    return MeshDef{positions, indices, normals, ntype, 1, flags};
+    return MeshDef{positions, indices, normals,
+        ntype, FRAGMENTED, 1, flags};
 }
 
 MeshDef MeshGen::Box(float w, float h, float d, MeshFlags flags)
@@ -52,7 +53,8 @@ MeshDef MeshGen::Box(float w, float h, float d, MeshFlags flags)
         -unitX, -unitX, -unitZ, -unitZ, -unitY, -unitY,
          unitX,  unitX,  unitZ,  unitZ,  unitY,  unitY};
 
-    return MeshDef{positions, indices, normals, SURFACE_NORMALS, 1, flags};
+    return MeshDef{positions, indices, normals,
+        SURFACE_NORMALS, FRAGMENTED, 1, flags};
 }
 
 MeshDef MeshGen::Sphere(float radius, int n, MeshFlags flags)
@@ -76,7 +78,8 @@ MeshDef MeshGen::Sphere(float radius, int n, MeshFlags flags)
         indices.push_back( (int)(p_mesh->triangles[i]) );
 
     par_shapes_free_mesh(p_mesh);
-    return MeshDef{positions, indices, normals, ntype, .02f, flags};
+    return MeshDef{positions, indices, normals,
+        ntype, FRAGMENTED, .02f, flags};
 }
 
 

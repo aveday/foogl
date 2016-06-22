@@ -115,34 +115,51 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     Vertex *vertices = new Vertex[mesh.vertices_n];
 
     // set vertex positions and normals
-    for (int i = 0; i < mesh.vertices_n; i++)
+    for (int i = 0; i < mesh.vertices_n; i++) {
         vertices[i].position = def.positions[def.indices[i]];
-
-    for (int i = 0; i < mesh.vertices_n; i++)
         vertices[i].normal = 
             def.normal_type == SURFACE_NORMALS  ? def.normals[i/3] :
             def.normal_type == POSITION_NORMALS ? def.normals[def.indices[i]] :
             def.normal_type == VERTEX_NORMALS   ? def.normals[i] :
             def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,1,0};
+    }
 
-    // calculate texture coordinate by rotating to z-plane
-    for(int i = 0; i < mesh.vertices_n; i+=3) {
-        // get the surface normal if it isn't already set
-        vec3 surface_normal = (def.normal_type == SURFACE_NORMALS)
-            ? def.normals[i/3]
-            : get_normal( vertices[i  ].position,
-                          vertices[i+1].position,
-                          vertices[i+2].position );
+    vec3 tex_normal, axis;
+    float angle;
+    for(int i = 0; i < mesh.vertices_n; i++) {
 
-        float angle = glm::angle(surface_normal, {0,0,1});
-        vec3 axis = glm::cross(surface_normal, {0,0,1});
-        if(axis == vec3(0)) axis = {1,0,0};
-
-        for (int n = 0; n < 3; n++) {
-            vec3 tpos = glm::rotate(vertices[i+n].position, angle, axis)
-                * def.texture_scale;
-            vertices[i+n].tex_coord = { tpos.x + 0.5, tpos.y + 0.5 };
+        if (def.texture_type == PROJECTED) {
+            vec3 tpos = vertices[i].position;
+            tpos *= def.texture_scale;
+            //FIXME reorient meshgen and use XY coords instead of XZ
+            //  then integrate with code below
+            vertices[i].tex_coord = { tpos.x + 0.5, tpos.z + 0.5 };
+            continue;
         }
+
+        // calculate texture coordinate by rotating to z-plane
+        if (def.texture_type==STRETCHED && def.normal_type!=POSITION_NORMALS)
+            std::cerr << "STRETCHED texturing requires POSITION_NORMALS";
+
+        if (def.texture_type == FRAGMENTED && i%3 == 0)
+                tex_normal = (def.normal_type == SURFACE_NORMALS)
+                    ? vertices[i].normal
+                    : get_normal( vertices[i  ].position,
+                                  vertices[i+1].position,
+                                  vertices[i+2].position );
+
+        else if (def.texture_type == STRETCHED)
+            tex_normal = vertices[i].normal;
+
+        if (def.texture_type != FRAGMENTED || i%3 == 0) {
+            angle = glm::angle(tex_normal, {0,0,1});
+            axis = glm::cross(tex_normal, {0,0,1});//XXX
+            if(axis == vec3(0)) axis = {1,0,0};
+        }
+
+        vec3 tpos = glm::rotate(vertices[i].position, angle, axis)
+                  * def.texture_scale;
+        vertices[i].tex_coord = { tpos.x + 0.5, tpos.y + 0.5 };
     }
 
     // buffer vertex data
