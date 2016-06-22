@@ -5,10 +5,10 @@
 
 namespace MeshGen {
     MeshDef PdpMesh(int vertices, float size, float amplitude,
-                    float period, MeshFlags flags = 0);
+                    float period);
 
-    MeshDef Box(float w, float h, float d, MeshFlags flags = SURFACE_NORMALS);
+    MeshDef Box(float w, float h, float d);
 
-    MeshDef Sphere(float radius, int n, MeshFlags flags = POSITION_NORMALS);
+    MeshDef Sphere(float radius, int n);
 
 }
