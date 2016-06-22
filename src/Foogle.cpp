@@ -13,10 +13,9 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
-
-static auto skybox_mesh = MeshGen::Sphere(100, 2, INVERTED|REMOVE_NORMALS);
-static auto ground_mesh = MeshGen::PdpMesh(2000, 50, 1, .2, CIRCULAR);
-static auto brick_mesh  = MeshGen::PdpMesh(80, 2, .2f, 4);
+static auto ground_mesh = MeshGen::PdpMesh(2000, 50, 1.f, .2);
+static auto brick_mesh  = MeshGen::PdpMesh(80,    2, .2f,  4);
+static auto skybox_mesh = MeshGen::Sphere(100, 2);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
 Model crate{&cube_mesh, "crate.jpg"};

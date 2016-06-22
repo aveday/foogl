@@ -4,15 +4,6 @@
 #include <string>
 #include "glm.h"
 
-
-typedef uint8_t MeshFlags;
-enum {
-    INVERTED       = 1<<0,
-    CIRCULAR       = 1<<1,
-    FLAT           = 1<<2,
-    REMOVE_NORMALS = 1<<3,
-};
-
 enum TextureType {
     PROJECTED,
     STRETCHED,
@@ -33,7 +24,6 @@ struct MeshDef {
     const NormalType normal_type;
     const TextureType texture_type;
     const float texture_scale = 1.f;
-    const MeshFlags flags = 0;
 };
 
 struct Mesh {
