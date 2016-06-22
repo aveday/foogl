@@ -30,8 +30,8 @@ int main() {
             Body{{-3, .8, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
 
     EM::new_entity(skybox, Body{} );
-    EM::new_entity(ground, Body{} );
-    EM::new_entity(brick, Body{{0,.8f,0}, {2,1,2}, {}, {-M_PI/2,0,0}} );
+    EM::new_entity(ground, Body{{}, {1,1,1}, {}, {M_PI_2,0,0}} );
+    EM::new_entity(brick,  Body{{0,.8f,0}, {2,1,2}} );
 
     // create walls
     EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
