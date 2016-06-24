@@ -14,7 +14,7 @@ RenderSystem    rendering;
 MovementSystem  movement;
 
 static auto ground_mesh = MeshGen::PdpMesh(2000, 50, 1.f, .2);
-static auto brick_mesh  = MeshGen::PdpMesh(80,    2, .2f,  4);
+static auto brick_mesh  = MeshGen::Box(1, 1, 1);
 static auto skybox_mesh = MeshGen::Sphere(100, 2);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
@@ -31,7 +31,7 @@ int main() {
 
     EM::new_entity(skybox, Body{} );
     EM::new_entity(ground, Body{{}, {1,1,1}, {}, {M_PI_2,0,0}} );
-    EM::new_entity(brick,  Body{{0,.8f,0}, {2,1,2}} );
+    EM::new_entity(brick,  Body{{0,.8f,0}} );
 
     // create walls
     EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
