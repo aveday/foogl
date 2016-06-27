@@ -8,10 +8,10 @@
 #include "triangulate.h"
 #include "poisson.h"
 
-MeshDef MeshGen::PdpMesh( const int vertices = 1000,
-                          const float size = 3.0f,
-                          const float amplitude = 0.2f,
-                          const float period = 4)
+MeshDef MeshGen::PdpMesh( const int vertices,
+                          const float size,
+                          const float amplitude,
+                          const float period )
 {
     std::vector<vec3> positions, normals;
 

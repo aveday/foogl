@@ -4,8 +4,10 @@
 #include "glm.h"
 
 namespace MeshGen {
-    MeshDef PdpMesh(int vertices, float size, float amplitude,
-                    float period);
+    MeshDef PdpMesh( const int vertices = 1000,
+                     const float size = 3.0f,
+                     const float amplitude = 0.2f,
+                     const float period = 4 );
 
     MeshDef Box(float w, float h, float d);
 
