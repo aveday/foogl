@@ -5,7 +5,9 @@
 #include "core_systems.h"
 #include "colors.h"
 #include "glm.h"
+
 #include "MeshGen.h"
+#include "TexGen.h"
 
 WindowSystem    windowing;
 ControlSystem   control;
@@ -13,15 +15,18 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
+static auto sphere_mesh = MeshGen::Sphere(1, 1);
+static auto brick_mesh = MeshGen::PdpMesh(100, 2, .3f, 2);
+
 static auto ground_mesh = MeshGen::PdpMesh(2000, 50, 1.f, .2);
-static auto brick_mesh  = MeshGen::Box(1, 1, 1);
 static auto skybox_mesh = MeshGen::Sphere(100, 2);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
 Model crate{&cube_mesh, "crate.jpg"};
 Model ground{&ground_mesh, "grass.png"};
 Model skybox{&skybox_mesh, "night.jpg"};
-Model brick{&brick_mesh, "colors.jpg"};
+
+Model test_model{&cube_mesh, "colors.jpg"};
 
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
@@ -31,7 +36,12 @@ int main() {
 
     EM::new_entity(skybox, Body{} );
     EM::new_entity(ground, Body{{}, {1,1,1}, {}, {M_PI_2,0,0}} );
-    EM::new_entity(brick,  Body{{0,.8f,0}} );
+
+    int test1 = EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{0,   .5f,0}});
+                EM::new_entity(Model{&brick_mesh,"colors.jpg"}, Body{{0,    2, 0}});
+
+    int test2 = EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{1.5f,.5f,0}});
+                EM::new_entity(Model{&sphere_mesh,"colors.jpg"},Body{{1.5f, 2, 0}});
 
     // create walls
     EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
@@ -56,6 +66,7 @@ int main() {
     };
 
     Clock &clock = EM::first_component<Clock>();
+    static bool debug = true;
 
     while (clock.running) {
         vec3 pos{0, 1, 3};
@@ -78,6 +89,15 @@ int main() {
         movement.run();
         lighting.run();
         rendering.run();
+
+        //GLuint n = TexGen::MeshNormals(*model.def, {512,512});
+        if(debug) {
+            debug = false;
+            EM::get_component<Model>(test1).texture =
+                TexGen::MeshNormals(brick_mesh, {512,512});
+            EM::get_component<Model>(test2).texture =
+                TexGen::MeshNormals(sphere_mesh, {512,512});
+        }
     }
     return 0;
 }
