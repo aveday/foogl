@@ -5,6 +5,8 @@
 #include "RenderSystem.h"
 #include "components.h"
 
+#include "TexGen.h"
+
 void RenderSystem::run()
 {
     static bool init = false;
@@ -36,13 +38,17 @@ void RenderSystem::run()
         if (!EM::has_components<Model, Body>(e))
             continue;
 
+
         Model &model = EM::get_component<Model>(e);
         Body &body = EM::get_component<Body>(e);
 
-        if (!model.mesh.vertices_n)
+        if (!model.mesh.vertices_n) {
             model.mesh = AL::LoadMesh(*model.def);
-        if (!model.texture)
+        }
+
+        if (!model.texture) {
             model.texture = AL::LoadTexture(model.texture_file);
+        }
 
         // bind the texture and set uniform
         glActiveTexture(GL_TEXTURE0);
