@@ -25,6 +25,7 @@ void WindowSystem::run()
     else glfwMakeContextCurrent(window.gl_window);
 
     glfwSwapBuffers(window.gl_window);
+    glViewport(0, 0, window.width, window.height);
 
     // Manage time
     float excess_seconds = clock.time - glfwGetTime() + clock.min;
