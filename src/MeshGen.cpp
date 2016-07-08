@@ -42,9 +42,9 @@ MeshDef MeshGen::PdpMesh( const int vertices,
         float z = stb_perlin_noise3(x*period, y*period, 0) * amplitude;
         positions.push_back({x, y, z});
 
-        float z1 = stb_perlin_noise3((x+d)*period, y*period, 0) * amplitude;
-        float z2 = stb_perlin_noise3(x*period, (y+d)*period, 0) * amplitude;
-        normals.push_back( get_normal({x,y,z}, {x+d,y,z1}, {x,y+d,z2}) );
+        float z1 = stb_perlin_noise3(x*period, (y+d)*period, 0) * amplitude;
+        float z2 = stb_perlin_noise3((x+d)*period, y*period, 0) * amplitude;
+        normals.push_back( get_normal({x,y,z}, {x,y+d,z1}, {x+d,y,z2}) );
     }
     std::vector<int> indices = triangulate(positions);
 
