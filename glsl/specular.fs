@@ -2,8 +2,9 @@
 #extension GL_ARB_explicit_uniform_location : require
 #extension GL_ARB_shading_language_420pack : require
 
-layout(location = 2) uniform sampler2D tex;
-layout(location = 3) uniform vec3 cameraPosition;
+layout(location = 2) uniform vec3 cameraPosition;
+layout(location = 3) uniform sampler2D tex;
+layout(location = 4) uniform sampler2D nmap; 
 
 float materialShininess = 80;
 vec3 materialSpecularColor = vec3(1,1,1);
