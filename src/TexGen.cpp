@@ -61,7 +61,7 @@ GLuint TexGen::MeshNormals(MeshDef &def, ivec2 resolution)
     mat4 pos = glm::translate( vec3{0, 0,  0} );
 
     // calculate and set an orthogonal view matrix
-    mat4 view_matrix = glm::ortho(1.f, -1.f, -1.f, 1.f) * glm::inverse(pos);
+    mat4 view_matrix = glm::ortho(-1.f, 1.f, -1.f, 1.f) * glm::inverse(pos);
     glUniformMatrix4fv(UNIFORM_VIEW_MATRIX, 1, 0, glm::value_ptr(view_matrix));
 
     // render to texture
