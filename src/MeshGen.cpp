@@ -8,6 +8,25 @@
 #include "triangulate.h"
 #include "poisson.h"
 
+MeshDef MeshGen::PdpSquare( const int vertices,
+                          const float size,
+                          const float amplitude,
+                          const float period )
+{
+    std::vector<vec3> positions;
+    for (auto p : GeneratePoissonPoints(vertices, 30, false)) {
+        float x = size * (p.x - .5f);
+        float y = size * (p.y - .5f);
+        float z = stb_perlin_noise3(x*period, y*period, 0) * amplitude;
+        positions.push_back({x, y, z});
+    }
+    std::vector<int> indices = triangulate(positions);
+    std::vector<vec3> normals = get_normals(positions, indices);
+
+    return MeshDef{positions, indices, normals,
+        SURFACE_NORMALS, FRAGMENTED, 1};
+}
+
 MeshDef MeshGen::PdpMesh( const int vertices,
                           const float size,
                           const float amplitude,
