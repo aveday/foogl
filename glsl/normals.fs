@@ -11,5 +11,5 @@ out vec4 finalColor;
 
 void main()
 {
-    finalColor = vec4((1 - fragNormal)/2, 1);
+    finalColor = vec4((1 + fragNormal)/2, 1);
 }
