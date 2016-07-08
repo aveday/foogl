@@ -80,8 +80,8 @@ std::vector<int> triangulate(const std::vector<glm::vec3> &positions)
 	float midy = (minY + maxY) / 2.f;
 
 	glm::vec3 p1(midx - 20 * deltaMax, midy - deltaMax, -1);
-	glm::vec3 p2(midx, midy + 20 * deltaMax, -1);
-	glm::vec3 p3(midx + 20 * deltaMax, midy - deltaMax, -1);
+	glm::vec3 p2(midx + 20 * deltaMax, midy - deltaMax, -1);
+	glm::vec3 p3(midx, midy + 20 * deltaMax, -1);
 	
 	// Create a list of triangles, and add the supertriangle in it
 	triangles.push_back(Triangle{p1, p2, p3});
