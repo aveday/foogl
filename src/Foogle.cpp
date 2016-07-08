@@ -16,9 +16,9 @@ RenderSystem    rendering;
 MovementSystem  movement;
 
 static auto sphere_mesh = MeshGen::Sphere(1, 1);
-static auto brick_mesh = MeshGen::PdpMesh(100, 2, .3f, 2);
+static auto brick_mesh = MeshGen::PdpSquare(100, 2, .3f, 2);
 
-static auto ground_mesh = MeshGen::PdpMesh(2000, 50, 1.f, .2);
+static auto ground_mesh = MeshGen::PdpMesh(2000, 50, .5f, .2);
 static auto skybox_mesh = MeshGen::Sphere(100, 2);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
@@ -31,21 +31,23 @@ Model test_model{&cube_mesh, "colors.jpg"};
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
 
-    EM::new_entity( Controller{}, Camera{},
-            Body{{-3, .8, -3}, {1, 1, 1}, {}, {0, -2.4, 0}});
+    int player = EM::new_entity( Controller{}, Camera{},
+            Body{{-1, .8, 3}, {1, 1, 1}, {}, {0, 5.6, 0}});
 
     EM::new_entity(skybox, Body{} );
-    EM::new_entity(ground, Body{{}, {1,1,1}, {}, {M_PI_2,0,0}} );
+    EM::new_entity(ground, Body{{}, {1,1,1}, {}, {-M_PI_2,0,0}} );
 
-    int test1 = EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{0,   .5f,0}});
-                EM::new_entity(Model{&brick_mesh,"colors.jpg"}, Body{{0,    2, 0}});
+    int test1 =
+        EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{0,   .5f,0}});
+        EM::new_entity(Model{&brick_mesh,"colors.jpg"}, Body{{0,    2, 0}});
 
-    int test2 = EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{1.5f,.5f,0}});
-                EM::new_entity(Model{&sphere_mesh,"colors.jpg"},Body{{1.5f, 2, 0}});
+    int test2 =
+        EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{1.5f,.5f,0}});
+        EM::new_entity(Model{&sphere_mesh,"colors.jpg"},Body{{1.5f, 2, 0}});
 
     // create walls
-    EM::new_entity( crate, Body{{3, 2, 0}, {.1, 4, 6}} );
-    EM::new_entity( crate, Body{{0, 2, 3}, { 6, 4,.1}} );
+    EM::new_entity( crate, Body{{3, 0, 0}, {.1, 4, 6}} );
+    EM::new_entity( crate, Body{{0, 0, -3}, { 6, 4,.1}} );
 
     // create ring of n_blocks
     int n_blocks = 6, blocks[n_blocks];
@@ -58,7 +60,7 @@ int main() {
     }
 
     // create lights
-    Body light_body{{0, 10, -5}, vec3(.05)};
+    Body light_body{{0, 10, 5}, vec3(.05)};
     int bulb[] = {
         EM::new_entity( crate, Light{{1, 1, 1}}, light_body ),
         EM::new_entity( crate, Light{{.5, .5, .5}}, light_body ),
@@ -90,9 +92,12 @@ int main() {
         lighting.run();
         rendering.run();
 
+        std::cout << EM::get_component<Body>(player).position.x << std::endl;
+
         //GLuint n = TexGen::MeshNormals(*model.def, {512,512});
         if(debug) {
             debug = false;
+
             EM::get_component<Model>(test1).texture =
                 TexGen::MeshNormals(brick_mesh, {512,512});
             EM::get_component<Model>(test2).texture =
