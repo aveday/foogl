@@ -1,11 +1,10 @@
 #include <iostream>
 #include <glm/gtc/type_ptr.hpp>
+#include "RenderSystem.h"
 #include "EntityManager.h"
 #include "AssetLoader.h"
-#include "RenderSystem.h"
 #include "components.h"
-
-#include "TexGen.h"
+#include "shader_uniforms.h"
 
 void RenderSystem::run()
 {
