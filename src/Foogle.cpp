@@ -26,8 +26,6 @@ Model crate{&cube_mesh, "crate.jpg"};
 Model ground{&ground_mesh, "grass.png"};
 Model skybox{&skybox_mesh, "night.jpg"};
 
-Model test_model{&cube_mesh, "colors.jpg"};
-
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
 
@@ -36,14 +34,6 @@ int main() {
 
     EM::new_entity(skybox, Body{} );
     EM::new_entity(ground, Body{{}, {1,1,1}, {}, {-M_PI_2,0,0}} );
-
-    int test1 =
-        EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{0,   .5f,0}});
-        EM::new_entity(Model{&brick_mesh,"colors.jpg"}, Body{{0,    2, 0}});
-
-    int test2 =
-        EM::new_entity(Model{&cube_mesh, "colors.jpg"}, Body{{1.5f,.5f,0}});
-        EM::new_entity(Model{&sphere_mesh,"colors.jpg"},Body{{1.5f, 2, 0}});
 
     // create walls
     EM::new_entity( crate, Body{{3, 0, 0}, {.1, 4, 6}} );
@@ -64,7 +54,7 @@ int main() {
     int bulb[] = {
         EM::new_entity( crate, Light{{1, 1, 1}}, light_body ),
         EM::new_entity( crate, Light{{.5, .5, .5}}, light_body ),
-        //EM::new_entity( crate, Light{{.1, .1, .8}}, light_body ),
+        EM::new_entity( crate, Light{{.1, .1, .8}}, light_body ),
     };
 
     Clock &clock = EM::first_component<Clock>();
@@ -75,34 +65,13 @@ int main() {
         float angle = fmodf(clock.time, 2*M_PI);
         EM::get_component<Body>(bulb[0]).position.y = .5*sin(clock.time)+1;
         EM::get_component<Body>(bulb[1]).position = glm::rotateY(pos, angle);
-        //EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
-
-        /*
-        for(int i = 0; i < n_blocks; ++i) {
-            Body &b = EM::get_component<Body>(blocks[i]);
-            b.position = glm::rotateY(b.position, clock.dt/20);
-            b.position.y = 1 + 0.2f * sin(8*M_PI*i/n_blocks + clock.time);
-            b.rotation.y = fmodf(clock.time/4 + i, 2*M_PI);
-        }
-        */
+        EM::get_component<Body>(bulb[2]).position = glm::rotateY(pos,-angle);
 
         windowing.run();
         control.run();
         movement.run();
         lighting.run();
         rendering.run();
-
-        std::cout << EM::get_component<Body>(player).position.x << std::endl;
-
-        //GLuint n = TexGen::MeshNormals(*model.def, {512,512});
-        if(debug) {
-            debug = false;
-
-            EM::get_component<Model>(test1).texture =
-                TexGen::MeshNormals(brick_mesh, {512,512});
-            EM::get_component<Model>(test2).texture =
-                TexGen::MeshNormals(sphere_mesh, {512,512});
-        }
     }
     return 0;
 }
