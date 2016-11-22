@@ -15,16 +15,11 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
-static auto sphere_mesh = MeshGen::Sphere(1, 1);
-static auto brick_mesh = MeshGen::PdpSquare(100, 2, .3f, 2);
-
-static auto ground_mesh = MeshGen::PdpMesh(2000, 50, .5f, .2);
-static auto skybox_mesh = MeshGen::Sphere(100, 2);
+static auto ground_mesh = MeshGen::Box(20, 1, 20);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
 Model crate{&cube_mesh, "crate.jpg"};
-Model ground{&ground_mesh, "grass.png"};
-Model skybox{&skybox_mesh, "night.jpg"};
+Model ground{&ground_mesh, "DarkCheck_S.jpg"};
 
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
@@ -32,8 +27,7 @@ int main() {
     int player = EM::new_entity( Controller{}, Camera{},
             Body{{-1, .8, 3}, {1, 1, 1}, {}, {0, 5.6, 0}});
 
-    EM::new_entity(skybox, Body{} );
-    EM::new_entity(ground, Body{{}, {1,1,1}, {}, {-M_PI_2,0,0}} );
+    EM::new_entity(ground, Body{{0,-1,0}, {1,1,1}, {}, {0,0,0}} );
 
     // create walls
     EM::new_entity( crate, Body{{3, 0, 0}, {.1, 4, 6}} );
@@ -58,7 +52,6 @@ int main() {
     };
 
     Clock &clock = EM::first_component<Clock>();
-    static bool debug = true;
 
     while (clock.running) {
         vec3 pos{0, 1, 3};
