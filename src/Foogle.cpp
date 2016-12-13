@@ -15,11 +15,15 @@ LightSystem     lighting;
 RenderSystem    rendering;
 MovementSystem  movement;
 
+// define materials
+static MaterialDef dark_check = {"DarkCheck_S.jpg", "DarkCheck_N.jpg"};
+
+// generate meshes
 static auto ground_mesh = MeshGen::Box(20, 1, 20);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
-Model crate{&cube_mesh, "crate.jpg"};
-Model ground{&ground_mesh, "DarkCheck_S.jpg"};
+Model crate{&cube_mesh, &dark_check};
+Model ground{&ground_mesh, &dark_check};
 
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});

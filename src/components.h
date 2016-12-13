@@ -43,10 +43,10 @@ struct Camera {
 };
 
 struct Model {
-    MeshDef *def;
-    std::string texture_file;
+    MeshDef *mesh_def;
+    MaterialDef *material_def;
     Mesh mesh = {0,0,0};
-    GLuint texture = 0;
+    Material material = {0,0,0};
 };
 
 struct Controller {

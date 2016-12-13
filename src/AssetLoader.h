@@ -13,10 +13,11 @@ public:
     template <typename A> static inline int add_asset(A asset);
     static GLuint LoadProgram(const char* vs, const char* fs);
     static Mesh LoadMesh(MeshDef &def);
-    static GLuint LoadTexture(std::string filename);
+    static Material LoadMaterial(MaterialDef &def);
 
 private:
     static GLuint LoadShader(GLenum type, const char *filename);
+    static GLuint LoadTexture(std::string filename);
 
     static std::unordered_map<std::string, GLuint> program_cache;
     static std::unordered_map<std::string, GLuint> texture_cache;

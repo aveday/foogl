@@ -15,7 +15,7 @@ void RenderSystem::run()
         glDepthFunc(GL_LEQUAL);
         glEnable(GL_CULL_FACE);
         glEnable(GL_TEXTURE_2D);
-        glUseProgram(AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs"));
+        glUseProgram(AL::LoadProgram("glsl/specular.vs", "glsl/specular.fs"));//FIXME
     }
 
     int viewer = EM::first_entity<Camera, Body>();
@@ -41,17 +41,15 @@ void RenderSystem::run()
         Model &model = EM::get_component<Model>(e);
         Body &body = EM::get_component<Body>(e);
 
-        if (!model.mesh.vertices_n) {
-            model.mesh = AL::LoadMesh(*model.def);
-        }
-
-        if (!model.texture) {
-            model.texture = AL::LoadTexture(model.texture_file);
-        }
+        //FIXME - shouldn't be checked like this, shouldn't be done so often
+        if (!model.mesh.vertices_n)
+            model.mesh = AL::LoadMesh(*model.mesh_def);
+        if (!model.material.diffuse)
+            model.material = AL::LoadMaterial(*model.material_def);
 
         // bind the texture and set uniform
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, model.texture);
+        glBindTexture(GL_TEXTURE_2D, model.material.diffuse);
         glUniform1i(UNIFORM_TEXTURE, 0);
 
         // update uniform shader inputs

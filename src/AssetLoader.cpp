@@ -87,6 +87,14 @@ GLuint AssetLoader::LoadProgram(const char* vs, const char* fs)
     return program;
 }
 
+Material AssetLoader::LoadMaterial(MaterialDef &def)
+{
+    Material material;
+    material.diffuse = AL::LoadTexture(def.diffuse_filename);
+    material.normal = AL::LoadTexture(def.normal_filename);
+    return material;
+}
+
 Mesh AssetLoader::LoadMesh(MeshDef &def)
 {
     if (mesh_cache.count(&def))
@@ -185,6 +193,7 @@ GLuint AssetLoader::LoadTexture(std::string filename)
 
     GLuint texture;
     glGenTextures(1, &texture);
+
     glBindTexture(GL_TEXTURE_2D, texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
