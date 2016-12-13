@@ -37,4 +37,15 @@ struct ShaderDef {
     std::string fs_filename;
 };
 
+struct MaterialDef {
+    std::string diffuse_filename;
+    std::string normal_filename;
+    std::string specular_filename;
+};
+
+struct Material {
+    GLuint diffuse;
+    GLuint normal;
+    GLuint specular;
+};
 
