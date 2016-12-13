@@ -37,7 +37,6 @@ void RenderSystem::run()
         if (!EM::has_components<Model, Body>(e))
             continue;
 
-
         Model &model = EM::get_component<Model>(e);
         Body &body = EM::get_component<Body>(e);
 
