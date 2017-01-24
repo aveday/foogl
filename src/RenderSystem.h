@@ -12,6 +12,7 @@ private:
 
     static const GLuint UNIFORM_DIFFUSEMAP = 3;
     static const GLuint UNIFORM_NORMALMAP = 4;
+    static const GLuint UNIFORM_SPECULARMAP = 5;
 
 	GLuint MatrixID;
 	GLuint ModelMatrixID;

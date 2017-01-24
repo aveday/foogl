@@ -27,6 +27,6 @@ private:
     static const GLuint INPUT_NORMAL = 1;
     static const GLuint INPUT_TANGENT = 2;
     static const GLuint INPUT_BITANGENT = 3;
-    static const GLuint INPUT_TEXCOORD = 4;
+    static const GLuint INPUT_UV = 4;
 } AL;
 
