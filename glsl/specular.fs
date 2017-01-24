@@ -2,20 +2,11 @@
 #extension GL_ARB_explicit_uniform_location : require
 #extension GL_ARB_shading_language_420pack : require
 
-layout(location = 2) uniform vec3 cameraPosition;
-layout(location = 3) uniform sampler2D tex;
-layout(location = 4) uniform sampler2D nmap; 
-
-float materialShininess = 80;
-vec3 materialSpecularColor = vec3(1,1,1);
-
 #define MAX_LIGHTS 10
 struct Light
 {
     vec3 position;
-    float attenuation;
     vec3 intensity;
-    float ambientCoefficient;
 };
 
 layout (binding = 0, std140) uniform LIGHTS
@@ -24,49 +15,73 @@ layout (binding = 0, std140) uniform LIGHTS
     Light lights[MAX_LIGHTS];
 };
 
+// Values that stay constant for the whole mesh.
+layout(location = 3) uniform sampler2D DiffuseTextureSampler;
+layout(location = 4) uniform sampler2D NormalTextureSampler;
+//uniform sampler2D SpecularTextureSampler;
+uniform mat4 V;
+uniform mat4 M;
+uniform mat3 MV3x3;
 
-in vec3 fragPosition;
-in vec3 fragNormal;
-in vec2 fragTexCoord;
+// Interpolated values from the vertex shaders
+in vec2 UV;
+in vec3 Position_worldspace;
+in vec3 EyeDirection_cameraspace;
+in vec3 EyeDirection_tangentspace;
+in mat3 TBN;
 
+// Ouput data
 out vec4 finalColor;
 
-vec3 ApplyLight(Light light, vec3 surfaceColor, vec3 normal, vec3 surfacePos, vec3 surfaceToCamera) {
-    vec3 surfaceToLight;
+void main(){
+    // Material properties
+    vec3 MaterialDiffuseColor = texture(DiffuseTextureSampler, UV).rgb;
+    vec3 MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
+    vec3 MaterialSpecularColor = vec3(0.3);
 
-    surfaceToLight = normalize(light.position.xyz - surfacePos);
-    float distanceToLight = length(light.position.xyz - surfacePos);
-    float attenuation = 1.0 / (1.0 + light.attenuation * pow(distanceToLight, 2));
+    // Local normal, in tangent space. V tex coordinate is inverted because normal map is in TGA (not in DDS) for better quality
+    vec3 TextureNormal_tangentspace = normalize(texture( NormalTextureSampler, UV ).rgb*2.0 - 1.0);
 
-    //ambient
-    vec3 ambient = light.ambientCoefficient * surfaceColor.rgb * light.intensity;
-
-    //diffuse
-    float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
-    vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * light.intensity;
-    
-    //specular
-    float specularCoefficient = 0.0;
-    if(diffuseCoefficient > 0.0)
-        specularCoefficient = pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), materialShininess);
-    vec3 specular = specularCoefficient * materialSpecularColor * light.intensity;
-
-    //linear color (color before gamma correction)
-    return ambient + attenuation*(diffuse + specular);
-}
-
-void main()
-{
-    vec3 surfaceToCamera = normalize(cameraPosition - fragPosition);
-
-    //combine color from all the lights
     vec3 linearColor = vec3(0);
-    vec3 texColor = texture(tex, fragTexCoord).rgb;
-    for(int i = 0; i < num_lights; ++i){
-        linearColor += ApplyLight(lights[i], texColor, fragNormal, fragPosition, surfaceToCamera);
+    for(int i = 0; i < num_lights; ++i) {
+        // Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
+        vec3 LightPosition_cameraspace = ( V * vec4(lights[i].position, 1) ).xyz;
+        vec3 LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;
+        vec3 LightDirection_tangentspace = TBN * LightDirection_cameraspace;
+
+        // Distance to the light
+        float distance = length( lights[i].position - Position_worldspace );
+
+        // Normal of the computed fragment, in camera space
+        vec3 n = TextureNormal_tangentspace;
+        // Direction of the light (from the fragment to the light)
+        vec3 l = normalize(LightDirection_tangentspace);
+        // Cosine of the angle between the normal and the light direction, 
+        // clamped above 0
+        //  - light is at the vertical of the triangle -> 1
+        //  - light is perpendicular to the triangle -> 0
+        //  - light is behind the triangle -> 0
+        float cosTheta = clamp( dot( n,l ), 0,1 );
+
+        // Eye vector (towards the camera)
+        vec3 E = normalize(EyeDirection_tangentspace);
+        // Direction in which the triangle reflects the light
+        vec3 R = reflect(-l,n);
+        // Cosine of the angle between the Eye vector and the Reflect vector,
+        // clamped to 0
+        //  - Looking into the reflection -> 1
+        //  - Looking elsewhere -> < 1
+        float cosAlpha = clamp( dot( E,R ), 0,1 );
+        
+        linearColor += 
+            // Ambient : simulates indirect lighting
+            MaterialAmbientColor +
+            // Diffuse : "color" of the object
+            MaterialDiffuseColor * lights[i].intensity * cosTheta / (distance*distance) +
+            // Specular : reflective highlight, like a mirror
+            MaterialSpecularColor * lights[i].intensity * pow(cosAlpha,5) / (distance*distance);
     }
-    
-    //final color (after gamma correction)
-    vec3 gamma = vec3(1.0/2.2);
+    vec3 gamma = vec3(1.0/1.5);
     finalColor = vec4(pow(linearColor, gamma), 1);
 }
+

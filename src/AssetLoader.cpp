@@ -112,24 +112,30 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     glBindVertexArray(mesh.vao);
 
     // define vertex buffer layout
-    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 32, (void*)0);
-    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 32, (void*)12);
-    glVertexAttribPointer(INPUT_TEXCOORD, 2, GL_FLOAT, 0, 32, (void*)24);
+    glVertexAttribPointer(INPUT_POSITION,  3, GL_FLOAT, 0, 56, (void*)0);
+    glVertexAttribPointer(INPUT_NORMAL,    3, GL_FLOAT, 0, 56, (void*)12);
+    glVertexAttribPointer(INPUT_TANGENT,   3, GL_FLOAT, 0, 56, (void*)24);
+    glVertexAttribPointer(INPUT_BITANGENT, 3, GL_FLOAT, 0, 56, (void*)36);
+    glVertexAttribPointer(INPUT_TEXCOORD,  2, GL_FLOAT, 0, 56, (void*)48);
+
     glEnableVertexAttribArray(INPUT_POSITION);
     glEnableVertexAttribArray(INPUT_NORMAL);
+    glEnableVertexAttribArray(INPUT_TANGENT);
+    glEnableVertexAttribArray(INPUT_BITANGENT);
     glEnableVertexAttribArray(INPUT_TEXCOORD);
 
-    struct Vertex { vec3 position, normal; vec2 tex_coord; };
+    struct Vertex { vec3 position, normal, tangent, bitangent; vec2 tex_coord; };
     Vertex *vertices = new Vertex[mesh.vertices_n];
 
     // set vertex positions and normals
     for (int i = 0; i < mesh.vertices_n; i++) {
         vertices[i].position = def.positions[def.indices[i]];
-        vertices[i].normal = 
+        vertices[i].normal =
             def.normal_type == SURFACE_NORMALS  ? def.normals[i/3] :
             def.normal_type == POSITION_NORMALS ? def.normals[def.indices[i]] :
             def.normal_type == VERTEX_NORMALS   ? def.normals[i] :
-            def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,1,0};
+            def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,0,1};
+        //vertices[i].normal = rotate(vertices[i].normal, (float)(-M_PI/2), vec3(0,1,0));
     }
 
     // calculate texture coordinates
@@ -167,6 +173,52 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
         // scale and center the final texture coordinates
         vertices[i].tex_coord = def.texture_scale * tpos + vec2(.5);
     }
+
+    for (int i = 0; i < mesh.vertices_n; i+=3) {
+        vec3 &v0 = vertices[i+0].position;
+        vec3 &v1 = vertices[i+1].position;
+        vec3 &v2 = vertices[i+2].position;
+
+        vec2 &uv0 = vertices[i+0].tex_coord;
+        vec2 &uv1 = vertices[i+1].tex_coord;
+        vec2 &uv2 = vertices[i+2].tex_coord;
+
+        vec3 deltaPos1 = v1-v0;
+        vec3 deltaPos2 = v2-v0;
+        // UV delta
+        vec2 deltaUV1 = uv1-uv0;
+        vec2 deltaUV2 = uv2-uv0;
+
+        float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+        vec3 normal = vertices[i].normal;
+        vec3 tangent = (deltaPos1 * deltaUV2.y   - deltaPos2 * deltaUV1.y)*r;
+        vec3 bitangent = (deltaPos2 * deltaUV1.x   - deltaPos1 * deltaUV2.x)*r;
+
+
+        vertices[i+0].tangent = tangent;
+        vertices[i+1].tangent = tangent;
+        vertices[i+2].tangent = tangent;
+
+        vertices[i+0].bitangent = bitangent;
+        vertices[i+1].bitangent = bitangent;
+        vertices[i+2].bitangent = bitangent;
+    }
+
+	// See "Going Further"
+	for (int i=0; i < mesh.vertices_n; i++) {
+		glm::vec3 &n = vertices[i].normal;
+		glm::vec3 &t = vertices[i].tangent;
+		glm::vec3 &b = vertices[i].bitangent;
+		
+		// Gram-Schmidt orthogonalize
+		t = glm::normalize(t - n * glm::dot(n, t));
+		
+		// Calculate handedness
+		if (glm::dot(glm::cross(n, t), b) < 0.0f){
+			t = t * -1.0f;
+		}
+
+	}
 
     // buffer vertex data
     int size = sizeof(Vertex) * mesh.vertices_n;
