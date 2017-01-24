@@ -18,7 +18,7 @@ layout (binding = 0, std140) uniform LIGHTS
 // Values that stay constant for the whole mesh.
 layout(location = 3) uniform sampler2D DiffuseTextureSampler;
 layout(location = 4) uniform sampler2D NormalTextureSampler;
-//uniform sampler2D SpecularTextureSampler;
+layout(location = 5) uniform sampler2D SpecularTextureSampler;
 uniform mat4 V;
 uniform mat4 M;
 uniform mat3 MV3x3;
@@ -37,7 +37,7 @@ void main(){
     // Material properties
     vec3 MaterialDiffuseColor = texture(DiffuseTextureSampler, UV).rgb;
     vec3 MaterialAmbientColor = vec3(0.1,0.1,0.1) * MaterialDiffuseColor;
-    vec3 MaterialSpecularColor = vec3(0.3);
+    vec3 MaterialSpecularColor = texture(SpecularTextureSampler, UV).rgb;
 
     // Local normal, in tangent space. V tex coordinate is inverted because normal map is in TGA (not in DDS) for better quality
     vec3 TextureNormal_tangentspace = normalize(texture( NormalTextureSampler, UV ).rgb*2.0 - 1.0);

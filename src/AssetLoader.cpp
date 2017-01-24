@@ -116,13 +116,13 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     glVertexAttribPointer(INPUT_NORMAL,    3, GL_FLOAT, 0, 56, (void*)12);
     glVertexAttribPointer(INPUT_TANGENT,   3, GL_FLOAT, 0, 56, (void*)24);
     glVertexAttribPointer(INPUT_BITANGENT, 3, GL_FLOAT, 0, 56, (void*)36);
-    glVertexAttribPointer(INPUT_TEXCOORD,  2, GL_FLOAT, 0, 56, (void*)48);
+    glVertexAttribPointer(INPUT_UV,        2, GL_FLOAT, 0, 56, (void*)48);
 
     glEnableVertexAttribArray(INPUT_POSITION);
     glEnableVertexAttribArray(INPUT_NORMAL);
     glEnableVertexAttribArray(INPUT_TANGENT);
     glEnableVertexAttribArray(INPUT_BITANGENT);
-    glEnableVertexAttribArray(INPUT_TEXCOORD);
+    glEnableVertexAttribArray(INPUT_UV);
 
     struct Vertex { vec3 position, normal, tangent, bitangent; vec2 tex_coord; };
     Vertex *vertices = new Vertex[mesh.vertices_n];
@@ -135,7 +135,6 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
             def.normal_type == POSITION_NORMALS ? def.normals[def.indices[i]] :
             def.normal_type == VERTEX_NORMALS   ? def.normals[i] :
             def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,0,1};
-        //vertices[i].normal = rotate(vertices[i].normal, (float)(-M_PI/2), vec3(0,1,0));
     }
 
     // calculate texture coordinates
