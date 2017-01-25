@@ -17,16 +17,18 @@ MovementSystem  movement;
 
 // define materials
 static MaterialDef dark_check = {
-    "pattern_35/diffus.tga",
+    "pattern_35/diffuse.tga",
     "pattern_35/normal.tga",
     "pattern_35/specular.tga"};
 
-// generate meshes
+// generate mes5hes
 static auto ground_mesh = MeshGen::Box(20, 1, 20);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
+static auto ball_mesh   = MeshGen::Sphere(1, 2);
 
 Model crate{&cube_mesh, &dark_check};
 Model ground{&ground_mesh, &dark_check};
+Model ball{&ball_mesh, &dark_check};
 
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
@@ -36,7 +38,7 @@ int main() {
 
     EM::new_entity(ground, Body{{0,-1,0}, {1,1,1}, {}, {0,0,0}} );
 
-    EM::new_entity( crate, Body{{0, 1, 0}, {1, 1, 1}} );
+    auto testball = EM::new_entity(ball, Body{{0, 1, 0}, {1, 1, 1}} );
     // create walls
     EM::new_entity( crate, Body{{3, 0, 0}, {.1, 4, 6}} );
     EM::new_entity( crate, Body{{0, 0, -3}, { 6, 4,.1}} );
@@ -52,7 +54,7 @@ int main() {
     }
 
     // create lights
-    Body light_body{{0, 10, 5}, vec3(.05)};
+    Body light_body{{0, 1, 2}, vec3(.05)};
     int bulb[] = {
         EM::new_entity( crate, Light{{1, 1, 1}}, light_body ),
     };
@@ -62,7 +64,8 @@ int main() {
     while (clock.running) {
         vec3 pos{0, 1 + cos(clock.time)/4.0, 2};
         float angle = fmodf(clock.time/2, 2*M_PI);
-        EM::get_component<Body>(bulb[0]).position = glm::rotateY(pos, angle);
+        //EM::get_component<Body>(bulb[0]).position = glm::rotateY(pos, angle);
+        EM::get_component<Body>(testball).rotation = vec3(0,angle,0);
 
         windowing.run();
         control.run();
