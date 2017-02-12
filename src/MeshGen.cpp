@@ -87,7 +87,7 @@ MeshDef MeshGen::Sphere(float radius, int n)
 
     par_shapes_free_mesh(p_mesh);
     return MeshDef{positions, indices, normals,
-        POSITION_NORMALS, PROJECTED, 1};
+        POSITION_NORMALS, FRAGMENTED, .02f};
 }
 
 
