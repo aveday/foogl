@@ -173,14 +173,17 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
         vertices[i].tex_coord = def.texture_scale * tpos + vec2(.5);
     }
 
-    for (int i = 0; i < mesh.vertices_n; i+=3) {
-        vec3 &v0 = vertices[i+0].position;
-        vec3 &v1 = vertices[i+1].position;
-        vec3 &v2 = vertices[i+2].position;
+    for (int i = 0; i < mesh.vertices_n; i++) {
+        int n = i - i%3;
+        //printf("1\n");
+        vec3 &v0 = vertices[n+0].position;
+        vec3 &v1 = vertices[n+1].position;
+        vec3 &v2 = vertices[n+2].position;
 
-        vec2 &uv0 = vertices[i+0].tex_coord;
-        vec2 &uv1 = vertices[i+1].tex_coord;
-        vec2 &uv2 = vertices[i+2].tex_coord;
+        //printf("2\n");
+        vec2 &uv0 = vertices[n+0].tex_coord;
+        vec2 &uv1 = vertices[n+1].tex_coord;
+        vec2 &uv2 = vertices[n+2].tex_coord;
 
         vec3 deltaPos1 = v1-v0;
         vec3 deltaPos2 = v2-v0;
