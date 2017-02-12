@@ -16,8 +16,6 @@ out vec3 EyeDirection_cameraspace;
 out vec3 EyeDirection_tangentspace;
 out mat3 TBN;
 
-out vec3 vertexNormal_tangentspace;
-
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
 uniform mat4 V;
@@ -27,15 +25,15 @@ uniform mat3 MV3x3;
 void main(){
 
     // Output position of the vertex, in clip space : MVP * position
-    gl_Position =  MVP * vec4(vertexPosition_modelspace, 1);
+    gl_Position =  MVP * vec4(vertexPosition_modelspace,1);
     
     // Position of the vertex, in worldspace : M * position
-    Position_worldspace = (M * vec4(vertexPosition_modelspace, 1)).xyz;
+    Position_worldspace = (M * vec4(vertexPosition_modelspace,1)).xyz;
     
     // Vector that goes from the vertex to the camera, in camera space.
-    // In camera space, the camera is at the origin (0, 0, 0).
-    vec3 vertexPosition_cameraspace = ( V * M * vec4(vertexPosition_modelspace, 1)).xyz;
-    EyeDirection_cameraspace = -vertexPosition_cameraspace;
+    // In camera space, the camera is at the origin (0,0,0).
+    vec3 vertexPosition_cameraspace = ( V * M * vec4(vertexPosition_modelspace,1)).xyz;
+    EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
     
     // UV of the vertex. No special space for this one.
     UV = vertexUV;
@@ -52,6 +50,5 @@ void main(){
     )); // You can use dot products instead of building this matrix and transposing it. See References for details.
 
     EyeDirection_tangentspace =  TBN * EyeDirection_cameraspace;
-    vertexNormal_tangentspace =  normalize(TBN * vertexBitangent_cameraspace);
 }
 
