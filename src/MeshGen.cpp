@@ -24,7 +24,7 @@ MeshDef MeshGen::PdpSquare( const int vertices,
     std::vector<vec3> normals = get_normals(positions, indices);
 
     return MeshDef{positions, indices, normals,
-        SURFACE_NORMALS, FRAGMENTED, 1};
+        SURFACE_NORMALS};
 }
 
 MeshDef MeshGen::PdpMesh( const int vertices,
@@ -49,7 +49,7 @@ MeshDef MeshGen::PdpMesh( const int vertices,
     std::vector<int> indices = triangulate(positions);
 
     return MeshDef{positions, indices, normals,
-        POSITION_NORMALS, FRAGMENTED, 1};
+        POSITION_NORMALS};
 }
 
 MeshDef MeshGen::Box(float w, float h, float d)
@@ -66,7 +66,7 @@ MeshDef MeshGen::Box(float w, float h, float d)
          unitX,  unitX,  unitZ,  unitZ,  unitY,  unitY};
 
     return MeshDef{positions, indices, normals,
-        SURFACE_NORMALS, FRAGMENTED, 1};
+        SURFACE_NORMALS};
 }
 
 MeshDef MeshGen::Sphere(float radius, int n)
@@ -87,7 +87,7 @@ MeshDef MeshGen::Sphere(float radius, int n)
 
     par_shapes_free_mesh(p_mesh);
     return MeshDef{positions, indices, normals,
-        POSITION_NORMALS, FRAGMENTED, .02f};
+        POSITION_NORMALS};
 }
 
 

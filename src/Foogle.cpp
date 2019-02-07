@@ -16,14 +16,14 @@ RenderSystem    rendering;
 MovementSystem  movement;
 
 // define materials
-static MaterialDef dark_check = {"DarkCheck_S.jpg", "DarkCheck_N.jpg"};
+static Material mGreen = { glm::vec4(0, .01, 0, 1) };
 
 // generate meshes
 static auto ground_mesh = MeshGen::Box(20, 1, 20);
 static auto cube_mesh   = MeshGen::Box(1, 1, 1);
 
-Model crate{&cube_mesh, &dark_check};
-Model ground{&ground_mesh, &dark_check};
+Model crate{&cube_mesh};
+Model ground{&ground_mesh};
 
 int main() {
     EM::new_entity( Window{"Foogle"}, Clock{});
@@ -31,11 +31,11 @@ int main() {
     int player = EM::new_entity( Controller{}, Camera{},
             Body{{-1, .8, 3}, {1, 1, 1}, {}, {0, 5.6, 0}});
 
-    EM::new_entity(ground, Body{{0,-1,0}, {1,1,1}, {}, {0,0,0}} );
+    EM::new_entity(ground, mGreen, Body{{0,-1,0}, {1,1,1}, {}, {0,0,0}} );
 
     // create walls
-    EM::new_entity( crate, Body{{3, 0, 0}, {.1, 4, 6}} );
-    EM::new_entity( crate, Body{{0, 0, -3}, { 6, 4,.1}} );
+    EM::new_entity( crate, mGreen, Body{{3, 0, 0}, {.1, 4, 6}} );
+    EM::new_entity( crate, mGreen, Body{{0, 0, -3}, { 6, 4,.1}} );
 
     // create ring of n_blocks
     int n_blocks = 6, blocks[n_blocks];
@@ -44,15 +44,15 @@ int main() {
     for(int i = 0; i < n_blocks; ++i) {
         body.position = glm::rotateY(body.position, div);
         body.rotation.y += div;
-        blocks[i] = EM::new_entity(crate, body);
+        blocks[i] = EM::new_entity(crate, mGreen, body);
     }
 
     // create lights
     Body light_body{{0, 10, 5}, vec3(.05)};
     int bulb[] = {
-        EM::new_entity( crate, Light{{1, 1, 1}}, light_body ),
-        EM::new_entity( crate, Light{{.5, .5, .5}}, light_body ),
-        EM::new_entity( crate, Light{{.1, .1, .8}}, light_body ),
+        EM::new_entity( crate, mGreen, Light{{1, 1, 1}}, light_body ),
+        EM::new_entity( crate, mGreen, Light{{.5, .5, .5}}, light_body ),
+        EM::new_entity( crate, mGreen, Light{{.1, .1, .8}}, light_body ),
     };
 
     Clock &clock = EM::first_component<Clock>();

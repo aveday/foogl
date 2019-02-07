@@ -1,15 +1,12 @@
 #version 330
 #extension GL_ARB_explicit_uniform_location : require
-#extension GL_ARB_shading_language_420pack : require
 
 layout(location = 2) uniform vec3 cameraPosition;
-layout(location = 3) uniform sampler2D tex;
-layout(location = 4) uniform sampler2D nmap; 
+layout(location = 3) uniform vec4 materialColor;
 
 float materialShininess = 80;
 vec3 materialSpecularColor = vec3(1,1,1);
 
-#define MAX_LIGHTS 10
 struct Light
 {
     vec3 position;
@@ -18,7 +15,8 @@ struct Light
     float ambientCoefficient;
 };
 
-layout (binding = 0, std140) uniform LIGHTS
+#define MAX_LIGHTS 10
+uniform LIGHTS
 {
     int num_lights;
     Light lights[MAX_LIGHTS];
@@ -27,7 +25,6 @@ layout (binding = 0, std140) uniform LIGHTS
 
 in vec3 fragPosition;
 in vec3 fragNormal;
-in vec2 fragTexCoord;
 
 out vec4 finalColor;
 
@@ -58,12 +55,12 @@ vec3 ApplyLight(Light light, vec3 surfaceColor, vec3 normal, vec3 surfacePos, ve
 void main()
 {
     vec3 surfaceToCamera = normalize(cameraPosition - fragPosition);
+    vec3 surfaceColor = vec3(materialColor); //TODO update for transparency
 
     //combine color from all the lights
     vec3 linearColor = vec3(0);
-    vec3 texColor = texture(tex, fragTexCoord).rgb;
-    for(int i = 0; i < num_lights; ++i){
-        linearColor += ApplyLight(lights[i], texColor, fragNormal, fragPosition, surfaceToCamera);
+    for(int i = 0; i < num_lights; ++i) {
+        linearColor += ApplyLight(lights[i], surfaceColor, fragNormal, fragPosition, surfaceToCamera);
     }
     
     //final color (after gamma correction)

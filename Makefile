@@ -1,5 +1,5 @@
 CXX := g++
-CPPFLAGS := -Wall -Wextra -std=c++14
+CPPFLAGS := -Wall -Wextra -std=c++14 -DGLM_ENABLE_EXPERIMENTAL
 BIN := Foogle
 LDFLAGS := -lm -lglfw -lGL -lGLU -lGLEW
 IFLAGS := -isystem deps -I. -Isrc 

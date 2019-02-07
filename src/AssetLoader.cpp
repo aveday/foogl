@@ -1,14 +1,9 @@
-
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-
 #include <iostream>
 #include <GL/glew.h>
 #include "AssetLoader.h"
 #include "glm.h"
 
 std::unordered_map<std::string, GLuint> AssetLoader::program_cache;
-std::unordered_map<std::string, GLuint> AssetLoader::texture_cache;
 std::unordered_map<MeshDef*, Mesh> AssetLoader::mesh_cache;
 
 /* Load and compile a shader given a shader type and filename */
@@ -87,14 +82,6 @@ GLuint AssetLoader::LoadProgram(const char* vs, const char* fs)
     return program;
 }
 
-Material AssetLoader::LoadMaterial(MaterialDef &def)
-{
-    Material material;
-    material.diffuse = AL::LoadTexture(def.diffuse_filename);
-    material.normal = AL::LoadTexture(def.normal_filename);
-    return material;
-}
-
 Mesh AssetLoader::LoadMesh(MeshDef &def)
 {
     if (mesh_cache.count(&def))
@@ -112,14 +99,12 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     glBindVertexArray(mesh.vao);
 
     // define vertex buffer layout
-    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 32, (void*)0);
-    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 32, (void*)12);
-    glVertexAttribPointer(INPUT_TEXCOORD, 2, GL_FLOAT, 0, 32, (void*)24);
+    glVertexAttribPointer(INPUT_POSITION, 3, GL_FLOAT, 0, 24, (void*)0);
+    glVertexAttribPointer(INPUT_NORMAL,   3, GL_FLOAT, 0, 24, (void*)12);
     glEnableVertexAttribArray(INPUT_POSITION);
     glEnableVertexAttribArray(INPUT_NORMAL);
-    glEnableVertexAttribArray(INPUT_TEXCOORD);
 
-    struct Vertex { vec3 position, normal; vec2 tex_coord; };
+    struct Vertex { vec3 position, normal; };
     Vertex *vertices = new Vertex[mesh.vertices_n];
 
     // set vertex positions and normals
@@ -132,42 +117,6 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
             def.normal_type == NO_NORMALS       ? vec3{0,0,0} : vec3{0,1,0};
     }
 
-    // calculate texture coordinates
-    vec3 tex_normal, axis;
-    vec2 tpos;
-    float angle;
-    for(int i = 0; i < mesh.vertices_n; i++) {
-        // set tpos by position for projected textures
-        if (def.texture_type == PROJECTED) {
-            tpos = vec2( vertices[i].position );
-
-        // otherwise find tpos by rotating point to XY plane
-        } else {
-            // first get the normal of the point
-            if (def.texture_type == STRETCHED) {
-                if (def.normal_type != POSITION_NORMALS)
-                    std::cerr << "STRETCHED requires POSITION_NORMALS\n";
-                tex_normal = vertices[i].normal;
-            } else if (i%3 == 0) {
-                tex_normal = (def.normal_type == SURFACE_NORMALS)
-                    ? vertices[i].normal
-                    : get_normal( vertices[i  ].position,
-                                  vertices[i+1].position,
-                                  vertices[i+2].position );
-            }
-            // define the rotation axis depenging on the normal
-            if (def.texture_type == STRETCHED || i%3 == 0) {
-                angle = glm::angle(tex_normal, {0,0,1});
-                axis = glm::cross(tex_normal, {0,0,1});
-                if(axis == vec3(0)) axis = {1,0,0};
-            }
-            // rotate the point position to find the texture position
-            tpos = vec2( glm::rotate(vertices[i].position, angle, axis) );
-        }
-        // scale and center the final texture coordinates
-        vertices[i].tex_coord = def.texture_scale * tpos + vec2(.5);
-    }
-
     // buffer vertex data
     int size = sizeof(Vertex) * mesh.vertices_n;
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
@@ -176,38 +125,5 @@ Mesh AssetLoader::LoadMesh(MeshDef &def)
     glBindVertexArray(0);
 
     return mesh;
-}
-
-GLuint AssetLoader::LoadTexture(std::string filename)
-{
-    std::string file = ASSET_DIR + filename;
-
-    // check if texture has been cached
-    if (texture_cache.count(file))
-        return texture_cache[file];
-
-    // load and check the image file with stb_image
-    int width, height, channels;
-    uint8_t* pixels = stbi_load(file.c_str(), &width, &height, &channels, 0);
-    if(!pixels) throw std::runtime_error(stbi_failure_reason());
-
-    GLuint texture;
-    glGenTextures(1, &texture);
-
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, pixels);
-
-    stbi_image_free(pixels);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    // cache and return the new texture
-    texture_cache[file] = texture;
-    return texture;
 }
 

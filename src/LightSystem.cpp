@@ -28,12 +28,16 @@ void LightSystem::run()
 
         auto &pos = EM::get_component<Body>(e).position;
         auto &col = EM::get_component<Light>(e).intensity;
+        auto &att = EM::get_component<Light>(e).attenuation;
+        auto &amb = EM::get_component<Light>(e).ambientCoefficient;
+
         int offset = 16 + (n++) * 32;
+
         glBindBuffer(GL_UNIFORM_BUFFER, ubo);
         glBufferSubData(GL_UNIFORM_BUFFER, offset,    12, glm::value_ptr(pos));
-        glBufferSubData(GL_UNIFORM_BUFFER, offset+12, 4,  &attenuation);
+        glBufferSubData(GL_UNIFORM_BUFFER, offset+12, 4,  &att);
         glBufferSubData(GL_UNIFORM_BUFFER, offset+16, 12, glm::value_ptr(col));
-        glBufferSubData(GL_UNIFORM_BUFFER, offset+28, 4,  &ambientCoefficient);
+        glBufferSubData(GL_UNIFORM_BUFFER, offset+28, 4,  &amb);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 

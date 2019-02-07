@@ -31,6 +31,8 @@ struct Clock {
 
 struct Light {
     vec3 intensity = {1,1,1};
+    float attenuation = 0.0f;
+    float ambientCoefficient = 0.0f;
     //TODO add attenuation and ambient coefficient
 };
 
@@ -42,11 +44,13 @@ struct Camera {
     mat4 projection = glm::perspective<GLfloat>(fov, aspect, near, far);
 };
 
+struct Material {
+    glm::vec4 color;
+};
+
 struct Model {
     MeshDef *mesh_def;
-    MaterialDef *material_def;
     Mesh mesh = {0,0,0};
-    Material material = {0,0,0};
 };
 
 struct Controller {
