@@ -1,5 +1,5 @@
 CXX := g++
-CPPFLAGS := -Wall -Wextra -std=c++11 -DGLM_ENABLE_EXPERIMENTAL
+CPPFLAGS := -Wall -Wextra -std=c++14 -DGLM_ENABLE_EXPERIMENTAL
 BIN := Foogle
 LDFLAGS := -lm -lglfw -lGL -lGLU -lGLEW
 RM:= rm -rf
